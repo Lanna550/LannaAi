@@ -1,0 +1,394 @@
+{
+  "nextRowId": 577,
+  "chatsByUserId": {
+    "1": [
+      {
+        "id": 1,
+        "user_id": 1,
+        "message": "{\"sessionId\":\"session-1\",\"modelId\":\"lanna\",\"title\":\"Test\",\"sessionCreatedAt\":\"2026-03-13T02:50:14.7942147Z\",\"updatedAt\":\"2026-03-13T02:50:14.7942147Z\",\"userMessageId\":\"u1\",\"userTimestamp\":\"2026-03-13T02:50:14.7942147Z\",\"userMessage\":\"hai\"}",
+        "response": "{\"assistantMessageId\":\"a1\",\"assistantTimestamp\":\"2026-03-13T02:50:14.7942147Z\",\"assistantMessage\":\"halo juga\",\"preview\":\"\",\"updatedAt\":\"2026-03-13T02:50:14.7942147Z\"}",
+        "created_at": "2026-03-13T02:50:14.000Z"
+      }
+    ],
+    "3": [
+      {
+        "id": 523,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773372348608-3cn7j4\",\"modelId\":\"lanna\",\"title\":\"Hayy\",\"sessionCreatedAt\":\"2026-03-13T03:25:48.608Z\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\",\"userMessageId\":\"message-1773372355682-05i30w\",\"userTimestamp\":\"2026-03-13T03:25:55.682Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:26:04.107Z\",\"assistantMessage\":\"\",\"preview\":\"hayy\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\"}",
+        "created_at": "2026-03-13T03:25:55.000Z"
+      },
+      {
+        "id": 524,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773372348608-3cn7j4\",\"modelId\":\"lanna\",\"title\":\"Hayy\",\"sessionCreatedAt\":\"2026-03-13T03:25:48.608Z\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\",\"userMessageId\":\"message-1773372364107-2j5jt6\",\"userTimestamp\":\"2026-03-13T03:26:04.107Z\",\"userMessage\":\"hayy\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:26:04.107Z\",\"assistantMessage\":\"\",\"preview\":\"hayy\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\"}",
+        "created_at": "2026-03-13T03:26:04.000Z"
+      },
+      {
+        "id": 525,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773372269602-788ulg\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-13T03:24:29.602Z\",\"updatedAt\":\"2026-03-13T03:24:41.345Z\",\"userMessageId\":\"message-1773372281345-0m0jrj\",\"userTimestamp\":\"2026-03-13T03:24:41.345Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:24:41.345Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:24:41.345Z\"}",
+        "created_at": "2026-03-13T03:24:41.000Z"
+      },
+      {
+        "id": 526,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773370430764-9hh9yj\",\"modelId\":\"lanna\",\"title\":\"Hyy\",\"sessionCreatedAt\":\"2026-03-13T02:53:50.764Z\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\",\"userMessageId\":\"message-1773370441886-neowpy\",\"userTimestamp\":\"2026-03-13T02:54:01.886Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:18:48.801Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\"}",
+        "created_at": "2026-03-13T02:54:01.000Z"
+      },
+      {
+        "id": 527,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773370430764-9hh9yj\",\"modelId\":\"lanna\",\"title\":\"Hyy\",\"sessionCreatedAt\":\"2026-03-13T02:53:50.764Z\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\",\"userMessageId\":\"message-1773371660370-w91mb4\",\"userTimestamp\":\"2026-03-13T03:14:20.370Z\",\"userMessage\":\"hyy\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:18:48.801Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\"}",
+        "created_at": "2026-03-13T03:14:20.000Z"
+      },
+      {
+        "id": 528,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773370430764-9hh9yj\",\"modelId\":\"lanna\",\"title\":\"Hyy\",\"sessionCreatedAt\":\"2026-03-13T02:53:50.764Z\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\",\"userMessageId\":\"message-1773371928801-c9n5a1\",\"userTimestamp\":\"2026-03-13T03:18:48.801Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:18:48.801Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\"}",
+        "created_at": "2026-03-13T03:18:48.000Z"
+      },
+      {
+        "id": 529,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773371621860-gzwx4y\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-13T03:13:41.860Z\",\"updatedAt\":\"2026-03-13T03:13:50.992Z\",\"userMessageId\":\"message-1773371630992-90fhtc\",\"userTimestamp\":\"2026-03-13T03:13:50.992Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:13:50.992Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:13:50.992Z\"}",
+        "created_at": "2026-03-13T03:13:50.000Z"
+      },
+      {
+        "id": 530,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773369355421-tawcyr\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-13T02:35:55.421Z\",\"updatedAt\":\"2026-03-13T02:36:03.504Z\",\"userMessageId\":\"message-1773369363504-y6nw7v\",\"userTimestamp\":\"2026-03-13T02:36:03.504Z\",\"userMessage\":\"hai\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T02:36:03.504Z\",\"assistantMessage\":\"\",\"preview\":\"hai\",\"updatedAt\":\"2026-03-13T02:36:03.504Z\"}",
+        "created_at": "2026-03-13T02:36:03.000Z"
+      },
+      {
+        "id": 531,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773366941868-uhzmex\",\"modelId\":\"lanna\",\"title\":\"Hallo\",\"sessionCreatedAt\":\"2026-03-13T01:55:41.868Z\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\",\"userMessageId\":\"message-1773366954612-y3aq07\",\"userTimestamp\":\"2026-03-13T01:55:54.612Z\",\"userMessage\":\"hallo\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T02:35:38.162Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\"}",
+        "created_at": "2026-03-13T01:55:54.000Z"
+      },
+      {
+        "id": 532,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773366941868-uhzmex\",\"modelId\":\"lanna\",\"title\":\"Hallo\",\"sessionCreatedAt\":\"2026-03-13T01:55:41.868Z\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\",\"userMessageId\":\"message-1773369338162-8o2kfw\",\"userTimestamp\":\"2026-03-13T02:35:38.162Z\",\"userMessage\":\"hallo\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T02:35:38.162Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\"}",
+        "created_at": "2026-03-13T02:35:38.000Z"
+      },
+      {
+        "id": 533,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773361816499-3zhm4l\",\"userTimestamp\":\"2026-03-13T00:30:16.499Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773361812501.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":130706}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T00:30:16.000Z"
+      },
+      {
+        "id": 534,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362136116-od8qtx\",\"userTimestamp\":\"2026-03-13T00:35:36.116Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773362131675.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":81440}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T00:35:36.000Z"
+      },
+      {
+        "id": 535,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362185708-4en3sr\",\"userTimestamp\":\"2026-03-13T00:36:25.708Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773362180576.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":65018}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T00:36:25.000Z"
+      },
+      {
+        "id": 536,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362629567-uy99lk\",\"userTimestamp\":\"2026-03-13T00:43:49.567Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T00:43:49.000Z"
+      },
+      {
+        "id": 537,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362798084-iqcyz3\",\"userTimestamp\":\"2026-03-13T00:46:38.084Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773362796462.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":93998}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T00:46:38.000Z"
+      },
+      {
+        "id": 538,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773363137359-vyjfis\",\"userTimestamp\":\"2026-03-13T00:52:17.359Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T00:52:17.000Z"
+      },
+      {
+        "id": 539,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773364025074-0xt7z4\",\"userTimestamp\":\"2026-03-13T01:07:05.074Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T01:07:05.000Z"
+      },
+      {
+        "id": 540,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773364340312-fqx5k7\",\"userTimestamp\":\"2026-03-13T01:12:20.312Z\",\"userMessage\":\"Halo halo halo bagaimana hari ini?\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T01:12:20.000Z"
+      },
+      {
+        "id": 541,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773364346672-bjasvg\",\"userTimestamp\":\"2026-03-13T01:12:26.672Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T01:12:26.000Z"
+      },
+      {
+        "id": 542,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773367124134-rfig7i\",\"userTimestamp\":\"2026-03-13T01:58:44.134Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T01:58:44.000Z"
+      },
+      {
+        "id": 543,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773367165338-2y7fr4\",\"userTimestamp\":\"2026-03-13T01:59:25.338Z\",\"userMessage\":\"hallo\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
+        "created_at": "2026-03-13T01:59:25.000Z"
+      },
+      {
+        "id": 544,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773364370100-v5ch52\",\"userTimestamp\":\"2026-03-13T01:12:50.100Z\",\"userMessage\":\"lihat\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:12:50.000Z"
+      },
+      {
+        "id": 545,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773365500400-dxj70u\",\"userTimestamp\":\"2026-03-13T01:31:40.400Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:31:40.000Z"
+      },
+      {
+        "id": 546,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773365601403-vjdaqe\",\"userTimestamp\":\"2026-03-13T01:33:21.403Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:33:21.000Z"
+      },
+      {
+        "id": 547,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773365737453-1cqd6f\",\"userTimestamp\":\"2026-03-13T01:35:37.453Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:35:37.000Z"
+      },
+      {
+        "id": 548,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773366001773-sn05cn\",\"userTimestamp\":\"2026-03-13T01:40:01.773Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:40:01.000Z"
+      },
+      {
+        "id": 549,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773366063796-bc665c\",\"userTimestamp\":\"2026-03-13T01:41:03.796Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:41:03.000Z"
+      },
+      {
+        "id": 550,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773366967305-4gvik5\",\"userTimestamp\":\"2026-03-13T01:56:07.305Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
+        "created_at": "2026-03-13T01:56:07.000Z"
+      },
+      {
+        "id": 551,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364644162-15wrze\",\"userTimestamp\":\"2026-03-13T01:17:24.162Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
+        "created_at": "2026-03-13T01:17:24.000Z"
+      },
+      {
+        "id": 552,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364670382-6xeaj5\",\"userTimestamp\":\"2026-03-13T01:17:50.382Z\",\"userMessage\":\"Halo halo halo bagaimana hari ini?\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
+        "created_at": "2026-03-13T01:17:50.000Z"
+      },
+      {
+        "id": 553,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364915007-q2vezl\",\"userTimestamp\":\"2026-03-13T01:21:55.007Z\",\"userMessage\":\"p\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
+        "created_at": "2026-03-13T01:21:55.000Z"
+      },
+      {
+        "id": 554,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364963323-kwsddp\",\"userTimestamp\":\"2026-03-13T01:22:43.323Z\",\"userMessage\":\"ii\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
+        "created_at": "2026-03-13T01:22:43.000Z"
+      },
+      {
+        "id": 555,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361188423-c2piq5\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361352041 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:19:48.423Z\",\"updatedAt\":\"2026-03-13T00:22:32.050Z\",\"userMessageId\":\"message-1773361352050-3nclak\",\"userTimestamp\":\"2026-03-13T00:22:32.050Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773361352041.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":131672}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:22:32.050Z\",\"assistantMessage\":\"\",\"preview\":\"Audio: recording-1773361352041.webm\",\"updatedAt\":\"2026-03-13T00:22:32.050Z\"}",
+        "created_at": "2026-03-13T00:22:32.000Z"
+      },
+      {
+        "id": 556,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773361017572-jqxfik\",\"modelId\":\"lanna\",\"title\":\"Lihat Ini\",\"sessionCreatedAt\":\"2026-03-13T00:16:57.572Z\",\"updatedAt\":\"2026-03-13T00:17:12.732Z\",\"userMessageId\":\"message-1773361032732-eawzee\",\"userTimestamp\":\"2026-03-13T00:17:12.732Z\",\"userMessage\":\"lihat ini\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:17:12.732Z\",\"assistantMessage\":\"\",\"preview\":\"lihat ini\",\"updatedAt\":\"2026-03-13T00:17:12.732Z\"}",
+        "created_at": "2026-03-13T00:17:12.000Z"
+      },
+      {
+        "id": 557,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773359759719-dns5sm\",\"userTimestamp\":\"2026-03-12T23:55:59.719Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
+        "created_at": "2026-03-12T23:55:59.000Z"
+      },
+      {
+        "id": 558,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360002096-tnpw9g\",\"userTimestamp\":\"2026-03-13T00:00:02.096Z\",\"userMessage\":\"[Membagikan file: miku.jpg]\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
+        "created_at": "2026-03-13T00:00:02.000Z"
+      },
+      {
+        "id": 559,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360821553-obc8wc\",\"userTimestamp\":\"2026-03-13T00:13:41.553Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
+        "created_at": "2026-03-13T00:13:41.000Z"
+      },
+      {
+        "id": 560,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360838743-3dy96r\",\"userTimestamp\":\"2026-03-13T00:13:58.743Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"document\",\"name\":\"ANIME LIST.docx\",\"mimeType\":\"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"size\":18179}}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
+        "created_at": "2026-03-13T00:13:58.000Z"
+      },
+      {
+        "id": 561,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360881802-gsbnkm\",\"userTimestamp\":\"2026-03-13T00:14:41.802Z\",\"userMessage\":\"Halo.\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
+        "created_at": "2026-03-13T00:14:41.000Z"
+      },
+      {
+        "id": 562,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359544664-zi651n\",\"modelId\":\"furina\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:52:24.664Z\",\"updatedAt\":\"2026-03-12T23:52:26.969Z\",\"userMessageId\":\"message-1773359546969-lsdkme\",\"userTimestamp\":\"2026-03-12T23:52:26.969Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:52:26.969Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:52:26.969Z\"}",
+        "created_at": "2026-03-12T23:52:26.000Z"
+      },
+      {
+        "id": 563,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359151912-pwkgll\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:45:51.912Z\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\",\"userMessageId\":\"message-1773359211143-scjpx8\",\"userTimestamp\":\"2026-03-12T23:46:51.143Z\",\"userMessage\":\"halo\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:47:13.734Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\"}",
+        "created_at": "2026-03-12T23:46:51.000Z"
+      },
+      {
+        "id": 564,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359151912-pwkgll\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:45:51.912Z\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\",\"userMessageId\":\"message-1773359227062-tsdc25\",\"userTimestamp\":\"2026-03-12T23:47:07.062Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:47:13.734Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\"}",
+        "created_at": "2026-03-12T23:47:07.000Z"
+      },
+      {
+        "id": 565,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773359151912-pwkgll\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:45:51.912Z\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\",\"userMessageId\":\"message-1773359233734-6fkkcy\",\"userTimestamp\":\"2026-03-12T23:47:13.734Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:47:13.734Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\"}",
+        "created_at": "2026-03-12T23:47:13.000Z"
+      },
+      {
+        "id": 566,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773358956507-ymq6sj\",\"modelId\":\"inori\",\"title\":\"Hallo\",\"sessionCreatedAt\":\"2026-03-12T23:42:36.507Z\",\"updatedAt\":\"2026-03-12T23:42:39.398Z\",\"userMessageId\":\"message-1773358959398-b4vucd\",\"userTimestamp\":\"2026-03-12T23:42:39.398Z\",\"userMessage\":\"hallo\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:42:39.398Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-12T23:42:39.398Z\"}",
+        "created_at": "2026-03-12T23:42:39.000Z"
+      },
+      {
+        "id": 567,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773358914135-pgfv2u\",\"modelId\":\"lanna\",\"title\":\"Hllo\",\"sessionCreatedAt\":\"2026-03-12T23:41:54.135Z\",\"updatedAt\":\"2026-03-12T23:42:01.957Z\",\"userMessageId\":\"message-1773358921957-msq849\",\"userTimestamp\":\"2026-03-12T23:42:01.957Z\",\"userMessage\":\"hllo\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:42:01.957Z\",\"assistantMessage\":\"\",\"preview\":\"hllo\",\"updatedAt\":\"2026-03-12T23:42:01.957Z\"}",
+        "created_at": "2026-03-12T23:42:01.000Z"
+      },
+      {
+        "id": 568,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773358619510-qkwg9h\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:36:59.510Z\",\"updatedAt\":\"2026-03-12T23:40:47.205Z\",\"userMessageId\":\"message-1773358843340-bykrf3\",\"userTimestamp\":\"2026-03-12T23:40:43.340Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":\"message-1773358847205-1hjzjm\",\"assistantTimestamp\":\"2026-03-12T23:40:47.205Z\",\"assistantMessage\":\"Hihi! Halo juga! ✨\\n\\nSenang banget deh bisa disapa sama kamu hari ini. Aku Lanna! Kamu kelihatannya lagi semangat ya? Ada cerita seru apa nih hari ini, atau ada yang bisa Lanna bantu? 😊 Lumayan lho, ngobrol bareng biar makin akrab! Yuk, yuk! 🌸🌻\",\"preview\":\"Hihi! Halo juga! ✨\\n\\nSenang banget deh bisa disapa ...\",\"updatedAt\":\"2026-03-12T23:40:47.205Z\"}",
+        "created_at": "2026-03-12T23:40:43.000Z"
+      },
+      {
+        "id": 569,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773358164175-vp052a\",\"modelId\":\"furina\",\"title\":\"Haii\",\"sessionCreatedAt\":\"2026-03-12T23:29:24.175Z\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\",\"userMessageId\":\"message-1773358189259-yss090\",\"userTimestamp\":\"2026-03-12T23:29:49.259Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":\"message-1773358196164-nltwwr\",\"assistantTimestamp\":\"2026-03-12T23:29:56.164Z\",\"assistantMessage\":\"Oh?\\n\\nSebuah kekeh yang ringan. Apa gerangan yang memercikkan riak kegembiraan di dalam dirimu itu? Ceritakanlah, jika kau berkenan. Aku selalu tertarik pada melodi hati yang tak terduga.\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\"}",
+        "created_at": "2026-03-12T23:29:49.000Z"
+      },
+      {
+        "id": 570,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773358164175-vp052a\",\"modelId\":\"furina\",\"title\":\"Haii\",\"sessionCreatedAt\":\"2026-03-12T23:29:24.175Z\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\",\"userMessageId\":\"message-1773358548609-ixyggb\",\"userTimestamp\":\"2026-03-12T23:35:48.609Z\",\"userMessage\":\"haii\"}",
+        "response": "{\"assistantMessageId\":\"message-1773358550600-t2adrw\",\"assistantTimestamp\":\"2026-03-12T23:35:50.600Z\",\"assistantMessage\":\"*Senyumannya merekah, matanya berbinar penuh rasa ingin tahu.*\\n\\nHmm, \\\"haiihaii\\\"? Sebuah sapaan yang... unik. Seolah ada tarian kecil di balik kata-kata itu. Apa yang membuatmu merasa begitu bersemangat hingga kata-kata pun ikut menari?\\n\\n*Ia memiringkan kepalanya sedikit, gestur yang penuh pesona dan misteri.*\\n\\nAdakah cerita yang ingin kau bagi? Atau mungkin hanya sekadar luapan kegembiraan yang tak tertahan? Katakan padaku, wahai penari kata-kata.\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\"}",
+        "created_at": "2026-03-12T23:35:48.000Z"
+      },
+      {
+        "id": 571,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773358164175-vp052a\",\"modelId\":\"furina\",\"title\":\"Haii\",\"sessionCreatedAt\":\"2026-03-12T23:29:24.175Z\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\",\"userMessageId\":\"message-1773358555941-netfue\",\"userTimestamp\":\"2026-03-12T23:35:55.941Z\",\"userMessage\":\"[Membagikan file: miku.jpg]\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:35:55.941Z\",\"assistantMessage\":\"\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\"}",
+        "created_at": "2026-03-12T23:35:55.000Z"
+      },
+      {
+        "id": 572,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773352494608-6v155r\",\"modelId\":\"lanna\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T21:54:54.608Z\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\",\"userMessageId\":\"message-1773352564408-6y8b4l\",\"userTimestamp\":\"2026-03-12T21:56:04.408Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":\"message-1773352567681-je9hyp\",\"assistantTimestamp\":\"2026-03-12T21:56:07.681Z\",\"assistantMessage\":\"Halo! Hihi juga! 👋✨ \\n\\nSenang banget deh disapa pagi-pagi begini (atau kapan pun kamu berada!). Ada yang bisa Lanna bantu hari ini? Atau mungkin kamu lagi mau cerita sesuatu yang seru? Lanna siap dengerin dengan senyuman lebar! 😊🌸\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\"}",
+        "created_at": "2026-03-12T21:56:04.000Z"
+      },
+      {
+        "id": 573,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773352494608-6v155r\",\"modelId\":\"lanna\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T21:54:54.608Z\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\",\"userMessageId\":\"message-1773352596305-cmfwo3\",\"userTimestamp\":\"2026-03-12T21:56:36.305Z\",\"userMessage\":\"Halo.\"}",
+        "response": "{\"assistantMessageId\":\"message-1773352599399-wx98xz\",\"assistantTimestamp\":\"2026-03-12T21:56:39.399Z\",\"assistantMessage\":\"Halo, halo juga! Wah, disapanya dua kali nih, jadi makin semangat deh Lanna-nya! Hehe. 😊✨\\n\\nApa kabar hari ini? Ada yang bisa Lanna bantu, atau mungkin kamu cuma mau ngobrol santai aja? Lanna siap menemani dengan senang hati! 🌸💖\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\"}",
+        "created_at": "2026-03-12T21:56:36.000Z"
+      },
+      {
+        "id": 574,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773352494608-6v155r\",\"modelId\":\"lanna\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T21:54:54.608Z\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\",\"userMessageId\":\"message-1773352601634-6qzmer\",\"userTimestamp\":\"2026-03-12T21:56:41.634Z\",\"userMessage\":\"[Membagikan file: miku.jpg]\"}",
+        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T21:56:41.634Z\",\"assistantMessage\":\"\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\"}",
+        "created_at": "2026-03-12T21:56:41.000Z"
+      },
+      {
+        "id": 575,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773349392119-odvru2\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T21:03:12.119Z\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\",\"userMessageId\":\"message-1773349422101-s7d1i6\",\"userTimestamp\":\"2026-03-12T21:03:42.101Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":\"message-1773349427116-2styza\",\"assistantTimestamp\":\"2026-03-12T21:03:47.116Z\",\"assistantMessage\":\"Halo halo! *lambai tangan dengan semangat* \\n\\nWah, sapaan yang ceria sekali! Aku Lanna, senang banget bisa ketemu kamu hari ini! ✨ Gimana kabarmu? Ada yang bisa Lanna bantu supaya harimu makin berwarna, atau kamu cuma mau ngobrol seru sama aku? Hehe! 🌸💕\",\"preview\":\"Hihihi! Aduh, ketawanya nular deh, aku jadi ikutan...\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\"}",
+        "created_at": "2026-03-12T21:03:42.000Z"
+      },
+      {
+        "id": 576,
+        "user_id": 3,
+        "message": "{\"sessionId\":\"session-1773349392119-odvru2\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T21:03:12.119Z\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\",\"userMessageId\":\"message-1773352489828-36ig8h\",\"userTimestamp\":\"2026-03-12T21:54:49.828Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":\"message-1773352494364-f7asly\",\"assistantTimestamp\":\"2026-03-12T21:54:54.364Z\",\"assistantMessage\":\"Hihihi! Aduh, ketawanya nular deh, aku jadi ikutan senyum-senyum sendiri nih! 😄✨\\n\\nAda cerita seru apa nih hari ini sampai kamu tertawa manis gitu? Atau kamu lagi pengen ditemenin ngobrol santai aja? Lanna siap dengerin kok! Pokoknya hari ini kita harus *happy* terus ya! 🌈💖\",\"preview\":\"Hihihi! Aduh, ketawanya nular deh, aku jadi ikutan...\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\"}",
+        "created_at": "2026-03-12T21:54:49.000Z"
+      }
+    ]
+  }
+}

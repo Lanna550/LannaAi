@@ -1,0 +1,1 @@
+{"code":"GEMINI_QUOTA_EXCEEDED","error":"Permintaan ke Gemini terkena batas kuota atau rate limit. Coba lagi dalam sekitar 8 detik atau ganti API key / aktifkan billing Gemini.","retryAfterSeconds":8,"attemptedModels":["gemini-2.5-flash"]}
