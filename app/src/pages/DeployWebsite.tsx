@@ -6,6 +6,8 @@ import {
   Clock3,
   Copy,
   ExternalLink,
+  Eye,
+  EyeOff,
   GitBranch,
   Globe,
   Loader2,
@@ -25,6 +27,7 @@ interface DeployWebsiteProps {
 
 type DeployProvider = 'vercel' | 'netlify' | 'github-pages';
 type DeployStatus = 'idle' | 'running' | 'success' | 'error';
+type DeployMode = 'direct' | 'backend';
 
 type GithubRun = {
   id: number | null;
@@ -47,11 +50,38 @@ type GithubDeployResponse = {
   run?: GithubRun | null;
 };
 
+type GithubWorkflowPayload = {
+  path?: string;
+  name?: string;
+};
+
+type GithubWorkflowListPayload = {
+  workflows?: GithubWorkflowPayload[];
+};
+
+type GithubApiRunPayload = {
+  id?: number;
+  status?: string;
+  conclusion?: string | null;
+  html_url?: string;
+  event?: string;
+  created_at?: string;
+  updated_at?: string;
+  head_branch?: string;
+};
+
+type GithubApiRunsPayload = {
+  workflow_runs?: GithubApiRunPayload[];
+};
+
 const PROVIDER_LABELS: Record<DeployProvider, string> = {
   vercel: 'Vercel',
   netlify: 'Netlify',
   'github-pages': 'GitHub Pages',
 };
+
+const GITHUB_API_BASE_URL = 'https://api.github.com';
+const STATIC_HOST_SUFFIXES = ['.github.io'];
 
 const DEPLOY_STEPS = [
   'Validasi konfigurasi deploy',
@@ -59,6 +89,12 @@ const DEPLOY_STEPS = [
   'Build dan publish ke GitHub Pages',
   'Situs online dan siap diakses',
 ];
+
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
 
 function parseGitHubRepository(value: string) {
   const raw = String(value || '').trim();
@@ -99,6 +135,23 @@ function parseGitHubRepository(value: string) {
   }
 }
 
+function mapGithubRun(rawRun?: GithubApiRunPayload | null): GithubRun | null {
+  if (!rawRun || typeof rawRun !== 'object') {
+    return null;
+  }
+
+  return {
+    id: Number(rawRun.id) || null,
+    status: String(rawRun.status || '').trim() || 'unknown',
+    conclusion:
+      rawRun.conclusion == null ? null : String(rawRun.conclusion || '').trim() || null,
+    htmlUrl: String(rawRun.html_url || '').trim() || null,
+    event: String(rawRun.event || '').trim() || null,
+    createdAt: String(rawRun.created_at || '').trim() || null,
+    updatedAt: String(rawRun.updated_at || '').trim() || null,
+  };
+}
+
 function resolveActiveStepIndex(status: DeployStatus, run: GithubRun | null) {
   if (status === 'idle') {
     return -1;
@@ -124,11 +177,82 @@ function resolveActiveStepIndex(status: DeployStatus, run: GithubRun | null) {
   return 2;
 }
 
+function getDefaultDeployMode() {
+  if (typeof window === 'undefined') {
+    return 'backend' as DeployMode;
+  }
+
+  const host = String(window.location.hostname || '').toLowerCase();
+  const isStaticHost = STATIC_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+  return isStaticHost ? 'direct' : 'backend';
+}
+
+function resolveGithubApiError(statusCode: number, payload: Record<string, unknown> | null) {
+  const rawMessage = String(payload?.message || payload?.error || '').trim();
+
+  if (statusCode === 401) {
+    return 'Token GitHub tidak valid. Gunakan PAT yang benar.';
+  }
+
+  if (statusCode === 403) {
+    if (/rate limit/i.test(rawMessage)) {
+      return 'Kena rate limit GitHub API. Tunggu beberapa saat lalu coba lagi.';
+    }
+    return 'Akses ditolak oleh GitHub API. Pastikan token punya izin workflow dan repo.';
+  }
+
+  if (statusCode === 404) {
+    return 'Resource tidak ditemukan (404). Kemungkinan repo/private access/workflow file tidak cocok.';
+  }
+
+  if (rawMessage) {
+    return `${rawMessage} (${statusCode})`;
+  }
+
+  return `GitHub API request gagal (${statusCode}).`;
+}
+
+async function githubApiRequest<T>(endpoint: string, token: string, init: RequestInit = {}) {
+  const response = await fetchWithTimeout(`${GITHUB_API_BASE_URL}${endpoint}`, {
+    ...init,
+    headers: {
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${token}`,
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+      ...(init.headers || {}),
+    },
+  });
+
+  const payload = await readJsonSafely<Record<string, unknown>>(response);
+  if (!response.ok) {
+    throw new Error(resolveGithubApiError(response.status, payload));
+  }
+
+  return (payload || {}) as T;
+}
+
+async function listWorkflowPaths(owner: string, repo: string, token: string) {
+  const payload = await githubApiRequest<GithubWorkflowListPayload>(
+    `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/actions/workflows?per_page=50`,
+    token,
+    { method: 'GET' },
+  );
+
+  const workflows = Array.isArray(payload.workflows) ? payload.workflows : [];
+  return workflows
+    .map((workflow) => String(workflow.path || workflow.name || '').trim())
+    .filter(Boolean);
+}
+
 export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
   const [repositoryUrl, setRepositoryUrl] = useState('https://github.com/Lanna550/LannaAi');
   const [branchName, setBranchName] = useState('main');
   const [workflowName, setWorkflowName] = useState('deploy-pages.yml');
   const [provider, setProvider] = useState<DeployProvider>('github-pages');
+  const [deployMode, setDeployMode] = useState<DeployMode>(() => getDefaultDeployMode());
+  const [githubToken, setGithubToken] = useState('');
+  const [showToken, setShowToken] = useState(false);
   const [autoRedeploy, setAutoRedeploy] = useState(true);
   const [deployStatus, setDeployStatus] = useState<DeployStatus>('idle');
   const [deployError, setDeployError] = useState('');
@@ -143,6 +267,8 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
     branch: string;
     workflow: string;
     runId: number | null;
+    mode: DeployMode;
+    token: string;
   } | null>(null);
 
   const parsedRepository = useMemo(
@@ -194,6 +320,61 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
     }
   };
 
+  const pollDirectGithubStatus = async (context: NonNullable<typeof deployContextRef.current>) => {
+    const runPayload = context.runId
+      ? await githubApiRequest<GithubApiRunPayload>(
+          `/repos/${encodeURIComponent(context.owner)}/${encodeURIComponent(context.repo)}/actions/runs/${encodeURIComponent(String(context.runId))}`,
+          context.token,
+          { method: 'GET' },
+        )
+      : await githubApiRequest<GithubApiRunsPayload>(
+          `/repos/${encodeURIComponent(context.owner)}/${encodeURIComponent(context.repo)}/actions/workflows/${encodeURIComponent(context.workflow)}/runs?branch=${encodeURIComponent(context.branch)}&event=workflow_dispatch&per_page=5`,
+          context.token,
+          { method: 'GET' },
+        );
+
+    if ('workflow_runs' in runPayload) {
+      const runs = Array.isArray(runPayload.workflow_runs) ? runPayload.workflow_runs : [];
+      const selectedRun =
+        runs.find(
+          (run) =>
+            String(run?.head_branch || '').trim().toLowerCase() ===
+            context.branch.toLowerCase(),
+        ) || runs[0] || null;
+      return mapGithubRun(selectedRun);
+    }
+
+    return mapGithubRun(runPayload as GithubApiRunPayload);
+  };
+
+  const pollBackendStatus = async (context: NonNullable<typeof deployContextRef.current>) => {
+    const query = new URLSearchParams({
+      owner: context.owner,
+      repo: context.repo,
+      branch: context.branch,
+      workflow: context.workflow,
+    });
+    if (context.runId) {
+      query.set('runId', String(context.runId));
+    }
+
+    const response = await fetchWithTimeout(
+      `${API_BASE_URL}/api/deploy/github/status?${query.toString()}`,
+      {
+        method: 'GET',
+      },
+    );
+    const payload = await readJsonSafely<GithubDeployResponse>(response);
+    if (!response.ok || !payload?.ok) {
+      throw new Error(payload?.error || `Gagal mengecek status deploy (${response.status}).`);
+    }
+
+    if (payload.pagesUrl) {
+      setDeployedUrl(payload.pagesUrl);
+    }
+    return payload.run || null;
+  };
+
   const pollGithubDeployStatus = async () => {
     const context = deployContextRef.current;
     if (!context || pollingBusyRef.current) {
@@ -202,37 +383,20 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
 
     pollingBusyRef.current = true;
     try {
-      const query = new URLSearchParams({
-        owner: context.owner,
-        repo: context.repo,
-        branch: context.branch,
-        workflow: context.workflow,
-      });
-      if (context.runId) {
-        query.set('runId', String(context.runId));
+      const run = context.mode === 'direct'
+        ? await pollDirectGithubStatus(context)
+        : await pollBackendStatus(context);
+
+      setCurrentRun(run);
+      if (run?.id && !context.runId) {
+        deployContextRef.current = {
+          ...context,
+          runId: run.id,
+        };
       }
 
-      const response = await fetchWithTimeout(
-        `${API_BASE_URL}/api/deploy/github/status?${query.toString()}`,
-        {
-          method: 'GET',
-        },
-      );
-      const payload = await readJsonSafely<GithubDeployResponse>(response);
-
-      if (!response.ok || !payload?.ok) {
-        throw new Error(payload?.error || `Gagal mengecek status deploy (${response.status}).`);
-      }
-
-      if (payload.pagesUrl) {
-        setDeployedUrl(payload.pagesUrl);
-      }
-      if (payload.run) {
-        setCurrentRun(payload.run);
-      }
-
-      const status = String(payload.run?.status || '').toLowerCase();
-      const conclusion = String(payload.run?.conclusion || '').toLowerCase();
+      const status = String(run?.status || '').toLowerCase();
+      const conclusion = String(run?.conclusion || '').toLowerCase();
 
       if (status === 'completed') {
         stopPolling();
@@ -268,6 +432,114 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
     }, 5000);
   };
 
+  const startDirectDeploy = async (
+    owner: string,
+    repo: string,
+    branch: string,
+    workflow: string,
+  ) => {
+    const trimmedToken = githubToken.trim();
+    if (!trimmedToken) {
+      throw new Error('Mode Direct butuh GitHub Personal Access Token (PAT).');
+    }
+
+    try {
+      await githubApiRequest(
+        `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/actions/workflows/${encodeURIComponent(workflow)}/dispatches`,
+        trimmedToken,
+        {
+          method: 'POST',
+          body: JSON.stringify({ ref: branch }),
+        },
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Gagal memicu workflow.';
+      if (/404/.test(message) || /tidak ditemukan/i.test(message)) {
+        try {
+          const availableWorkflows = await listWorkflowPaths(owner, repo, trimmedToken);
+          if (availableWorkflows.length > 0) {
+            throw new Error(
+              `Workflow "${workflow}" tidak ditemukan. Coba pakai salah satu: ${availableWorkflows.join(', ')}`,
+            );
+          }
+        } catch {
+          // ignore secondary error and keep original message
+        }
+      }
+      throw new Error(message);
+    }
+
+    await sleep(1300);
+    const firstRun = await pollDirectGithubStatus({
+      owner,
+      repo,
+      branch,
+      workflow,
+      runId: null,
+      mode: 'direct',
+      token: trimmedToken,
+    });
+
+    deployContextRef.current = {
+      owner,
+      repo,
+      branch,
+      workflow,
+      runId: firstRun?.id || null,
+      mode: 'direct',
+      token: trimmedToken,
+    };
+
+    setCurrentRun(firstRun || null);
+    setDeployedUrl(`https://${owner}.github.io/${repo}/`);
+    return firstRun;
+  };
+
+  const startBackendDeploy = async (
+    repository: string,
+    branch: string,
+    workflow: string,
+    owner: string,
+    repo: string,
+  ) => {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/deploy/github/start`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        repositoryUrl: repository,
+        branch,
+        workflow,
+        autoRedeploy,
+      }),
+    });
+    const payload = await readJsonSafely<GithubDeployResponse>(response);
+
+    if (!response.ok || !payload?.ok) {
+      throw new Error(payload?.error || `Gagal memulai deploy (${response.status}).`);
+    }
+
+    deployContextRef.current = {
+      owner: payload.owner || owner,
+      repo: payload.repo || repo,
+      branch: payload.branch || branch,
+      workflow: payload.workflow || workflow,
+      runId: payload.run?.id || null,
+      mode: 'backend',
+      token: '',
+    };
+
+    if (payload.pagesUrl) {
+      setDeployedUrl(payload.pagesUrl);
+    } else {
+      setDeployedUrl(`https://${owner}.github.io/${repo}/`);
+    }
+
+    setCurrentRun(payload.run || null);
+    return payload.run || null;
+  };
+
   const handleAutoDeploy = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -285,7 +557,8 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
       return;
     }
 
-    if (!parseGitHubRepository(trimmedRepositoryUrl)) {
+    const parsedRepo = parseGitHubRepository(trimmedRepositoryUrl);
+    if (!parsedRepo) {
       toast.error('Repository harus format owner/repo atau URL GitHub valid.');
       return;
     }
@@ -296,41 +569,23 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
     setCurrentRun(null);
 
     try {
-      const response = await fetchWithTimeout(`${API_BASE_URL}/api/deploy/github/start`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          repositoryUrl: trimmedRepositoryUrl,
-          branch: trimmedBranchName,
-          workflow: trimmedWorkflowName,
-          autoRedeploy,
-        }),
-      });
-      const payload = await readJsonSafely<GithubDeployResponse>(response);
+      const run = deployMode === 'direct'
+        ? await startDirectDeploy(
+            parsedRepo.owner,
+            parsedRepo.repo,
+            trimmedBranchName,
+            trimmedWorkflowName,
+          )
+        : await startBackendDeploy(
+            trimmedRepositoryUrl,
+            trimmedBranchName,
+            trimmedWorkflowName,
+            parsedRepo.owner,
+            parsedRepo.repo,
+          );
 
-      if (!response.ok || !payload?.ok || !payload.owner || !payload.repo) {
-        throw new Error(payload?.error || `Gagal memulai deploy (${response.status}).`);
-      }
-
-      deployContextRef.current = {
-        owner: payload.owner,
-        repo: payload.repo,
-        branch: payload.branch || trimmedBranchName,
-        workflow: payload.workflow || trimmedWorkflowName,
-        runId: payload.run?.id || null,
-      };
-
-      if (payload.pagesUrl) {
-        setDeployedUrl(payload.pagesUrl);
-      }
-      if (payload.run) {
-        setCurrentRun(payload.run);
-      }
-
-      const runStatus = String(payload.run?.status || '').toLowerCase();
-      const runConclusion = String(payload.run?.conclusion || '').toLowerCase();
+      const runStatus = String(run?.status || '').toLowerCase();
+      const runConclusion = String(run?.conclusion || '').toLowerCase();
       if (runStatus === 'completed' && runConclusion === 'success') {
         setDeployStatus('success');
         toast.success('Deploy GitHub Pages selesai dan berhasil.');
@@ -451,6 +706,53 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                   />
                 </div>
 
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                      Mode Deploy
+                    </label>
+                    <select
+                      value={deployMode}
+                      onChange={(event) => setDeployMode(event.target.value as DeployMode)}
+                      className="h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
+                    >
+                      <option value="direct">Direct GitHub API (Recommended di GitHub Pages)</option>
+                      <option value="backend">Via Backend API</option>
+                    </select>
+                  </div>
+                  {deployMode === 'direct' ? (
+                    <div>
+                      <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        GitHub PAT Token
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showToken ? 'text' : 'password'}
+                          value={githubToken}
+                          onChange={(event) => setGithubToken(event.target.value)}
+                          placeholder="ghp_xxx / github_pat_xxx"
+                          className="h-11 pr-11"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowToken((prev) => !prev)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                          aria-label={showToken ? 'Sembunyikan token' : 'Tampilkan token'}
+                        >
+                          {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        Backend API Target
+                      </label>
+                      <Input value={API_BASE_URL} disabled className="h-11" />
+                    </div>
+                  )}
+                </div>
+
                 <label className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/60 px-3.5 py-3 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-200">
                   <input
                     type="checkbox"
@@ -493,7 +795,6 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
               </div>
             </form>
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -591,12 +892,20 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                   </div>
                 )}
 
-                <p className="mt-4 text-xs text-blue-700 dark:text-blue-300">
-                  Backend butuh env `GITHUB_DEPLOY_TOKEN` dengan akses workflow + repo untuk trigger deploy.
-                </p>
-                <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
-                  API target sekarang: <span className="font-semibold">{API_BASE_URL}</span>
-                </p>
+                {deployMode === 'direct' ? (
+                  <p className="mt-4 text-xs text-blue-700 dark:text-blue-300">
+                    Mode direct aktif: deploy dipicu langsung ke GitHub API dari browser.
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-4 text-xs text-blue-700 dark:text-blue-300">
+                      Backend butuh env `GITHUB_DEPLOY_TOKEN` dengan akses workflow + repo untuk trigger deploy.
+                    </p>
+                    <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+                      API target sekarang: <span className="font-semibold">{API_BASE_URL}</span>
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
