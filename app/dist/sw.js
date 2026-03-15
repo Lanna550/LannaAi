@@ -1,4 +1,4 @@
-const CACHE_NAME = "lanna-pwa-v2";
+const CACHE_NAME = "lanna-pwa-v3";
 const APP_SHELL = [
   "./",
   "./index.html",

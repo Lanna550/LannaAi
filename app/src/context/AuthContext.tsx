@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { API_BASE_URL, fetchWithTimeout, readJsonSafely } from '@/lib/api';
+import {
+  API_BASE_URL,
+  fetchWithTimeout,
+  isLikelyMixedContentPrivateApiBlock,
+  readJsonSafely,
+} from '@/lib/api';
 
 export interface User {
   id: string;
@@ -143,6 +148,14 @@ async function sendAuthRequest(
     if (error instanceof DOMException && error.name === 'AbortError') {
       return {
         error: 'Backend auth timeout. Periksa koneksi server/ngrok dan coba lagi.',
+      };
+    }
+
+    if (isLikelyMixedContentPrivateApiBlock(API_BASE_URL)) {
+      return {
+        error:
+          `Browser memblokir koneksi dari HTTPS ke HTTP private (${API_BASE_URL}). ` +
+          'Pakai backend HTTPS (ngrok/Cloudflare Tunnel) atau buka frontend lokal (http://localhost:5173).',
       };
     }
 

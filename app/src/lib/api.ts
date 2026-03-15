@@ -64,6 +64,14 @@ function parseUrlHostname(value: string) {
   }
 }
 
+function parseUrlPort(value: string) {
+  try {
+    return String(new URL(value).port || '').trim();
+  } catch {
+    return '';
+  }
+}
+
 function resolveCurrentHostApiBaseUrl(envApiBaseUrl: string) {
   if (typeof window === 'undefined') {
     return `http://localhost:${DEFAULT_LOCAL_API_PORT}`;
@@ -109,10 +117,18 @@ function resolveApiBaseUrl() {
       const pageHost = String(window.location.hostname || '').trim().toLowerCase();
       const envHost = parseUrlHostname(envApiBaseUrl);
       const isEnvLocalHost = isLoopbackOrPrivateHost(envHost);
+      const envPort = parseUrlPort(envApiBaseUrl) || String(DEFAULT_LOCAL_API_PORT);
 
       // Untuk sesi ngrok, kalau env masih localhost/private, fallback ke origin ngrok aktif.
       if (isNgrokHost(pageHost) && isEnvLocalHost) {
         return window.location.origin;
+      }
+
+      // Untuk frontend static host (GitHub Pages), URL API private (IP lokal) rentan
+      // gagal karena mixed content/private network restriction dari browser.
+      // Gunakan localhost agar tetap bisa login saat backend lokal aktif di perangkat ini.
+      if (isLikelyStaticHost(pageHost) && isEnvLocalHost) {
+        return `http://localhost:${envPort}`;
       }
 
       // Kalau frontend lokal tapi env menunjuk host lokal lain (IP lama/berubah),
@@ -129,6 +145,29 @@ function resolveApiBaseUrl() {
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();
+
+export function isLikelyMixedContentPrivateApiBlock(apiBaseUrl: string) {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  try {
+    const pageProtocol = String(window.location.protocol || '').trim().toLowerCase();
+    const apiUrl = new URL(apiBaseUrl);
+    const apiProtocol = String(apiUrl.protocol || '').trim().toLowerCase();
+    const apiHost = String(apiUrl.hostname || '').trim().toLowerCase();
+    const isTrustedLocalLoopback = LOCALHOST_HOSTS.has(apiHost) || apiHost.endsWith('.local');
+
+    return (
+      pageProtocol === 'https:' &&
+      apiProtocol === 'http:' &&
+      isLoopbackOrPrivateHost(apiHost) &&
+      !isTrustedLocalLoopback
+    );
+  } catch {
+    return false;
+  }
+}
 
 export async function readJsonSafely<T>(response: Response): Promise<T | null> {
   const rawText = await response.text().catch(() => '');
