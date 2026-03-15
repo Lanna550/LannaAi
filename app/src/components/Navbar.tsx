@@ -11,7 +11,8 @@ import {
   Sparkles,
   MessageCircle,
   Brain,
-  Home
+  Home,
+  Wrench,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
@@ -55,6 +56,7 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
     { id: 'home', label: 'Home', icon: Home },
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'ml', label: 'ML Features', icon: Brain },
+    { id: 'tools', label: 'Tools', icon: Wrench },
   ];
 
   const handleLogout = () => {
@@ -78,10 +80,10 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center sm:h-11 sm:w-11">
+              <Sparkles className="h-5 w-5 text-white sm:h-6 sm:w-6" />
             </div>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+            <span className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
               Lanna
             </span>
           </motion.button>
@@ -90,7 +92,12 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
           <div className="hidden md:flex items-center gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = currentPage === item.id;
+              const isToolsItem = item.id === 'tools';
+              const isToolsPage =
+                currentPage === 'tools' ||
+                currentPage === 'tiktok-downloader' ||
+                currentPage === 'youtube-downloader';
+              const isActive = isToolsItem ? isToolsPage : currentPage === item.id;
               return (
                 <motion.button
                   key={item.id}
@@ -118,7 +125,7 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Theme toggle */}
             <motion.button
               onClick={toggleTheme}
@@ -194,7 +201,7 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => onNavigate('login')}
                   className="hidden sm:block px-5 py-2.5 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -203,7 +210,7 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
                 </button>
                 <motion.button
                   onClick={() => onNavigate('register')}
-                  className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-base font-medium"
+                  className="shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 px-3 py-2 text-sm font-medium leading-none text-white sm:px-5 sm:py-2.5 sm:text-base"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -240,7 +247,12 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
             <div className="px-4 py-4 space-y-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = currentPage === item.id;
+                const isToolsItem = item.id === 'tools';
+                const isToolsPage =
+                  currentPage === 'tools' ||
+                  currentPage === 'tiktok-downloader' ||
+                  currentPage === 'youtube-downloader';
+                const isActive = isToolsItem ? isToolsPage : currentPage === item.id;
                 return (
                   <motion.button
                     key={item.id}

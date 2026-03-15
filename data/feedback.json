@@ -1,0 +1,135 @@
+{
+  "nextId": 14,
+  "feedbacks": [
+    {
+      "id": 1,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 5,
+      "feedback_type": "positive",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:00.185Z"
+    },
+    {
+      "id": 2,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 3,
+      "feedback_type": "neutral",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:03.508Z"
+    },
+    {
+      "id": 3,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 5,
+      "feedback_type": "positive",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:16.010Z"
+    },
+    {
+      "id": 4,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 3,
+      "feedback_type": "neutral",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:18.035Z"
+    },
+    {
+      "id": 5,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 1,
+      "feedback_type": "negative",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:20.285Z"
+    },
+    {
+      "id": 6,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 3,
+      "feedback_type": "neutral",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:28.121Z"
+    },
+    {
+      "id": 7,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 5,
+      "feedback_type": "positive",
+      "comment": null,
+      "created_at": "2026-03-13T23:51:32.042Z"
+    },
+    {
+      "id": 8,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 3,
+      "feedback_type": "neutral",
+      "comment": null,
+      "created_at": "2026-03-13T23:53:06.841Z"
+    },
+    {
+      "id": 9,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 5,
+      "feedback_type": "positive",
+      "comment": null,
+      "created_at": "2026-03-13T23:53:08.419Z"
+    },
+    {
+      "id": 10,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 1,
+      "feedback_type": "negative",
+      "comment": null,
+      "created_at": "2026-03-13T23:53:12.410Z"
+    },
+    {
+      "id": 11,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 3,
+      "feedback_type": "neutral",
+      "comment": null,
+      "created_at": "2026-03-13T23:54:34.195Z"
+    },
+    {
+      "id": 12,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 5,
+      "feedback_type": "positive",
+      "comment": null,
+      "created_at": "2026-03-13T23:54:35.877Z"
+    },
+    {
+      "id": 13,
+      "users_id": 2,
+      "message_id": "message-1773445367706-5hmzmx",
+      "model_name": "lanna",
+      "rating": 3,
+      "feedback_type": "neutral",
+      "comment": null,
+      "created_at": "2026-03-13T23:59:47.558Z"
+    }
+  ]
+}

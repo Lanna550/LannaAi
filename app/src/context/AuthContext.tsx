@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { API_BASE_URL, readJsonSafely } from '@/lib/api';
+import { API_BASE_URL, fetchWithTimeout, readJsonSafely } from '@/lib/api';
 
 export interface User {
   id: string;
@@ -40,7 +40,8 @@ interface AuthApiResponse {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const DEFAULT_AVATAR = '/images/avatar1.jpg';
-const DEFAULT_BIO = 'Halo! Aku suka anime!';
+const DEFAULT_BIO = '';
+const LEGACY_DEFAULT_BIO = 'Halo! Aku suka anime!';
 const STORAGE_KEY = 'lanna-user';
 
 function resolveAssetUrl(value?: string) {
@@ -64,12 +65,17 @@ function resolveAssetUrl(value?: string) {
 }
 
 function normalizeUser(rawUser: Partial<User> | null | undefined): User {
+  const normalizedBio =
+    typeof rawUser?.bio === 'string' && rawUser.bio.trim() !== LEGACY_DEFAULT_BIO
+      ? rawUser.bio
+      : DEFAULT_BIO;
+
   return {
     id: String(rawUser?.id || ''),
     username: String(rawUser?.username || ''),
     email: String(rawUser?.email || ''),
     displayName: String(rawUser?.displayName || rawUser?.username || ''),
-    bio: String(rawUser?.bio || DEFAULT_BIO),
+    bio: normalizedBio,
     avatar: String(resolveAssetUrl(rawUser?.avatar) || DEFAULT_AVATAR),
     banner: resolveAssetUrl(rawUser?.banner),
     location: typeof rawUser?.location === 'string' ? rawUser.location : undefined,
@@ -107,15 +113,25 @@ async function sendAuthRequest(
   endpoint: string,
   payload: Record<string, string>,
 ): Promise<{ user?: User; error?: string }> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetchWithTimeout(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
 
-  return readUserResponse(response);
+    return readUserResponse(response);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return {
+        error: 'Backend auth timeout. Periksa koneksi server/ngrok dan coba lagi.',
+      };
+    }
+
+    throw error;
+  }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -138,7 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return null;
     }
 
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `${API_BASE_URL}/api/users?email=${encodeURIComponent(normalizedEmail)}`,
     );
     const result = await readUserResponse(response);
@@ -152,7 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (candidateUser.id) {
-      const response = await fetch(`${API_BASE_URL}/api/users/${candidateUser.id}`);
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/users/${candidateUser.id}`);
       const result = await readUserResponse(response);
       if (result.user) {
         const normalized = normalizeUser({
@@ -283,7 +299,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/${activeUser.id}`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/users/${activeUser.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -346,7 +362,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         formData.append('banner', files.banner, files.banner.name);
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/users/${activeUser.id}/media`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/users/${activeUser.id}/media`, {
         method: 'POST',
         body: formData,
       });

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { API_BASE_URL, readJsonSafely } from '@/lib/api';
+import { API_BASE_URL, fetchWithTimeout, readJsonSafely } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { askGemini, ChatApiError } from '@/lib/gemini';
 
@@ -106,10 +106,10 @@ const SESSION_TITLE_MAX_LENGTH = 42;
 
 const WELCOME_MESSAGES: Record<ChatModel, string> = {
   lanna:
-    'Halo! Aku Lanna, teman ceritamu. Kamu bisa cerita apa pun: sedih, senang, capek, atau bingung. Aku dengerin ya.',
+    'Halo! Aku Miku, teman ceritamu. Kamu bisa cerita apa pun: sedih, senang, capek, atau bingung. Aku dengerin ya.',
   furina:
-    'Furina siap jadi spesialis generate gambarmu. Jelaskan visual yang kamu mau, nanti aku buatkan gambarnya.',
-  inori: 'Halo! Inori siap bantu ngoding. Lagi bikin apa, dan pakai bahasa apa?',
+    'Sparkle siap jadi spesialis generate gambarmu. Jelaskan visual yang kamu mau, nanti aku buatkan gambarnya.',
+  inori: 'Halo! Furina siap bantu ngoding. Lagi bikin apa, dan pakai bahasa apa?',
 };
 
 const TOPIC_STOP_WORDS = new Set([
@@ -130,9 +130,9 @@ const TOPIC_STOP_WORDS = new Set([
 export const CHAT_MODELS: ChatModelConfig[] = [
   {
     id: 'lanna',
-    name: 'Lanna',
+    name: 'Miku',
     description: 'Teman cerita yang peka mood dan suportif',
-    avatar: '/images/lanna_portrait.png',
+    avatar: '/images/hatsune_miku.png',
     theme: {
       primary: '#3b82f6',
       secondary: '#60a5fa',
@@ -143,9 +143,9 @@ export const CHAT_MODELS: ChatModelConfig[] = [
   },
   {
     id: 'furina',
-    name: 'Furina',
+    name: 'Sparkle',
     description: 'Spesialis generate gambar dan ilustrasi visual',
-    avatar: '/images/furina_portrait.png',
+    avatar: '/images/sparkle_portrait.png',
     theme: {
       primary: '#6366f1',
       secondary: '#8b5cf6',
@@ -156,9 +156,9 @@ export const CHAT_MODELS: ChatModelConfig[] = [
   },
   {
     id: 'inori',
-    name: 'Inori',
+    name: 'Furina',
     description: 'Asisten coding yang fokus dan rapi',
-    avatar: '/images/inori_portrait.png',
+    avatar: '/images/furina_potrait.png',
     theme: {
       primary: '#ec4899',
       secondary: '#f472b6',
@@ -567,7 +567,7 @@ function serializeSessionsForRemote(sessions: ChatSession[]) {
 }
 
 async function fetchRemoteSessions(userId: string): Promise<ChatSession[]> {
-  const response = await fetch(`${API_BASE_URL}/api/chats/${userId}`);
+  const response = await fetchWithTimeout(`${API_BASE_URL}/api/chats/${userId}`);
   const data = await readJsonSafely<RemoteChatResponse>(response);
 
   if (!response.ok) {
@@ -581,12 +581,17 @@ async function fetchRemoteSessions(userId: string): Promise<ChatSession[]> {
   return dedupeSessions(sessions as ChatSession[]).slice(0, MAX_STORED_SESSIONS);
 }
 
-async function syncRemoteSessions(userId: string, sessions: ChatSession[]) {
-  const response = await fetch(`${API_BASE_URL}/api/chats/${userId}`, {
+async function syncRemoteSessions(
+  userId: string,
+  sessions: ChatSession[],
+  options: { keepalive?: boolean } = {},
+) {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/api/chats/${userId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
+    keepalive: Boolean(options.keepalive),
     body: JSON.stringify({
       sessions: serializeSessionsForRemote(sessions),
     }),
@@ -604,6 +609,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [activeSessionId, setActiveSessionId] = useState<string>('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasLoadedRemoteSessions, setHasLoadedRemoteSessions] = useState(false);
+  const remoteSyncRetryTimerRef = React.useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -676,6 +682,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const timeoutId = window.setTimeout(() => {
       void syncRemoteSessions(user.id, chatSessions).catch((error) => {
         console.error('Failed to sync chat sessions to DB:', error);
+        if (remoteSyncRetryTimerRef.current !== null) {
+          window.clearTimeout(remoteSyncRetryTimerRef.current);
+        }
+        remoteSyncRetryTimerRef.current = window.setTimeout(() => {
+          void syncRemoteSessions(user.id, chatSessions).catch((retryError) => {
+            console.error('Retry sync chat sessions failed:', retryError);
+          });
+        }, 2000);
       });
     }, 400);
 
@@ -683,6 +697,40 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       window.clearTimeout(timeoutId);
     };
   }, [chatSessions, hasLoadedRemoteSessions, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || !hasLoadedRemoteSessions) {
+      return;
+    }
+
+    const flushSync = () => {
+      void syncRemoteSessions(user.id, chatSessions, { keepalive: true }).catch((error) => {
+        console.error('Flush sync chat sessions failed:', error);
+      });
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        flushSync();
+      }
+    };
+
+    window.addEventListener('pagehide', flushSync);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.removeEventListener('pagehide', flushSync);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [chatSessions, hasLoadedRemoteSessions, user?.id]);
+
+  useEffect(() => {
+    return () => {
+      if (remoteSyncRetryTimerRef.current !== null) {
+        window.clearTimeout(remoteSyncRetryTimerRef.current);
+      }
+    };
+  }, []);
 
   const activeSession =
     chatSessions.find((session) => session.id === activeSessionId) ?? chatSessions[0];

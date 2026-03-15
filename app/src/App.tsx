@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
@@ -19,6 +19,9 @@ import { Profile } from '@/pages/Profile';
 import { Settings } from '@/pages/Settings';
 import { Chat } from '@/pages/Chat';
 import { MLPage } from '@/pages/MLPage';
+import { Tools } from '@/pages/Tools';
+import { TiktokDownloader } from '@/pages/TiktokDownloader';
+import { YoutubeDownloader } from '@/pages/YoutubeDownloader';
 import {
   HousePricePrediction,
   SpamClassifier,
@@ -41,12 +44,18 @@ type Page =
   | 'ml-grade'
   | 'ml-disease'
   | 'ml-fraud'
-  | 'ml-art';
+  | 'ml-art'
+  | 'tools'
+  | 'tiktok-downloader'
+  | 'youtube-downloader';
 
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const { theme } = useTheme();
+  const handleLoadingComplete = useCallback(() => {
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -65,6 +74,9 @@ function AppContent() {
         'ml-disease',
         'ml-fraud',
         'ml-art',
+        'tools',
+        'tiktok-downloader',
+        'youtube-downloader',
       ];
       if (validPages.includes(path)) {
         setCurrentPage(path);
@@ -228,6 +240,42 @@ function AppContent() {
             <AIArtDetection onNavigate={navigate} />
           </motion.div>
         );
+      case 'tools':
+        return (
+          <motion.div
+            key="tools"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Tools onNavigate={navigate} />
+          </motion.div>
+        );
+      case 'tiktok-downloader':
+        return (
+          <motion.div
+            key="tiktok-downloader"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <TiktokDownloader onNavigate={navigate} />
+          </motion.div>
+        );
+      case 'youtube-downloader':
+        return (
+          <motion.div
+            key="youtube-downloader"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <YoutubeDownloader onNavigate={navigate} />
+          </motion.div>
+        );
       case 'home':
       default:
         return (
@@ -254,7 +302,7 @@ function AppContent() {
     <div className={`min-h-screen ${theme} bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}>
       <AnimatePresence>
         {isLoading && (
-          <LoadingScreen onComplete={() => setIsLoading(false)} />
+          <LoadingScreen onComplete={handleLoadingComplete} />
         )}
       </AnimatePresence>
 

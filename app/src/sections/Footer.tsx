@@ -29,6 +29,7 @@ export function Footer({ onNavigate }: FooterProps) {
             <button onClick={() => onNavigate('home')} className="hover:text-gray-900 dark:hover:text-white transition-colors">Home</button>
             <button onClick={() => onNavigate('chat')} className="hover:text-gray-900 dark:hover:text-white transition-colors">Chat</button>
             <button onClick={() => onNavigate('ml')} className="hover:text-gray-900 dark:hover:text-white transition-colors">ML Features</button>
+            <button onClick={() => onNavigate('tools')} className="hover:text-gray-900 dark:hover:text-white transition-colors">Tools</button>
           </div>
 
           {/* Copyright */}

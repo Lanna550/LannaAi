@@ -2,26 +2,26 @@ import { motion } from 'framer-motion';
 
 const companions = [
   {
-    name: 'Lanna',
+    name: 'Miku',
     title: 'The Friendly Assistant',
     description: 'Your cheerful companion for everyday conversations and general assistance.',
-    image: '/images/lanna_portrait.png',
+    image: '/images/hatsune_miku.png',
     tags: ['Friendly', 'Helpful', 'Cheerful'],
     tagColor: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
   },
  {
-  name: 'Furina',
+  name: 'Sparkle',
   title: 'Visual Creation AI',
   description: 'Expert in prompt-to-image generation, producing illustrations, artworks, and creative visual concepts.',
-  image: '/images/furina_portrait.png',
+  image: '/images/sparkle_portrait.png',
   tags: ['Image', 'Art', 'Generation'],
   tagColor: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
 },
   {
-  name: 'Inori',
+  name: 'Furina',
   title: 'AI Coding Specialist',
   description: 'Specialized in programming, debugging, code optimization, and software development.',
-  image: '/images/inori_portrait.png',
+  image: '/images/furina_potrait.png',
   tags: ['Coding', 'Debugging', 'Development'],
   tagColor: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400',
 },

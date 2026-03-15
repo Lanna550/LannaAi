@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { MessageSquare, Image, Brain } from 'lucide-react';
+import { MessageSquare, Image, Brain, Download } from 'lucide-react';
 
 const features = [
   {
@@ -22,6 +22,13 @@ const features = [
     iconBg: 'bg-orange-500',
     title: 'ML Predictions',
     description: 'Access powerful machine learning models for various prediction tasks.',
+  },
+  {
+    image: '/images/feature_image.png',
+    icon: Download,
+    iconBg: 'bg-emerald-500',
+    title: 'Tiktok Downloader',
+    description: 'Download TikTok videos without watermark quickly using a share link.',
   },
 ];
 
@@ -46,7 +53,7 @@ export function Features() {
         </motion.div>
 
         {/* Features grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (

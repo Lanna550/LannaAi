@@ -7,7 +7,7 @@ const testimonials = [
     name: 'Alex Chen',
     avatar: '/images/avatar1.jpg',
     role: 'Anime Enthusiast',
-    content: 'Lanna is absolutely amazing! The conversations feel so natural and the character personalities are spot on. Furina is my favorite!',
+    content: 'Lanna is absolutely amazing! The conversations feel so natural and the character personalities are spot on. Sparkle is my favorite!',
     rating: 5,
   },
   {
@@ -35,7 +35,7 @@ const testimonials = [
     name: 'David Park',
     avatar: '/images/avatar2.jpg',
     role: 'Content Creator',
-    content: 'Inori has such a gentle personality. Whenever I need someone to talk to, shes always there with kind and supportive words.',
+    content: 'Furina has such a gentle personality. Whenever I need someone to talk to, shes always there with kind and supportive words.',
     rating: 5,
   },
   {

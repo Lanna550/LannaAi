@@ -8,6 +8,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FileState, GoogleAIFileManager } from "@google/generative-ai/server";
 
@@ -68,7 +70,8 @@ const DB_USER = process.env.DB_USER || "root";
 const DB_PASSWORD = process.env.DB_PASSWORD || "";
 const DB_NAME = process.env.DB_NAME || "chatbot";
 const AUTH_DEFAULT_AVATAR = "/images/avatar1.jpg";
-const AUTH_DEFAULT_BIO = "Halo! Aku suka anime!";
+const AUTH_DEFAULT_BIO = "";
+const LEGACY_AUTH_DEFAULT_BIO = "Halo! Aku suka anime!";
 const PROFILE_UPLOAD_DIR = path.join(
   __dirname,
   "app",
@@ -119,7 +122,11 @@ const FALLBACK_CHATS_FILE = path.join(FALLBACK_DATA_DIR, "chats.json");
 const FALLBACK_FEEDBACK_FILE = path.join(FALLBACK_DATA_DIR, "feedback.json");
 
 const PERSISTENCE_MODE = String(process.env.PERSISTENCE_MODE || "").trim().toLowerCase();
+const IS_PERSISTENCE_FORCED_FILE = PERSISTENCE_MODE === "file";
+const MYSQL_RECOVERY_RETRY_MS =
+  Number.parseInt(process.env.MYSQL_RECOVERY_RETRY_MS || "15000", 10) || 15000;
 let persistenceMode = PERSISTENCE_MODE === "file" ? "file" : "mysql";
+let nextMysqlRecoveryAttemptAt = 0;
 const persistenceReady = (async () => {
   await fs.promises.mkdir(FALLBACK_DATA_DIR, { recursive: true });
 
@@ -332,8 +339,31 @@ async function runWithPersistence({ mysqlTask, fileTask }) {
       if (isMysqlConnectivityError(error)) {
         console.error("MYSQL UNAVAILABLE, switch to file fallback:", error);
         persistenceMode = "file";
+        nextMysqlRecoveryAttemptAt = Date.now() + MYSQL_RECOVERY_RETRY_MS;
       } else {
         throw error;
+      }
+    }
+  }
+
+  if (!IS_PERSISTENCE_FORCED_FILE && persistenceMode === "file") {
+    const now = Date.now();
+    if (now >= nextMysqlRecoveryAttemptAt) {
+      try {
+        const result = await mysqlTask();
+        persistenceMode = "mysql";
+        nextMysqlRecoveryAttemptAt = 0;
+        console.log("MYSQL RECOVERED, switch back to MySQL persistence.");
+        return result;
+      } catch (error) {
+        if (isMysqlConnectivityError(error)) {
+          nextMysqlRecoveryAttemptAt = now + MYSQL_RECOVERY_RETRY_MS;
+          console.warn(
+            `MYSQL RECOVERY FAILED (${String(error?.code || "UNKNOWN")}), tetap fallback file.`,
+          );
+        } else {
+          throw error;
+        }
       }
     }
   }
@@ -471,12 +501,17 @@ function deleteStoredUpload(filePath = "") {
 }
 
 function mapUserRow(row = {}) {
+  const resolvedBio =
+    typeof row.bio === "string" && row.bio.trim() !== LEGACY_AUTH_DEFAULT_BIO
+      ? row.bio
+      : AUTH_DEFAULT_BIO;
+
   return {
     id: String(row.id || ""),
     username: String(row.username || ""),
     email: String(row.email || ""),
     displayName: String(row.username || ""),
-    bio: String(row.bio || AUTH_DEFAULT_BIO),
+    bio: resolvedBio,
     avatar: String(row.profile_image || AUTH_DEFAULT_AVATAR),
     banner: row.banner_image ? String(row.banner_image) : undefined,
     createdAt: row.created_at
@@ -760,22 +795,38 @@ async function loadChatRowsForUser(userId) {
     return [];
   }
 
-  return runWithPersistence({
-    mysqlTask: async () => {
-      const [rows] = await dbPool.execute(
-        "SELECT id, user_id, message, response, created_at FROM chats WHERE user_id = ? ORDER BY created_at ASC, id ASC",
-        [normalizedUserId],
-      );
-
+  const fileTask = async () =>
+    withFileLock("chats", async () => {
+      const store = await readChatsStore();
+      const rows = store.chatsByUserId[String(normalizedUserId)];
       return Array.isArray(rows) ? rows : [];
-    },
-    fileTask: async () =>
-      withFileLock("chats", async () => {
-        const store = await readChatsStore();
-        const rows = store.chatsByUserId[String(normalizedUserId)];
-        return Array.isArray(rows) ? rows : [];
-      }),
-  });
+    });
+
+  try {
+    const rows = await runWithPersistence({
+      mysqlTask: async () => {
+        const [mysqlRows] = await dbPool.execute(
+          "SELECT id, user_id, message, response, created_at FROM chats WHERE user_id = ? ORDER BY created_at ASC, id ASC",
+          [normalizedUserId],
+        );
+
+        return Array.isArray(mysqlRows) ? mysqlRows : [];
+      },
+      fileTask,
+    });
+
+    if (Array.isArray(rows) && rows.length > 0) {
+      return rows;
+    }
+
+    // Jika DB kosong tapi ada data fallback file (mis. sync sebelumnya gagal),
+    // pakai data file agar history lintas device tidak hilang.
+    const fileRows = await fileTask();
+    return Array.isArray(fileRows) && fileRows.length > 0 ? fileRows : rows;
+  } catch (error) {
+    console.error("CHAT LOAD ERROR, fallback ke file:", error);
+    return fileTask();
+  }
 }
 
 async function saveChatRowsForUser(userId, sessions = []) {
@@ -785,49 +836,78 @@ async function saveChatRowsForUser(userId, sessions = []) {
   }
 
   const rows = buildChatRowsForStorage(normalizedUserId, sessions);
+  const fileTask = async () =>
+    withFileLock("chats", async () => {
+      const store = await readChatsStore();
+      const userKey = String(normalizedUserId);
+      const nextRows = rows.map((row) => ({
+        id: store.nextRowId++,
+        user_id: normalizedUserId,
+        message: row.message,
+        response: row.response,
+        created_at: new Date(
+          String(row.createdAt || "").trim().replace(" ", "T") + "Z",
+        ).toISOString(),
+      }));
 
-  return runWithPersistence({
-    mysqlTask: async () => {
-      const connection = await dbPool.getConnection();
-      try {
-        await connection.beginTransaction();
-        await connection.execute("DELETE FROM chats WHERE user_id = ?", [normalizedUserId]);
+      store.chatsByUserId[userKey] = nextRows;
+      await writeChatsStore(store);
+      return { ok: true, savedRows: nextRows.length };
+    });
 
-        for (const row of rows) {
-          await connection.execute(
-            "INSERT INTO chats (user_id, message, response, created_at) VALUES (?, ?, ?, ?)",
-            [row.userId, row.message, row.response, row.createdAt],
-          );
+  try {
+    const result = await runWithPersistence({
+      mysqlTask: async () => {
+        const connection = await dbPool.getConnection();
+        try {
+          await connection.beginTransaction();
+          await connection.execute("DELETE FROM chats WHERE user_id = ?", [normalizedUserId]);
+
+          for (const row of rows) {
+            await connection.execute(
+              "INSERT INTO chats (user_id, message, response, created_at) VALUES (?, ?, ?, ?)",
+              [row.userId, row.message, row.response, row.createdAt],
+            );
+          }
+
+          await connection.commit();
+          return { ok: true, savedRows: rows.length };
+        } catch (error) {
+          await connection.rollback();
+          throw error;
+        } finally {
+          connection.release();
         }
+      },
+      fileTask,
+    });
 
-        await connection.commit();
-        return { ok: true, savedRows: rows.length };
-      } catch (error) {
-        await connection.rollback();
-        throw error;
-      } finally {
-        connection.release();
+    // Mirror ke file sebagai backup lintas restart/masalah DB.
+    if (persistenceMode === "mysql") {
+      try {
+        await fileTask();
+      } catch (mirrorError) {
+        console.warn("CHAT MIRROR FILE FAILED:", mirrorError);
       }
-    },
-    fileTask: async () =>
-      withFileLock("chats", async () => {
-        const store = await readChatsStore();
-        const userKey = String(normalizedUserId);
-        const nextRows = rows.map((row) => ({
-          id: store.nextRowId++,
-          user_id: normalizedUserId,
-          message: row.message,
-          response: row.response,
-          created_at: new Date(
-            String(row.createdAt || "").trim().replace(" ", "T") + "Z",
-          ).toISOString(),
-        }));
+    }
 
-        store.chatsByUserId[userKey] = nextRows;
-        await writeChatsStore(store);
-        return { ok: true, savedRows: nextRows.length };
-      }),
-  });
+    return result;
+  } catch (error) {
+    // Kasus umum yang bikin history "terlihat hilang" lintas device:
+    // user_id tidak punya row users di MySQL => FK fail.
+    if (
+      String(error?.code || "").toUpperCase() === "ER_NO_REFERENCED_ROW_2" ||
+      String(error?.code || "").toUpperCase() === "ER_ROW_IS_REFERENCED_2"
+    ) {
+      console.warn(
+        "CHAT SAVE FK ERROR, fallback ke file untuk menjaga history tetap tersimpan:",
+        error,
+      );
+      return fileTask();
+    }
+
+    throw error;
+  }
 }
 
 async function saveFeedbackRecord({
@@ -900,10 +980,10 @@ async function saveFeedbackRecord({
 
 const CHAT_WELCOME_MESSAGES = {
   lanna:
-    "Halo! Aku Lanna, teman ceritamu. Kamu bisa cerita apa pun: sedih, senang, capek, atau bingung. Aku dengerin ya.",
+    "Halo! Aku Miku, teman ceritamu. Kamu bisa cerita apa pun: sedih, senang, capek, atau bingung. Aku dengerin ya.",
   furina:
-    "Furina siap jadi spesialis generate gambarmu. Jelaskan visual yang kamu mau, nanti aku buatkan gambarnya.",
-  inori: "Halo! Inori di sini. Yuk ngobrol.",
+    "Sparkle siap jadi spesialis generate gambarmu. Jelaskan visual yang kamu mau, nanti aku buatkan gambarnya.",
+  inori: "Halo! Furina di sini. Yuk ngobrol.",
 };
 
 function createWelcomeMessage(modelId = "lanna") {
@@ -1201,6 +1281,8 @@ app.get("/api/health", (_req, res) => {
     persistence: persistenceMode,
     hasGeminiApiKey: Boolean(apiKey),
     geminiApiKeyFingerprint: apiKeyFingerprint,
+    hasTiktokRapidApiKey: Boolean(TIKTOK_RAPIDAPI_KEY),
+    tiktokRapidApiHost: TIKTOK_RAPIDAPI_HOST,
     textModel: DEFAULT_TEXT_MODEL,
     multimodalModel: DEFAULT_MULTIMODAL_MODEL,
     imageModel: DEFAULT_IMAGE_MODEL,
@@ -1592,6 +1674,40 @@ const DEFAULT_MULTIMODAL_MODEL =
 const DEFAULT_IMAGE_MODEL =
   normalizeModelName(process.env.GEMINI_IMAGE_MODEL) ||
   "gemini-3.1-flash-image-preview";
+const DEFAULT_EXTERNAL_IMAGE_MODEL =
+  String(process.env.EXTERNAL_IMAGE_MODEL || "lan-image-worker").trim() || "lan-image-worker";
+const EXTERNAL_IMAGE_API_URL = String(
+  process.env.EXTERNAL_IMAGE_API_URL || "https://image-api.maulanapermana550.workers.dev/",
+).trim();
+const EXTERNAL_IMAGE_API_BEARER = String(
+  process.env.EXTERNAL_IMAGE_API_BEARER || "lan-api-93f2a8d4c6b71e5f0a9d2c8b4e7f1a6",
+).trim();
+const FORCE_EXTERNAL_IMAGE_API =
+  String(process.env.FORCE_EXTERNAL_IMAGE_API || "1").trim() !== "0";
+const TIKTOK_RAPIDAPI_URL =
+  String(
+    process.env.TIKTOK_RAPIDAPI_URL || "https://tiktok-video-no-watermark2.p.rapidapi.com/",
+  ).trim() || "https://tiktok-video-no-watermark2.p.rapidapi.com/";
+const TIKTOK_RAPIDAPI_HOST =
+  String(process.env.TIKTOK_RAPIDAPI_HOST || "tiktok-video-no-watermark2.p.rapidapi.com").trim() ||
+  "tiktok-video-no-watermark2.p.rapidapi.com";
+const TIKTOK_RAPIDAPI_KEY = String(process.env.TIKTOK_RAPIDAPI_KEY || "").trim();
+const TIKTOK_RAPIDAPI_TIMEOUT_MS =
+  Number.parseInt(String(process.env.TIKTOK_RAPIDAPI_TIMEOUT_MS || "15000"), 10) || 15000;
+const TIKTOK_DEFAULT_HD = String(process.env.TIKTOK_DEFAULT_HD || "1").trim() !== "0";
+const TIKTOK_MEDIA_DOWNLOAD_TIMEOUT_MS =
+  Number.parseInt(String(process.env.TIKTOK_MEDIA_DOWNLOAD_TIMEOUT_MS || "180000"), 10) ||
+  180000;
+const TIKTOK_MEDIA_DOWNLOAD_MAX_RETRIES =
+  Number.parseInt(String(process.env.TIKTOK_MEDIA_DOWNLOAD_MAX_RETRIES || "2"), 10) || 2;
+const TIKTOK_PROXY_ALLOWED_HOST_KEYWORDS = [
+  "tiktokcdn",
+  "tokcdn",
+  "tiktokv",
+  "ibytedtos",
+  "byteoversea",
+  "muscdn",
+];
 const DEFAULT_IMAGE_ASPECT_RATIO =
   String(process.env.GEMINI_IMAGE_ASPECT_RATIO || "1:1").trim() || "1:1";
 const DEFAULT_IMAGE_SIZE = String(process.env.GEMINI_IMAGE_SIZE || "").trim();
@@ -1746,6 +1862,14 @@ function getCandidateImageModels(requestedModel = "") {
   ].filter((value, index, array) => value && array.indexOf(value) === index);
 }
 
+function isExternalImageModel(requestedModel = "") {
+  const normalized = String(requestedModel || "").trim().toLowerCase();
+  return (
+    normalized === DEFAULT_EXTERNAL_IMAGE_MODEL.toLowerCase() ||
+    /deepai|lan-image-worker|image-worker|image-api/.test(normalized)
+  );
+}
+
 function cleanErrorMessage(error) {
   return (error?.message || "Unknown Gemini error").replace(
     "[GoogleGenerativeAI Error]: ",
@@ -1818,6 +1942,13 @@ function createClientError(error, attemptedModels = []) {
   const status = getErrorStatus(error);
   const retryAfterSeconds = getRetryAfterSeconds(error);
   const message = cleanErrorMessage(error);
+  const isExternalImageRequest = attemptedModels.some((model) =>
+    /deepai|lan-image-worker|image-worker|image-api/i.test(String(model || "")),
+  );
+  const attemptedImageModels = attemptedModels.filter((model) =>
+    /image|imagen/i.test(String(model || "")),
+  );
+  const isImageRequest = attemptedImageModels.length > 0 || isExternalImageRequest;
 
   if (
     /developer instruction is not enabled|system instruction is not enabled|does not support (developer|system) instruction/i.test(
@@ -1838,18 +1969,26 @@ function createClientError(error, attemptedModels = []) {
   if (status === 429) {
     const isZeroQuota = /\blimit:\s*0\b/i.test(message);
     const retryMessage = retryAfterSeconds
-      ? ` Coba lagi dalam sekitar ${retryAfterSeconds} detik atau ganti API key / aktifkan billing Gemini.`
-      : " Coba lagi beberapa saat atau ganti API key / aktifkan billing Gemini.";
+      ? ` Coba lagi dalam sekitar ${retryAfterSeconds} detik.`
+      : " Coba lagi beberapa saat.";
+    const isImageZeroQuota = isZeroQuota && isImageRequest;
 
     return {
       status,
       payload: {
-        code: "GEMINI_QUOTA_EXCEEDED",
+        code: isExternalImageRequest
+          ? "EXTERNAL_IMAGE_RATE_LIMIT"
+          : isImageZeroQuota
+            ? "GEMINI_IMAGE_QUOTA_ZERO_LIMIT"
+            : "GEMINI_QUOTA_EXCEEDED",
         error:
-          (isZeroQuota
-            ? "Kuota Gemini API untuk project/key ini terdeteksi 0 (free tier tidak aktif / billing belum aktif). "
-            : "Permintaan ke Gemini terkena batas kuota atau rate limit.") +
-          retryMessage,
+          (isExternalImageRequest
+            ? "Permintaan ke layanan image API terkena batas penggunaan."
+            : isZeroQuota
+              ? isImageRequest
+                ? "Kuota Gemini API untuk generate gambar pada project/key ini terdeteksi 0 (free tier image tidak aktif / billing belum aktif). "
+                : "Kuota Gemini API untuk project/key ini terdeteksi 0 (free tier tidak aktif / billing belum aktif). "
+              : "Permintaan ke Gemini terkena batas kuota atau rate limit.") + retryMessage,
         retryAfterSeconds,
         attemptedModels,
       },
@@ -1860,9 +1999,22 @@ function createClientError(error, attemptedModels = []) {
     return {
       status,
       payload: {
-        code: "GEMINI_AUTH_ERROR",
+        code: isExternalImageRequest ? "EXTERNAL_IMAGE_AUTH_ERROR" : "GEMINI_AUTH_ERROR",
         error:
-          "GEMINI_API_KEY di server tidak valid, tidak aktif, atau tidak punya akses ke model yang dipakai.",
+          isExternalImageRequest
+            ? "Token image API di server tidak valid atau tidak aktif."
+            : "GEMINI_API_KEY di server tidak valid, tidak aktif, atau tidak punya akses ke model yang dipakai.",
+        attemptedModels,
+      },
+    };
+  }
+
+  if (status === 402 && isExternalImageRequest) {
+    return {
+      status,
+      payload: {
+        code: "EXTERNAL_IMAGE_PAYMENT_REQUIRED",
+        error: "Layanan image API butuh saldo/paket aktif untuk generate gambar.",
         attemptedModels,
       },
     };
@@ -1871,7 +2023,9 @@ function createClientError(error, attemptedModels = []) {
   return {
     status,
     payload: {
-      code: "GEMINI_REQUEST_FAILED",
+      code: isExternalImageRequest
+        ? "EXTERNAL_IMAGE_REQUEST_FAILED"
+        : "GEMINI_REQUEST_FAILED",
       error: cleanErrorMessage(error),
       attemptedModels,
     },
@@ -1892,6 +2046,640 @@ function parseJsonField(value, fallback) {
   } catch (_error) {
     return fallback;
   }
+}
+
+function pickFirstNonEmptyString(...values) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item === "string" && item.trim()) {
+          return item.trim();
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function normalizeDurationSeconds(value) {
+  const parsed = Number.parseFloat(String(value));
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+
+  return Math.round(parsed);
+}
+
+function collectUrlCandidates(...values) {
+  const queue = [];
+
+  for (const value of values) {
+    if (typeof value === "string") {
+      queue.push(value);
+      continue;
+    }
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item === "string") {
+          queue.push(item);
+        }
+      }
+    }
+  }
+
+  const seen = new Set();
+  const candidates = [];
+
+  for (const rawValue of queue) {
+    const normalized = String(rawValue || "").trim();
+    if (!normalized || seen.has(normalized)) {
+      continue;
+    }
+
+    try {
+      const parsed = new URL(normalized);
+      const protocol = String(parsed.protocol || "").toLowerCase();
+      if (protocol !== "http:" && protocol !== "https:") {
+        continue;
+      }
+
+      seen.add(normalized);
+      candidates.push(normalized);
+    } catch (_error) {
+      // ignore invalid URL candidate
+    }
+  }
+
+  return candidates;
+}
+
+function normalizeTikTokResponse(payload) {
+  const root = payload && typeof payload === "object" ? payload : {};
+  const data =
+    (root.data && typeof root.data === "object" ? root.data : null) ||
+    (root.result && typeof root.result === "object" ? root.result : null) ||
+    root;
+
+  const hdVideoCandidates = collectUrlCandidates(
+    data.hdplay,
+    data.hd_play,
+    data.hd_no_watermark,
+    data.video_hd,
+  );
+  const primaryVideoCandidates = collectUrlCandidates(
+    data.play,
+    data.nowm,
+    data.no_watermark,
+    data.video?.playAddr,
+    data.video?.downloadAddrNoWatermark,
+    data.video?.downloadAddr,
+  );
+  const fallbackVideoCandidates = collectUrlCandidates(
+    ...hdVideoCandidates,
+    data.video_no_watermark,
+    data.download,
+  );
+  const videoCandidates = Array.from(
+    new Set([...primaryVideoCandidates, ...fallbackVideoCandidates]),
+  );
+
+  const hdNoWatermarkUrl = pickFirstNonEmptyString(
+    data.hdplay,
+    data.hd_play,
+    data.hd_no_watermark,
+    data.video_hd,
+    videoCandidates[0],
+  );
+  const noWatermarkUrl = pickFirstNonEmptyString(
+    data.play,
+    data.nowm,
+    data.no_watermark,
+    primaryVideoCandidates[0],
+    data.video_no_watermark,
+    data.video?.playAddr,
+    data.video?.downloadAddrNoWatermark,
+    data.video?.downloadAddr,
+    hdNoWatermarkUrl,
+    data.download,
+  );
+  const watermarkUrl = pickFirstNonEmptyString(
+    data.wmplay,
+    data.watermark,
+    data.watermark_url,
+    data.video?.playAddrWithWatermark,
+  );
+  const audioUrl = pickFirstNonEmptyString(
+    data.music,
+    data.music_url,
+    data.music_info?.play,
+    data.music_info?.play_url,
+    data.audio,
+    data.sound,
+  );
+  const audioCandidates = collectUrlCandidates(
+    data.music,
+    data.music_url,
+    data.music_info?.play,
+    data.music_info?.play_url,
+    data.audio,
+    data.sound,
+  );
+
+  return {
+    id: pickFirstNonEmptyString(data.id, data.aweme_id, data.video_id),
+    title: pickFirstNonEmptyString(data.title, data.desc),
+    author: pickFirstNonEmptyString(
+      data.author?.nickname,
+      data.author?.unique_id,
+      data.author_name,
+      data.owner?.nickname,
+      data.nickname,
+    ),
+    durationSeconds: normalizeDurationSeconds(data.duration || data.video?.duration),
+    thumbnailUrl: pickFirstNonEmptyString(
+      data.origin_cover,
+      data.cover,
+      data.thumbnail,
+      data.video?.cover,
+      data.video?.dynamicCover,
+      data.author?.avatar,
+    ),
+    noWatermarkUrl,
+    hdNoWatermarkUrl: hdNoWatermarkUrl || null,
+    hdVideoCandidates,
+    videoCandidates,
+    watermarkUrl: watermarkUrl || null,
+    audioUrl: audioUrl || null,
+    audioCandidates,
+  };
+}
+
+function isTikTokDomainHost(hostname = "") {
+  const normalizedHost = String(hostname || "").toLowerCase();
+  return normalizedHost === "tiktok.com" || normalizedHost.endsWith(".tiktok.com");
+}
+
+function createTikTokHttpError(statusCode, message, extra = {}) {
+  const error = new Error(message || "Terjadi kesalahan TikTok downloader.");
+  error.statusCode = Number(statusCode) || 500;
+  error.clientMessage = message || "Terjadi kesalahan TikTok downloader.";
+  Object.assign(error, extra);
+  return error;
+}
+
+async function resolveTikTokSourceUrl(sourceUrl) {
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(sourceUrl);
+  } catch (_error) {
+    throw createTikTokHttpError(400, "URL TikTok tidak valid.");
+  }
+
+  if (!isTikTokDomainHost(parsedUrl.hostname)) {
+    throw createTikTokHttpError(400, "URL harus berasal dari domain TikTok.");
+  }
+
+  const abortController = new AbortController();
+  const timeoutId = setTimeout(() => abortController.abort(), TIKTOK_RAPIDAPI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(parsedUrl.toString(), {
+      method: "GET",
+      redirect: "follow",
+      signal: abortController.signal,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    if (response.body) {
+      response.body.cancel().catch(() => undefined);
+    }
+
+    const resolvedUrl = String(response.url || parsedUrl.toString()).trim();
+    let parsedResolvedUrl;
+    try {
+      parsedResolvedUrl = new URL(resolvedUrl);
+    } catch (_error) {
+      throw createTikTokHttpError(400, "Gagal resolve redirect URL TikTok.");
+    }
+
+    if (!isTikTokDomainHost(parsedResolvedUrl.hostname)) {
+      throw createTikTokHttpError(400, "Redirect URL TikTok tidak valid.");
+    }
+
+    return parsedResolvedUrl.toString();
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      throw createTikTokHttpError(504, "Resolve redirect TikTok timeout. Coba lagi.");
+    }
+
+    if (error?.clientMessage) {
+      throw error;
+    }
+
+    throw createTikTokHttpError(502, "Gagal resolve redirect TikTok.");
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function requestTikTokDownloadInfo(sourceUrl, { hd = TIKTOK_DEFAULT_HD } = {}) {
+  if (!sourceUrl || !String(sourceUrl).trim()) {
+    throw createTikTokHttpError(400, "URL TikTok wajib diisi.");
+  }
+
+  if (!TIKTOK_RAPIDAPI_KEY) {
+    throw createTikTokHttpError(500, "TIKTOK_RAPIDAPI_KEY belum diset di server.");
+  }
+
+  const resolvedTikTokUrl = await resolveTikTokSourceUrl(String(sourceUrl).trim());
+  const encodedParams = new URLSearchParams();
+  encodedParams.set("url", resolvedTikTokUrl);
+  encodedParams.set("hd", hd ? "1" : "0");
+
+  const abortController = new AbortController();
+  const timeoutId = setTimeout(() => abortController.abort(), TIKTOK_RAPIDAPI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(TIKTOK_RAPIDAPI_URL, {
+      method: "POST",
+      headers: {
+        "x-rapidapi-key": TIKTOK_RAPIDAPI_KEY,
+        "x-rapidapi-host": TIKTOK_RAPIDAPI_HOST,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: encodedParams.toString(),
+      signal: abortController.signal,
+    });
+
+    const rawText = await response.text().catch(() => "");
+    let payload = null;
+    if (rawText) {
+      try {
+        payload = JSON.parse(rawText);
+      } catch (_error) {
+        payload = null;
+      }
+    }
+
+    const rapidApiMessage = pickFirstNonEmptyString(
+      payload?.message,
+      payload?.error,
+      payload?.msg,
+      payload?.detail,
+      payload?.error?.message,
+      rawText.length <= 300 ? rawText : "",
+    );
+
+    if (!response.ok) {
+      const likelyAuthIssue = /not subscribed|forbidden|unauthorized|invalid api key/i.test(
+        String(rapidApiMessage || ""),
+      );
+      throw createTikTokHttpError(
+        likelyAuthIssue ? 402 : response.status,
+        rapidApiMessage || `TikTok API gagal merespons (${response.status}).`,
+      );
+    }
+
+    if (/not subscribed/i.test(String(rapidApiMessage || ""))) {
+      throw createTikTokHttpError(
+        402,
+        "RapidAPI key belum subscribe ke API TikTok downloader.",
+      );
+    }
+
+    const normalizedResult = normalizeTikTokResponse(payload);
+    if (!normalizedResult.noWatermarkUrl) {
+      throw createTikTokHttpError(
+        404,
+        rapidApiMessage ||
+          "Video no watermark tidak ditemukan dari respons TikTok API.",
+      );
+    }
+
+    return {
+      sourceUrl: resolvedTikTokUrl,
+      result: normalizedResult,
+    };
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      throw createTikTokHttpError(504, "Request ke TikTok API timeout. Coba lagi.");
+    }
+
+    if (error?.clientMessage) {
+      throw error;
+    }
+
+    throw createTikTokHttpError(502, "Gagal menghubungi layanan TikTok downloader.");
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function isAllowedTikTokMediaHost(hostname = "") {
+  const normalizedHost = String(hostname || "").toLowerCase();
+  if (!normalizedHost) {
+    return false;
+  }
+
+  if (isTikTokDomainHost(normalizedHost)) {
+    return true;
+  }
+
+  return TIKTOK_PROXY_ALLOWED_HOST_KEYWORDS.some((keyword) =>
+    normalizedHost.includes(keyword),
+  );
+}
+
+function isLikelyTikTokCdnHost(hostname = "") {
+  const normalizedHost = String(hostname || "").toLowerCase();
+  if (!normalizedHost) {
+    return false;
+  }
+
+  return (
+    normalizedHost.includes("tiktokcdn") ||
+    normalizedHost.includes("tokcdn") ||
+    normalizedHost.includes("ibytedtos") ||
+    normalizedHost.includes("byteoversea")
+  );
+}
+
+function getExtensionFromContentType(contentType = "") {
+  const mimeType = String(contentType || "").toLowerCase();
+
+  if (mimeType.includes("video/mp4")) {
+    return "mp4";
+  }
+
+  if (mimeType.includes("video/webm")) {
+    return "webm";
+  }
+
+  if (mimeType.includes("audio/mpeg") || mimeType.includes("audio/mp3")) {
+    return "mp3";
+  }
+
+  if (mimeType.includes("audio/mp4") || mimeType.includes("audio/x-m4a")) {
+    return "m4a";
+  }
+
+  if (mimeType.includes("audio/webm")) {
+    return "webm";
+  }
+
+  return "mp4";
+}
+
+function sanitizeDownloadFileName(value = "", fallback = "tiktok-file") {
+  const cleaned = String(value || "")
+    .replace(/[<>:"/\\|?*\u0000-\u001F\u007F]/g, "")
+    .replace(/[;\r\n]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+
+  return cleaned || fallback;
+}
+
+function toAsciiDownloadFileName(value = "", fallback = "tiktok-file") {
+  const cleaned = String(value || "")
+    .normalize("NFKD")
+    .replace(/[^\x20-\x7E]/g, "")
+    .replace(/["\\;]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+
+  return cleaned || fallback;
+}
+
+function encodeRFC5987FileName(value = "") {
+  return encodeURIComponent(String(value || "")).replace(
+    /['()*]/g,
+    (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+}
+
+function shouldRetryTikTokMediaError(error) {
+  const code = String(error?.code || error?.cause?.code || "").toUpperCase();
+  const message = String(error?.message || "").toLowerCase();
+
+  if (error?.name === "AbortError") {
+    return true;
+  }
+
+  return (
+    code === "UND_ERR_SOCKET" ||
+    code === "ECONNRESET" ||
+    code === "ETIMEDOUT" ||
+    code === "EPIPE" ||
+    code === "ENOTFOUND" ||
+    code === "EHOSTUNREACH" ||
+    message.includes("terminated") ||
+    message.includes("socket") ||
+    message.includes("network")
+  );
+}
+
+async function fetchTikTokMediaResponseWithRetry(mediaUrl) {
+  const maxAttempts = Math.max(1, TIKTOK_MEDIA_DOWNLOAD_MAX_RETRIES + 1);
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(
+      () => abortController.abort(),
+      TIKTOK_MEDIA_DOWNLOAD_TIMEOUT_MS,
+    );
+
+    try {
+      const upstreamResponse = await fetch(mediaUrl, {
+        method: "GET",
+        redirect: "follow",
+        signal: abortController.signal,
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36",
+          Accept: "*/*",
+          Referer: "https://www.tiktok.com/",
+        },
+      });
+
+      if (!upstreamResponse.ok || !upstreamResponse.body) {
+        const sourceError = Object.assign(
+          new Error(`Source media response ${upstreamResponse.status}`),
+          { statusCode: upstreamResponse.status },
+        );
+        throw sourceError;
+      }
+
+      return upstreamResponse;
+    } catch (error) {
+      lastError = error;
+      const canRetry =
+        attempt < maxAttempts &&
+        (shouldRetryTikTokMediaError(error) ||
+          (Number.isInteger(error?.statusCode) && error.statusCode >= 500));
+
+      if (!canRetry) {
+        throw error;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 300 * attempt));
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  throw lastError || new Error("Gagal mengambil stream media TikTok.");
+}
+
+function looksLikeHtmlOrJsonPayload(buffer) {
+  if (!buffer || !buffer.length) {
+    return true;
+  }
+
+  const sample = buffer
+    .toString("utf8", 0, Math.min(buffer.length, 512))
+    .trim()
+    .toLowerCase();
+
+  return (
+    sample.startsWith("<!doctype") ||
+    sample.startsWith("<html") ||
+    sample.startsWith("{") ||
+    sample.startsWith("[")
+  );
+}
+
+function looksLikeMp4Header(buffer) {
+  if (!buffer || buffer.length < 12) {
+    return false;
+  }
+
+  return buffer.subarray(4, 8).toString("ascii") === "ftyp";
+}
+
+function looksLikeMp3Header(buffer) {
+  if (!buffer || buffer.length < 3) {
+    return false;
+  }
+
+  if (buffer[0] === 0x49 && buffer[1] === 0x44 && buffer[2] === 0x33) {
+    return true;
+  }
+
+  return buffer[0] === 0xff && (buffer[1] & 0xe0) === 0xe0;
+}
+
+async function openValidatedTikTokMediaStream(mediaUrl, { kind = "video" } = {}) {
+  const normalizedKind = kind === "audio" ? "audio" : "video";
+  const upstreamResponse = await fetchTikTokMediaResponseWithRetry(mediaUrl);
+  let finalResponseHost = "";
+  try {
+    finalResponseHost = String(new URL(upstreamResponse.url || mediaUrl).hostname || "").toLowerCase();
+  } catch (_error) {
+    finalResponseHost = "";
+  }
+  const isFinalHostAllowed =
+    normalizedKind === "audio"
+      ? isAllowedTikTokMediaHost(finalResponseHost)
+      : isLikelyTikTokCdnHost(finalResponseHost);
+  if (!finalResponseHost || !isFinalHostAllowed) {
+    throw createTikTokHttpError(
+      502,
+      normalizedKind === "audio"
+        ? "Source akhir bukan CDN TikTok audio yang valid."
+        : "Source akhir bukan CDN TikTok video yang valid.",
+    );
+  }
+  const upstreamContentType = String(
+    upstreamResponse.headers.get("content-type") || "",
+  ).toLowerCase();
+
+  const isVideoPayload = upstreamContentType.startsWith("video/mp4");
+  const isAudioPayload = upstreamContentType.startsWith("audio/");
+  const isBinaryPayload =
+    upstreamContentType.includes("application/octet-stream") ||
+    upstreamContentType.includes("binary/octet-stream");
+  const isExpectedContentType =
+    normalizedKind === "audio"
+      ? isAudioPayload || isBinaryPayload
+      : isVideoPayload;
+
+  if (!isExpectedContentType) {
+    const sample = await upstreamResponse.text().catch(() => "");
+    const compactSample = sample.replace(/\s+/g, " ").trim().slice(0, 180);
+    throw createTikTokHttpError(
+      502,
+      compactSample
+        ? `Source media tidak sesuai (${upstreamContentType || "unknown"}): ${compactSample}`
+        : `Source media tidak sesuai (${upstreamContentType || "unknown"}).`,
+    );
+  }
+
+  const streamBody = upstreamResponse.body;
+  if (!streamBody) {
+    throw createTikTokHttpError(502, "Body stream media kosong.");
+  }
+
+  const reader = streamBody.getReader();
+  const firstRead = await reader.read();
+  if (firstRead.done || !firstRead.value || !firstRead.value.length) {
+    await reader.cancel().catch(() => undefined);
+    throw createTikTokHttpError(502, "File video kosong.");
+  }
+
+  const firstChunk = Buffer.from(firstRead.value);
+  if (normalizedKind === "audio") {
+    const looksLikeAudioHeader = looksLikeMp3Header(firstChunk) || looksLikeMp4Header(firstChunk);
+    if (isBinaryPayload && !looksLikeAudioHeader) {
+      await reader.cancel().catch(() => undefined);
+      throw createTikTokHttpError(
+        502,
+        "Header file audio tidak valid.",
+      );
+    }
+  } else if (!looksLikeMp4Header(firstChunk)) {
+    await reader.cancel().catch(() => undefined);
+    throw createTikTokHttpError(
+      502,
+      "Header file bukan MP4 valid meskipun content-type video/mp4.",
+    );
+  }
+
+  if (looksLikeHtmlOrJsonPayload(firstChunk)) {
+    await reader.cancel().catch(() => undefined);
+    throw createTikTokHttpError(502, "Source media mengembalikan HTML/JSON, bukan video MP4.");
+  }
+
+  return {
+    upstreamResponse,
+    reader,
+    firstChunk,
+    upstreamContentType,
+  };
+}
+
+function ensureFileNameWithExtension(fileName = "", extension = "mp4") {
+  const safeName = sanitizeDownloadFileName(fileName, "tiktok-file");
+  if (/\.[a-z0-9]{2,5}$/i.test(safeName)) {
+    return safeName;
+  }
+
+  return `${safeName}.${String(extension || "mp4").replace(/[^a-z0-9]/gi, "") || "mp4"}`;
 }
 
 function getAttachmentKind(mimeType = "") {
@@ -2287,6 +3075,95 @@ async function generateImageReply({
   });
 }
 
+async function generateExternalImageReply({ prompt, requestedModel }) {
+  const modelName = requestedModel || DEFAULT_EXTERNAL_IMAGE_MODEL;
+  const attemptedModels = [modelName];
+
+  if (!EXTERNAL_IMAGE_API_URL) {
+    throw Object.assign(new Error("EXTERNAL_IMAGE_API_URL belum diset di server."), {
+      status: 500,
+      statusCode: 500,
+      attemptedModels,
+    });
+  }
+
+  if (!EXTERNAL_IMAGE_API_BEARER) {
+    throw Object.assign(new Error("EXTERNAL_IMAGE_API_BEARER belum diset di server."), {
+      status: 500,
+      statusCode: 500,
+      attemptedModels,
+    });
+  }
+
+  const trimmedPrompt = String(prompt || "").trim();
+  if (!trimmedPrompt) {
+    throw Object.assign(new Error("Prompt gambar tidak boleh kosong."), {
+      status: 400,
+      statusCode: 400,
+      attemptedModels,
+    });
+  }
+
+  const response = await fetch(EXTERNAL_IMAGE_API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${EXTERNAL_IMAGE_API_BEARER}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: trimmedPrompt,
+    }),
+  });
+
+  if (!response.ok) {
+    const rawBody = await response.text().catch(() => "");
+    const fallbackMessage = `Image API request gagal dengan status ${response.status}.`;
+    let parsed = null;
+    if (rawBody) {
+      try {
+        parsed = JSON.parse(rawBody);
+      } catch (_error) {
+        parsed = null;
+      }
+    }
+    const message =
+      parsed?.error || parsed?.message || parsed?.detail || rawBody || fallbackMessage;
+    throw Object.assign(new Error(String(message || fallbackMessage)), {
+      status: response.status || 502,
+      statusCode: response.status || 502,
+      attemptedModels,
+    });
+  }
+
+  const contentTypeHeader = String(response.headers.get("content-type") || "image/png");
+  const mimeType = contentTypeHeader.split(";")[0].trim() || "image/png";
+  const imageBuffer = Buffer.from(await response.arrayBuffer());
+
+  if (!imageBuffer.length || !mimeType.startsWith("image/")) {
+    throw Object.assign(new Error("Image API tidak mengembalikan file gambar valid."), {
+      status: 502,
+      statusCode: 502,
+      attemptedModels,
+    });
+  }
+
+  const extension = getExtensionFromMimeType(mimeType);
+  const base64 = imageBuffer.toString("base64");
+
+  return {
+    reply: "Gambar berhasil dibuat.",
+    model: modelName,
+    attemptedModels,
+    attachment: {
+      kind: "image",
+      name: `generated-${Date.now()}.${extension}`,
+      mimeType,
+      size: imageBuffer.length,
+      previewUrl: `data:${mimeType};base64,${base64}`,
+    },
+  };
+}
+
 app.post("/api/chat", upload.single("attachment"), async (req, res) => {
   try {
     const body = req.body || {};
@@ -2363,9 +3240,11 @@ app.post("/api/chat/image", upload.single("attachment"), async (req, res) => {
     const systemInstruction =
       typeof body.systemInstruction === "string" ? body.systemInstruction : "";
     const requestedModel = typeof body.model === "string" ? body.model : "";
+    const useExternalImage =
+      FORCE_EXTERNAL_IMAGE_API || isExternalImageModel(requestedModel);
     const { apiKey } = getGeminiClients();
 
-    if (!apiKey) {
+    if (!useExternalImage && !apiKey) {
       return res.status(500).json({
         error: "GEMINI_API_KEY belum diset di server.",
       });
@@ -2383,13 +3262,20 @@ app.post("/api/chat/image", upload.single("attachment"), async (req, res) => {
       });
     }
 
-    const result = await generateImageReply({
-      requestedModel,
-      systemInstruction,
-      prompt: message,
-      history,
-      imageFile: req.file || null,
-    });
+    const result = useExternalImage
+      ? await generateExternalImageReply({
+          requestedModel: isExternalImageModel(requestedModel)
+            ? requestedModel
+            : DEFAULT_EXTERNAL_IMAGE_MODEL,
+          prompt: message,
+        })
+      : await generateImageReply({
+          requestedModel,
+          systemInstruction,
+          prompt: message,
+          history,
+          imageFile: req.file || null,
+        });
 
     return res.json({
       reply: result.reply,
@@ -2410,6 +3296,220 @@ app.post("/api/chat/image", upload.single("attachment"), async (req, res) => {
     return res.status(clientError.status).json(clientError.payload);
   }
 });
+
+app.post("/api/tiktok/download", async (req, res) => {
+  const sourceUrl = String(req.body?.url || "").trim();
+  const hd = req.body?.hd == null ? TIKTOK_DEFAULT_HD : String(req.body.hd).trim() !== "0";
+
+  try {
+    const downloadInfo = await requestTikTokDownloadInfo(sourceUrl, { hd });
+
+    return res.json({
+      ok: true,
+      sourceUrl: downloadInfo.sourceUrl,
+      result: downloadInfo.result,
+    });
+  } catch (error) {
+    const statusCode = Number(error?.statusCode) || 502;
+    const errorMessage =
+      error?.clientMessage || error?.message || "Gagal menghubungi layanan TikTok downloader.";
+    console.error("TIKTOK DOWNLOAD ERROR:", error);
+    return res.status(statusCode).json({
+      ok: false,
+      error: errorMessage,
+    });
+  }
+});
+
+async function handleTikTokFileDownload(req, res) {
+  const sourceInput = String(req.query?.url || req.body?.url || "").trim();
+  const requestedKind = String(req.query?.kind || req.body?.kind || "video")
+    .trim()
+    .toLowerCase();
+  const mediaKind =
+    requestedKind === "audio" ? "audio" : requestedKind === "hd" ? "hd" : "video";
+  const hdParam = req.body?.hd ?? req.query?.hd;
+  const hd =
+    mediaKind === "hd"
+      ? true
+      : hdParam == null
+        ? TIKTOK_DEFAULT_HD
+        : String(hdParam).trim() !== "0";
+  const isHeadRequest = req.method === "HEAD";
+
+  if (!sourceInput) {
+    return res.status(400).json({
+      ok: false,
+      error: "Parameter url wajib diisi.",
+    });
+  }
+
+  let parsedSourceUrl;
+  try {
+    parsedSourceUrl = new URL(sourceInput);
+  } catch (_error) {
+    return res.status(400).json({
+      ok: false,
+      error: "URL TikTok/media tidak valid.",
+    });
+  }
+
+  const sourceProtocol = String(parsedSourceUrl.protocol || "").toLowerCase();
+  if (sourceProtocol !== "http:" && sourceProtocol !== "https:") {
+    return res.status(400).json({
+      ok: false,
+      error: "Protocol URL tidak didukung.",
+    });
+  }
+
+  try {
+    const sourceHostname = String(parsedSourceUrl.hostname || "").toLowerCase();
+    const isTikTokSource = isTikTokDomainHost(sourceHostname);
+    const isDirectMediaSource = isAllowedTikTokMediaHost(sourceHostname);
+    if (!isTikTokSource && !isDirectMediaSource) {
+      return res.status(400).json({
+        ok: false,
+        error: "URL harus berasal dari domain TikTok atau CDN media TikTok yang valid.",
+      });
+    }
+
+    let resolvedRawMediaCandidates = [];
+    if (isTikTokSource) {
+      const downloadInfo = await requestTikTokDownloadInfo(parsedSourceUrl.toString(), { hd });
+      resolvedRawMediaCandidates =
+        mediaKind === "audio"
+          ? Array.isArray(downloadInfo.result?.audioCandidates)
+            ? downloadInfo.result.audioCandidates
+            : collectUrlCandidates(downloadInfo.result?.audioUrl)
+          : mediaKind === "hd"
+            ? Array.isArray(downloadInfo.result?.hdVideoCandidates)
+              ? downloadInfo.result.hdVideoCandidates
+              : collectUrlCandidates(
+                  downloadInfo.result?.hdNoWatermarkUrl,
+                  downloadInfo.result?.noWatermarkUrl,
+                )
+            : Array.isArray(downloadInfo.result?.videoCandidates)
+              ? downloadInfo.result.videoCandidates
+              : collectUrlCandidates(
+                  downloadInfo.result?.noWatermarkUrl,
+                  downloadInfo.result?.hdNoWatermarkUrl,
+                );
+    } else {
+      resolvedRawMediaCandidates = collectUrlCandidates(parsedSourceUrl.toString());
+    }
+    const cdnMediaCandidates = resolvedRawMediaCandidates.filter((candidate) => {
+      try {
+        const parsed = new URL(candidate);
+        const hostname = String(parsed.hostname || "").toLowerCase();
+        return isAllowedTikTokMediaHost(hostname) && isLikelyTikTokCdnHost(hostname);
+      } catch (_error) {
+        return false;
+      }
+    });
+    const candidatePool = cdnMediaCandidates.length
+      ? cdnMediaCandidates
+      : resolvedRawMediaCandidates.filter((candidate) => {
+          try {
+            const parsed = new URL(candidate);
+            const hostname = String(parsed.hostname || "").toLowerCase();
+            return isAllowedTikTokMediaHost(hostname);
+          } catch (_error) {
+            return false;
+          }
+        });
+
+    if (!candidatePool.length) {
+      return res.status(404).json({
+        ok: false,
+        error:
+          mediaKind === "audio"
+            ? "URL audio TikTok tidak ditemukan."
+            : mediaKind === "hd"
+              ? "URL video HD TikTok tidak ditemukan."
+              : "URL video tanpa watermark dari CDN TikTok tidak ditemukan.",
+      });
+    }
+
+    let validatedStream = null;
+    let lastStreamError = null;
+    for (const candidateUrl of candidatePool) {
+      try {
+        validatedStream = await openValidatedTikTokMediaStream(candidateUrl, {
+          kind: mediaKind === "audio" ? "audio" : "video",
+        });
+        break;
+      } catch (error) {
+        lastStreamError = error;
+      }
+    }
+
+    if (!validatedStream) {
+      throw createTikTokHttpError(
+        Number(lastStreamError?.statusCode) || 502,
+        lastStreamError?.clientMessage ||
+          "URL video MP4 tanpa watermark tidak valid atau gagal diakses.",
+      );
+    }
+
+    const { reader, firstChunk } = validatedStream;
+    const responseContentType =
+      mediaKind === "audio" ? "audio/mpeg" : "video/mp4";
+    const responseFileName =
+      mediaKind === "audio"
+        ? "tiktok-audio.mp3"
+        : mediaKind === "hd"
+          ? "tiktok-video-hd.mp4"
+          : "tiktok-video.mp4";
+
+    res.status(200);
+    res.setHeader("Content-Type", responseContentType);
+    res.setHeader("Content-Disposition", `attachment; filename="${responseFileName}"`);
+    res.setHeader("Cache-Control", "no-store, max-age=0");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Access-Control-Expose-Headers", "Content-Disposition, Content-Type");
+
+    if (isHeadRequest) {
+      await reader.cancel().catch(() => undefined);
+      return res.end();
+    }
+
+    async function* tikTokStreamGenerator() {
+      yield firstChunk;
+      while (true) {
+        const next = await reader.read();
+        if (next.done) {
+          break;
+        }
+
+        if (next.value && next.value.length) {
+          yield Buffer.from(next.value);
+        }
+      }
+    }
+
+    await pipeline(Readable.from(tikTokStreamGenerator()), res);
+    return undefined;
+  } catch (error) {
+    const statusCode = Number(error?.statusCode) || 502;
+    const errorMessage =
+      error?.clientMessage || error?.message || "Gagal memproses download file TikTok.";
+    console.error("TIKTOK FILE DOWNLOAD ERROR:", error);
+
+    if (res.headersSent) {
+      res.destroy(error instanceof Error ? error : new Error(errorMessage));
+      return undefined;
+    }
+
+    return res.status(statusCode).json({
+      ok: false,
+      error: errorMessage,
+    });
+  }
+}
+
+app.get("/api/tiktok/download/file", handleTikTokFileDownload);
+app.head("/api/tiktok/download/file", handleTikTokFileDownload);
+app.post("/api/tiktok/download/file", handleTikTokFileDownload);
 
 app.use((error, _req, res, next) => {
   if (error?.code === "LIMIT_FILE_SIZE") {

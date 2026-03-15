@@ -1,5 +1,5 @@
 {
-  "nextRowId": 577,
+  "nextRowId": 8392,
   "chatsByUserId": {
     "1": [
       {
@@ -10,384 +10,321 @@
         "created_at": "2026-03-13T02:50:14.000Z"
       }
     ],
+    "2": [
+      {
+        "id": 586,
+        "user_id": 2,
+        "message": "{\"sessionId\":\"session-1773444512084-6oo712\",\"modelId\":\"lanna\",\"title\":\"Mulai Bicara\",\"sessionCreatedAt\":\"2026-03-13T23:28:32.084Z\",\"updatedAt\":\"2026-03-13T23:42:47.706Z\",\"pinnedAt\":\"2026-03-13T23:43:03.404Z\",\"userMessageId\":\"message-1773444519849-n8uzou\",\"userTimestamp\":\"2026-03-13T23:28:39.849Z\",\"userMessage\":\"halo\"}",
+        "response": "{\"assistantMessageId\":\"message-1773444521727-o9kn5n\",\"assistantTimestamp\":\"2026-03-13T23:28:41.727Z\",\"assistantMessage\":\"Halo juga! 👋 Ada apa nih? Cerita yuk kalau ada yang mau diceritain.\",\"preview\":\"Oke, dari gambar ini, yang aku lihat adalah:\\n\\nAda ...\",\"pinnedAt\":\"2026-03-13T23:43:03.404Z\",\"updatedAt\":\"2026-03-13T23:42:47.706Z\"}",
+        "created_at": "2026-03-13T23:28:39.000Z"
+      },
+      {
+        "id": 587,
+        "user_id": 2,
+        "message": "{\"sessionId\":\"session-1773444512084-6oo712\",\"modelId\":\"lanna\",\"title\":\"Mulai Bicara\",\"sessionCreatedAt\":\"2026-03-13T23:28:32.084Z\",\"updatedAt\":\"2026-03-13T23:42:47.706Z\",\"pinnedAt\":\"2026-03-13T23:43:03.404Z\",\"userMessageId\":\"message-1773445358849-c1clkm\",\"userTimestamp\":\"2026-03-13T23:42:38.849Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"Cuplikan layar 2026-01-13 090458.png\",\"mimeType\":\"image/png\",\"size\":90064,\"fileUri\":\"https://generativelanguage.googleapis.com/v1beta/files/g0olzi5te4su\"}}",
+        "response": "{\"assistantMessageId\":\"message-1773445367706-5hmzmx\",\"assistantTimestamp\":\"2026-03-13T23:42:47.706Z\",\"assistantMessage\":\"Oke, dari gambar ini, yang aku lihat adalah:\\n\\nAda seseorang yang sedang mencoba masuk ke akun TikTok-nya. Tapi, muncul pesan \\\"Suspicious activity detected\\\" (aktivitas mencurigakan terdeteksi) yang meminta dia memverifikasi identitasnya dengan memasukkan kode yang dikirim ke emailnya (m***1@gmail.com).\\n\\nDi sisi kanan, terlihat email dari TikTok dengan subjek \\\"Y22J9J is your verification code\\\". Isi email itu mengonfirmasi bahwa kode verifikasinya adalah **Y22J9J** dan kode ini berlaku selama 48 jam. Kode ini sama persis dengan yang diminta di layar login TikTok di sisi kiri.\\n\\nJadi intinya, orang ini perlu memasukkan kode verifikasi Y22J9J dari emailnya ke kolom yang tersedia di aplikasi TikTok untuk bisa melanjutkan login.\",\"preview\":\"Oke, dari gambar ini, yang aku lihat adalah:\\n\\nAda ...\",\"pinnedAt\":\"2026-03-13T23:43:03.404Z\",\"updatedAt\":\"2026-03-13T23:42:47.706Z\"}",
+        "created_at": "2026-03-13T23:42:38.000Z"
+      }
+    ],
     "3": [
       {
-        "id": 523,
+        "id": 8351,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773372348608-3cn7j4\",\"modelId\":\"lanna\",\"title\":\"Hayy\",\"sessionCreatedAt\":\"2026-03-13T03:25:48.608Z\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\",\"userMessageId\":\"message-1773372355682-05i30w\",\"userTimestamp\":\"2026-03-13T03:25:55.682Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:26:04.107Z\",\"assistantMessage\":\"\",\"preview\":\"hayy\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\"}",
-        "created_at": "2026-03-13T03:25:55.000Z"
+        "message": "{\"sessionId\":\"session-1773491588662-avhgjb\",\"modelId\":\"lanna\",\"title\":\"Sapaan Awal\",\"sessionCreatedAt\":\"2026-03-14T12:33:08.662Z\",\"updatedAt\":\"2026-03-14T12:33:23.642Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773491601632-41i2ye\",\"userTimestamp\":\"2026-03-14T12:33:21.632Z\",\"userMessage\":\"Halo\"}",
+        "response": "{\"assistantMessageId\":\"message-1773491603642-ztd87v\",\"assistantTimestamp\":\"2026-03-14T12:33:23.642Z\",\"assistantMessage\":\"Halo juga! 👋 Ada yang mau diceritain? Atau gimana kabarmu hari ini? Aku siap dengerin. 😊\",\"preview\":\"Halo juga! 👋 Ada yang mau diceritain? Atau gimana...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T12:33:23.642Z\"}",
+        "created_at": "2026-03-14T12:33:21.000Z"
       },
       {
-        "id": 524,
+        "id": 8352,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773372348608-3cn7j4\",\"modelId\":\"lanna\",\"title\":\"Hayy\",\"sessionCreatedAt\":\"2026-03-13T03:25:48.608Z\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\",\"userMessageId\":\"message-1773372364107-2j5jt6\",\"userTimestamp\":\"2026-03-13T03:26:04.107Z\",\"userMessage\":\"hayy\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:26:04.107Z\",\"assistantMessage\":\"\",\"preview\":\"hayy\",\"updatedAt\":\"2026-03-13T03:26:04.107Z\"}",
-        "created_at": "2026-03-13T03:26:04.000Z"
+        "message": "{\"sessionId\":\"session-1773469468126-kszbeo\",\"modelId\":\"furina\",\"title\":\"Gambar Ikan Duduk Pantai\",\"sessionCreatedAt\":\"2026-03-14T06:24:28.126Z\",\"updatedAt\":\"2026-03-14T06:24:47.726Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773469483114-m5ric9\",\"userTimestamp\":\"2026-03-14T06:24:43.114Z\",\"userMessage\":\"buat gambar ikan duduk di pantai\"}",
+        "response": "{\"assistantMessageId\":\"message-1773469487726-ameuu6\",\"assistantTimestamp\":\"2026-03-14T06:24:47.726Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773469487721.jpg\",\"mimeType\":\"image/jpeg\",\"size\":123811},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T06:24:47.726Z\"}",
+        "created_at": "2026-03-14T06:24:43.000Z"
       },
       {
-        "id": 525,
+        "id": 8353,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773372269602-788ulg\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-13T03:24:29.602Z\",\"updatedAt\":\"2026-03-13T03:24:41.345Z\",\"userMessageId\":\"message-1773372281345-0m0jrj\",\"userTimestamp\":\"2026-03-13T03:24:41.345Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:24:41.345Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:24:41.345Z\"}",
-        "created_at": "2026-03-13T03:24:41.000Z"
+        "message": "{\"sessionId\":\"session-1773451704011-lofql6\",\"modelId\":\"furina\",\"title\":\"Gambar Seperti\",\"sessionCreatedAt\":\"2026-03-14T01:28:24.011Z\",\"updatedAt\":\"2026-03-14T04:53:48.452Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773451718403-3w4a1e\",\"userTimestamp\":\"2026-03-14T01:28:38.403Z\",\"userMessage\":\"Buatkan gambar seperti ini\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"8b32ab077abcee17d43eb72a9d43b61e.jpg\",\"mimeType\":\"image/jpeg\",\"size\":25122}}",
+        "response": "{\"assistantMessageId\":\"message-1773451746170-udck54\",\"assistantTimestamp\":\"2026-03-14T01:29:06.170Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773451728586.jpg\",\"mimeType\":\"image/jpeg\",\"size\":2217002},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T04:53:48.452Z\"}",
+        "created_at": "2026-03-14T01:28:38.000Z"
       },
       {
-        "id": 526,
+        "id": 8354,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773370430764-9hh9yj\",\"modelId\":\"lanna\",\"title\":\"Hyy\",\"sessionCreatedAt\":\"2026-03-13T02:53:50.764Z\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\",\"userMessageId\":\"message-1773370441886-neowpy\",\"userTimestamp\":\"2026-03-13T02:54:01.886Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:18:48.801Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\"}",
-        "created_at": "2026-03-13T02:54:01.000Z"
+        "message": "{\"sessionId\":\"session-1773451704011-lofql6\",\"modelId\":\"furina\",\"title\":\"Gambar Seperti\",\"sessionCreatedAt\":\"2026-03-14T01:28:24.011Z\",\"updatedAt\":\"2026-03-14T04:53:48.452Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773452992265-1i94ye\",\"userTimestamp\":\"2026-03-14T01:49:52.265Z\",\"userMessage\":\"Kucing sedang duduk\"}",
+        "response": "{\"assistantMessageId\":\"message-1773452996508-vsipfs\",\"assistantTimestamp\":\"2026-03-14T01:49:56.508Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773452995999.jpg\",\"mimeType\":\"image/jpeg\",\"size\":116868},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T04:53:48.452Z\"}",
+        "created_at": "2026-03-14T01:49:52.000Z"
       },
       {
-        "id": 527,
+        "id": 8355,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773370430764-9hh9yj\",\"modelId\":\"lanna\",\"title\":\"Hyy\",\"sessionCreatedAt\":\"2026-03-13T02:53:50.764Z\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\",\"userMessageId\":\"message-1773371660370-w91mb4\",\"userTimestamp\":\"2026-03-13T03:14:20.370Z\",\"userMessage\":\"hyy\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:18:48.801Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\"}",
-        "created_at": "2026-03-13T03:14:20.000Z"
+        "message": "{\"sessionId\":\"session-1773451704011-lofql6\",\"modelId\":\"furina\",\"title\":\"Gambar Seperti\",\"sessionCreatedAt\":\"2026-03-14T01:28:24.011Z\",\"updatedAt\":\"2026-03-14T04:53:48.452Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773453006887-9lrxqu\",\"userTimestamp\":\"2026-03-14T01:50:06.887Z\",\"userMessage\":\"Orang sedang melihat hotel \"}",
+        "response": "{\"assistantMessageId\":\"message-1773453011680-ky1ycv\",\"assistantTimestamp\":\"2026-03-14T01:50:11.680Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773453011153.jpg\",\"mimeType\":\"image/jpeg\",\"size\":200626},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T04:53:48.452Z\"}",
+        "created_at": "2026-03-14T01:50:06.000Z"
       },
       {
-        "id": 528,
+        "id": 8356,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773370430764-9hh9yj\",\"modelId\":\"lanna\",\"title\":\"Hyy\",\"sessionCreatedAt\":\"2026-03-13T02:53:50.764Z\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\",\"userMessageId\":\"message-1773371928801-c9n5a1\",\"userTimestamp\":\"2026-03-13T03:18:48.801Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:18:48.801Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:18:48.801Z\"}",
-        "created_at": "2026-03-13T03:18:48.000Z"
+        "message": "{\"sessionId\":\"session-1773451704011-lofql6\",\"modelId\":\"furina\",\"title\":\"Gambar Seperti\",\"sessionCreatedAt\":\"2026-03-14T01:28:24.011Z\",\"updatedAt\":\"2026-03-14T04:53:48.452Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773453200080-pbkare\",\"userTimestamp\":\"2026-03-14T01:53:20.080Z\",\"userMessage\":\"Ulang\"}",
+        "response": "{\"assistantMessageId\":\"message-1773453200766-6artki\",\"assistantTimestamp\":\"2026-03-14T01:53:20.766Z\",\"assistantMessage\":\"Maaf. Server sedang bermasalah. Coba lagi beberapa saat ya.\",\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T04:53:48.452Z\"}",
+        "created_at": "2026-03-14T01:53:20.000Z"
       },
       {
-        "id": 529,
+        "id": 8357,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773371621860-gzwx4y\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-13T03:13:41.860Z\",\"updatedAt\":\"2026-03-13T03:13:50.992Z\",\"userMessageId\":\"message-1773371630992-90fhtc\",\"userTimestamp\":\"2026-03-13T03:13:50.992Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T03:13:50.992Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-13T03:13:50.992Z\"}",
-        "created_at": "2026-03-13T03:13:50.000Z"
+        "message": "{\"sessionId\":\"session-1773451704011-lofql6\",\"modelId\":\"furina\",\"title\":\"Gambar Seperti\",\"sessionCreatedAt\":\"2026-03-14T01:28:24.011Z\",\"updatedAt\":\"2026-03-14T04:53:48.452Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773454368329-jvvfwc\",\"userTimestamp\":\"2026-03-14T02:12:48.329Z\",\"userMessage\":\"Ulang\"}",
+        "response": "{\"assistantMessageId\":\"message-1773454376244-tx6ov1\",\"assistantTimestamp\":\"2026-03-14T02:12:56.244Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773454372362.jpg\",\"mimeType\":\"image/jpeg\",\"size\":154939},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T04:53:48.452Z\"}",
+        "created_at": "2026-03-14T02:12:48.000Z"
       },
       {
-        "id": 530,
+        "id": 8358,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773369355421-tawcyr\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-13T02:35:55.421Z\",\"updatedAt\":\"2026-03-13T02:36:03.504Z\",\"userMessageId\":\"message-1773369363504-y6nw7v\",\"userTimestamp\":\"2026-03-13T02:36:03.504Z\",\"userMessage\":\"hai\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T02:36:03.504Z\",\"assistantMessage\":\"\",\"preview\":\"hai\",\"updatedAt\":\"2026-03-13T02:36:03.504Z\"}",
-        "created_at": "2026-03-13T02:36:03.000Z"
+        "message": "{\"sessionId\":\"session-1773451704011-lofql6\",\"modelId\":\"furina\",\"title\":\"Gambar Seperti\",\"sessionCreatedAt\":\"2026-03-14T01:28:24.011Z\",\"updatedAt\":\"2026-03-14T04:53:48.452Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773464021921-47qinp\",\"userTimestamp\":\"2026-03-14T04:53:41.921Z\",\"userMessage\":\"buatkan gambar kucing\"}",
+        "response": "{\"assistantMessageId\":\"message-1773464028452-s9k668\",\"assistantTimestamp\":\"2026-03-14T04:53:48.452Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773464028439.jpg\",\"mimeType\":\"image/jpeg\",\"size\":282401},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T04:53:48.452Z\"}",
+        "created_at": "2026-03-14T04:53:41.000Z"
       },
       {
-        "id": 531,
+        "id": 8359,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773366941868-uhzmex\",\"modelId\":\"lanna\",\"title\":\"Hallo\",\"sessionCreatedAt\":\"2026-03-13T01:55:41.868Z\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\",\"userMessageId\":\"message-1773366954612-y3aq07\",\"userTimestamp\":\"2026-03-13T01:55:54.612Z\",\"userMessage\":\"hallo\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T02:35:38.162Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\"}",
-        "created_at": "2026-03-13T01:55:54.000Z"
+        "message": "{\"sessionId\":\"session-1773451641538-96odpg\",\"modelId\":\"inori\",\"title\":\"Permintaan Gambar Ikan\",\"sessionCreatedAt\":\"2026-03-14T01:27:21.537Z\",\"updatedAt\":\"2026-03-14T01:27:32.352Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773451650321-hnn00g\",\"userTimestamp\":\"2026-03-14T01:27:30.321Z\",\"userMessage\":\"Buatkan saya gambar ikan\"}",
+        "response": "{\"assistantMessageId\":\"message-1773451652352-lx4yfg\",\"assistantTimestamp\":\"2026-03-14T01:27:32.352Z\",\"assistantMessage\":\"Saya Inori, asisten coding Anda. Saya tidak bisa membuat gambar. Fokus saya adalah membantu Anda dengan pemrograman, debugging, atau desain kode.\\n\\nApakah ada hal terkait coding yang ingin Anda diskusikan? Jika Anda ingin membuat gambar, mungkin model lain akan lebih cocok.\",\"preview\":\"Saya Inori, asisten coding Anda. Saya tidak bisa m...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T01:27:32.352Z\"}",
+        "created_at": "2026-03-14T01:27:30.000Z"
       },
       {
-        "id": 532,
+        "id": 8360,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773366941868-uhzmex\",\"modelId\":\"lanna\",\"title\":\"Hallo\",\"sessionCreatedAt\":\"2026-03-13T01:55:41.868Z\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\",\"userMessageId\":\"message-1773369338162-8o2kfw\",\"userTimestamp\":\"2026-03-13T02:35:38.162Z\",\"userMessage\":\"hallo\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T02:35:38.162Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T02:35:38.162Z\"}",
-        "created_at": "2026-03-13T02:35:38.000Z"
+        "message": "{\"sessionId\":\"session-1773450332729-6208tn\",\"modelId\":\"furina\",\"title\":\"Gambar Kucing\",\"sessionCreatedAt\":\"2026-03-14T01:05:32.728Z\",\"updatedAt\":\"2026-03-14T01:26:01.743Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773451257942-j0ly3g\",\"userTimestamp\":\"2026-03-14T01:20:57.942Z\",\"userMessage\":\"Buatkan gambar kucing \"}",
+        "response": "{\"assistantMessageId\":\"message-1773451270007-dpa1uf\",\"assistantTimestamp\":\"2026-03-14T01:21:10.007Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773451268419.jpg\",\"mimeType\":\"image/jpeg\",\"size\":1443828},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T01:26:01.743Z\"}",
+        "created_at": "2026-03-14T01:20:57.000Z"
       },
       {
-        "id": 533,
+        "id": 8361,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773361816499-3zhm4l\",\"userTimestamp\":\"2026-03-13T00:30:16.499Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773361812501.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":130706}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T00:30:16.000Z"
+        "message": "{\"sessionId\":\"session-1773450332729-6208tn\",\"modelId\":\"furina\",\"title\":\"Gambar Kucing\",\"sessionCreatedAt\":\"2026-03-14T01:05:32.728Z\",\"updatedAt\":\"2026-03-14T01:26:01.743Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773451526543-vivkvp\",\"userTimestamp\":\"2026-03-14T01:25:26.543Z\",\"userMessage\":\"Seorang gadis anime berumur 18 tahun dengan rambut hitam panjang memakai hoodie oversized dan rok kotak-kotak, duduk di lantai apartemen modern minimalis pada malam hari. Di sekelilingnya ada banyak bungkus snack dan laptop terbuka yang menampilkan kode Python. Cahaya lampu neon biru dan ungu dari jendela kota Tokyo masuk ke ruangan, menciptakan suasana cyberpunk lembut. Gaya ilustrasi anime detail tinggi, cinematic lighting, depth of field, ultra detailed, 4k.\"}",
+        "response": "{\"assistantMessageId\":\"message-1773451535561-cl20fe\",\"assistantTimestamp\":\"2026-03-14T01:25:35.561Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773451535169.jpg\",\"mimeType\":\"image/jpeg\",\"size\":3129},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T01:26:01.743Z\"}",
+        "created_at": "2026-03-14T01:25:26.000Z"
       },
       {
-        "id": 534,
+        "id": 8362,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362136116-od8qtx\",\"userTimestamp\":\"2026-03-13T00:35:36.116Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773362131675.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":81440}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T00:35:36.000Z"
+        "message": "{\"sessionId\":\"session-1773450332729-6208tn\",\"modelId\":\"furina\",\"title\":\"Gambar Kucing\",\"sessionCreatedAt\":\"2026-03-14T01:05:32.728Z\",\"updatedAt\":\"2026-03-14T01:26:01.743Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773451548858-6t3n51\",\"userTimestamp\":\"2026-03-14T01:25:48.858Z\",\"userMessage\":\"Buatkan gambar ikan\"}",
+        "response": "{\"assistantMessageId\":\"message-1773451561743-u47w8f\",\"assistantTimestamp\":\"2026-03-14T01:26:01.743Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-1773451560654.jpg\",\"mimeType\":\"image/jpeg\",\"size\":1879274},\"preview\":\"Gambar berhasil dibuat.\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T01:26:01.743Z\"}",
+        "created_at": "2026-03-14T01:25:48.000Z"
       },
       {
-        "id": 535,
+        "id": 8363,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362185708-4en3sr\",\"userTimestamp\":\"2026-03-13T00:36:25.708Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773362180576.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":65018}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T00:36:25.000Z"
+        "message": "{\"sessionId\":\"session-1773450307598-wvo3ad\",\"modelId\":\"furina\",\"title\":\"Generasi Gambar Kucing\",\"sessionCreatedAt\":\"2026-03-14T01:05:07.598Z\",\"updatedAt\":\"2026-03-14T01:05:16.762Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773450315401-5hjjxe\",\"userTimestamp\":\"2026-03-14T01:05:15.401Z\",\"userMessage\":\"Generate image cat\"}",
+        "response": "{\"assistantMessageId\":\"message-1773450316761-ohbqir\",\"assistantTimestamp\":\"2026-03-14T01:05:16.762Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 44 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T01:05:16.762Z\"}",
+        "created_at": "2026-03-14T01:05:15.000Z"
       },
       {
-        "id": 536,
+        "id": 8364,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362629567-uy99lk\",\"userTimestamp\":\"2026-03-13T00:43:49.567Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T00:43:49.000Z"
+        "message": "{\"sessionId\":\"session-1773390386399-vzorm3\",\"modelId\":\"lanna\",\"title\":\"File CV MAULANAPERMANA Docx\",\"sessionCreatedAt\":\"2026-03-13T08:26:26.399Z\",\"updatedAt\":\"2026-03-13T08:26:38.922Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773390394813-xxxuqq\",\"userTimestamp\":\"2026-03-13T08:26:34.813Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"document\",\"name\":\"CV MAULANAPERMANA.docx\",\"mimeType\":\"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"size\":91502}}",
+        "response": "{\"assistantMessageId\":\"message-1773390398922-turlz0\",\"assistantTimestamp\":\"2026-03-13T08:26:38.922Z\",\"assistantMessage\":\"Maaf ya. Permintaannya tidak valid atau formatnya tidak bisa diproses. Coba kirim ulang dengan teks yang lebih sederhana.\",\"preview\":\"Maaf ya. Permintaannya tidak valid atau formatnya ...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:26:38.922Z\"}",
+        "created_at": "2026-03-13T08:26:34.000Z"
       },
       {
-        "id": 537,
+        "id": 8365,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773362798084-iqcyz3\",\"userTimestamp\":\"2026-03-13T00:46:38.084Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773362796462.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":93998}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T00:46:38.000Z"
+        "message": "{\"sessionId\":\"session-1773388861637-d9lx6l\",\"modelId\":\"furina\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T08:01:01.637Z\",\"updatedAt\":\"2026-03-13T08:16:50.461Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773388877475-qwrif1\",\"userTimestamp\":\"2026-03-13T08:01:17.475Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":\"message-1773388879986-xkff7f\",\"assistantTimestamp\":\"2026-03-13T08:01:19.986Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 13 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:16:50.461Z\"}",
+        "created_at": "2026-03-13T08:01:17.000Z"
       },
       {
-        "id": 538,
+        "id": 8366,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773363137359-vyjfis\",\"userTimestamp\":\"2026-03-13T00:52:17.359Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T00:52:17.000Z"
+        "message": "{\"sessionId\":\"session-1773388861637-d9lx6l\",\"modelId\":\"furina\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T08:01:01.637Z\",\"updatedAt\":\"2026-03-13T08:16:50.461Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773389260522-qss0tx\",\"userTimestamp\":\"2026-03-13T08:07:40.522Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":\"message-1773389261801-i8xtfi\",\"assistantTimestamp\":\"2026-03-13T08:07:41.801Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 51 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:16:50.461Z\"}",
+        "created_at": "2026-03-13T08:07:40.000Z"
       },
       {
-        "id": 539,
+        "id": 8367,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773364025074-0xt7z4\",\"userTimestamp\":\"2026-03-13T01:07:05.074Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T01:07:05.000Z"
+        "message": "{\"sessionId\":\"session-1773388861637-d9lx6l\",\"modelId\":\"furina\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T08:01:01.637Z\",\"updatedAt\":\"2026-03-13T08:16:50.461Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773389487111-7lwypk\",\"userTimestamp\":\"2026-03-13T08:11:27.111Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":\"message-1773389491454-bznihr\",\"assistantTimestamp\":\"2026-03-13T08:11:31.454Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 2 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:16:50.461Z\"}",
+        "created_at": "2026-03-13T08:11:27.000Z"
       },
       {
-        "id": 540,
+        "id": 8368,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773364340312-fqx5k7\",\"userTimestamp\":\"2026-03-13T01:12:20.312Z\",\"userMessage\":\"Halo halo halo bagaimana hari ini?\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T01:12:20.000Z"
+        "message": "{\"sessionId\":\"session-1773388861637-d9lx6l\",\"modelId\":\"furina\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T08:01:01.637Z\",\"updatedAt\":\"2026-03-13T08:16:50.461Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773389541042-hjflep\",\"userTimestamp\":\"2026-03-13T08:12:21.042Z\",\"userMessage\":\"lihat\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":\"message-1773389542989-mgl29v\",\"assistantTimestamp\":\"2026-03-13T08:12:22.989Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 10 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:16:50.461Z\"}",
+        "created_at": "2026-03-13T08:12:21.000Z"
       },
       {
-        "id": 541,
+        "id": 8369,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773364346672-bjasvg\",\"userTimestamp\":\"2026-03-13T01:12:26.672Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T01:12:26.000Z"
+        "message": "{\"sessionId\":\"session-1773388861637-d9lx6l\",\"modelId\":\"furina\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T08:01:01.637Z\",\"updatedAt\":\"2026-03-13T08:16:50.461Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773389806905-lyunb4\",\"userTimestamp\":\"2026-03-13T08:16:46.905Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
+        "response": "{\"assistantMessageId\":\"message-1773389810461-0gxwkc\",\"assistantTimestamp\":\"2026-03-13T08:16:50.461Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 43 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:16:50.461Z\"}",
+        "created_at": "2026-03-13T08:16:46.000Z"
       },
       {
-        "id": 542,
+        "id": 8370,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773367124134-rfig7i\",\"userTimestamp\":\"2026-03-13T01:58:44.134Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T01:58:44.000Z"
+        "message": "{\"sessionId\":\"session-1773387880676-jn31qx\",\"modelId\":\"lanna\",\"title\":\"Berbagi Pikiran Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T07:44:40.676Z\",\"updatedAt\":\"2026-03-13T08:10:59.885Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773387882857-wrukg2\",\"userTimestamp\":\"2026-03-13T07:44:42.857Z\",\"userMessage\":\"hi\"}",
+        "response": "{\"assistantMessageId\":\"message-1773387884924-2wagxq\",\"assistantTimestamp\":\"2026-03-13T07:44:44.924Z\",\"assistantMessage\":\"Hai! Ceritain dong apa yang lagi ada di pikiranmu hari ini. Aku di sini buat dengerin dan nemenin kamu. 😊\",\"preview\":\"Maaf ya. Permintaannya tidak valid atau formatnya ...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:10:59.885Z\"}",
+        "created_at": "2026-03-13T07:44:42.000Z"
       },
       {
-        "id": 543,
+        "id": 8371,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361615446-7794rq\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361812501 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:26:55.446Z\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\",\"userMessageId\":\"message-1773367165338-2y7fr4\",\"userTimestamp\":\"2026-03-13T01:59:25.338Z\",\"userMessage\":\"hallo\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:59:25.338Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-13T01:59:25.338Z\"}",
-        "created_at": "2026-03-13T01:59:25.000Z"
+        "message": "{\"sessionId\":\"session-1773387880676-jn31qx\",\"modelId\":\"lanna\",\"title\":\"Berbagi Pikiran Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T07:44:40.676Z\",\"updatedAt\":\"2026-03-13T08:10:59.885Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773389444297-on4rnq\",\"userTimestamp\":\"2026-03-13T08:10:44.297Z\",\"userMessage\":\"oke\"}",
+        "response": "{\"assistantMessageId\":\"message-1773389446376-t0r1x2\",\"assistantTimestamp\":\"2026-03-13T08:10:46.376Z\",\"assistantMessage\":\"Oke, baiklah. Ada sesuatu yang pengen kamu ceritain? Atau mungkin cuma mau ngobrol santai aja? Nggak apa-apa kok, aku siap mendengarkan. 😊\",\"preview\":\"Maaf ya. Permintaannya tidak valid atau formatnya ...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:10:59.885Z\"}",
+        "created_at": "2026-03-13T08:10:44.000Z"
       },
       {
-        "id": 544,
+        "id": 8372,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773364370100-v5ch52\",\"userTimestamp\":\"2026-03-13T01:12:50.100Z\",\"userMessage\":\"lihat\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:12:50.000Z"
+        "message": "{\"sessionId\":\"session-1773387880676-jn31qx\",\"modelId\":\"lanna\",\"title\":\"Berbagi Pikiran Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T07:44:40.676Z\",\"updatedAt\":\"2026-03-13T08:10:59.885Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773389455639-ejhses\",\"userTimestamp\":\"2026-03-13T08:10:55.639Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"document\",\"name\":\"Dokumen.docx\",\"mimeType\":\"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"size\":14116}}",
+        "response": "{\"assistantMessageId\":\"message-1773389459885-s666ip\",\"assistantTimestamp\":\"2026-03-13T08:10:59.885Z\",\"assistantMessage\":\"Maaf ya. Permintaannya tidak valid atau formatnya tidak bisa diproses. Coba kirim ulang dengan teks yang lebih sederhana.\",\"preview\":\"Maaf ya. Permintaannya tidak valid atau formatnya ...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T08:10:59.885Z\"}",
+        "created_at": "2026-03-13T08:10:55.000Z"
       },
       {
-        "id": 545,
+        "id": 8373,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773365500400-dxj70u\",\"userTimestamp\":\"2026-03-13T01:31:40.400Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:31:40.000Z"
+        "message": "{\"sessionId\":\"session-1773387497623-5imt8h\",\"modelId\":\"lanna\",\"title\":\"Berbagi Pikiran Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T07:38:17.623Z\",\"updatedAt\":\"2026-03-13T07:44:20.208Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773387540387-orosql\",\"userTimestamp\":\"2026-03-13T07:39:00.387Z\",\"userMessage\":\"halo\"}",
+        "response": "{\"assistantMessageId\":\"message-1773387545934-tt7ned\",\"assistantTimestamp\":\"2026-03-13T07:39:05.934Z\",\"assistantMessage\":\"Hai! Ceritain dong apa yang lagi ada di pikiranmu hari ini. Aku di sini buat dengerin dan nemenin kamu. 😊\",\"preview\":\"Hai juga! Cuacanya lumayan bersahabat nih, cerah t...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T07:44:20.208Z\"}",
+        "created_at": "2026-03-13T07:39:00.000Z"
       },
       {
-        "id": 546,
+        "id": 8374,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773365601403-vjdaqe\",\"userTimestamp\":\"2026-03-13T01:33:21.403Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:33:21.000Z"
+        "message": "{\"sessionId\":\"session-1773387497623-5imt8h\",\"modelId\":\"lanna\",\"title\":\"Berbagi Pikiran Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T07:38:17.623Z\",\"updatedAt\":\"2026-03-13T07:44:20.208Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773387857591-mhbieh\",\"userTimestamp\":\"2026-03-13T07:44:17.591Z\",\"userMessage\":\"haii bagaimana cuaca hari ini\"}",
+        "response": "{\"assistantMessageId\":\"message-1773387860208-5009lx\",\"assistantTimestamp\":\"2026-03-13T07:44:20.208Z\",\"assistantMessage\":\"Hai juga! Cuacanya lumayan bersahabat nih, cerah tapi ada sedikit awan. Kayaknya cocok buat cerita-cerita, ya? ☀️\\n\\nKamu lagi pengen cerita apa hari ini? Atau ada hal spesifik yang pengen kamu bagi?\",\"preview\":\"Hai juga! Cuacanya lumayan bersahabat nih, cerah t...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T07:44:20.208Z\"}",
+        "created_at": "2026-03-13T07:44:17.000Z"
       },
       {
-        "id": 547,
+        "id": 8375,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773365737453-1cqd6f\",\"userTimestamp\":\"2026-03-13T01:35:37.453Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:35:37.000Z"
+        "message": "{\"sessionId\":\"session-1773383833376-8kpwiv\",\"modelId\":\"inori\",\"title\":\"Fitur Chat Ruangan Real-Time\",\"sessionCreatedAt\":\"2026-03-13T06:37:13.376Z\",\"updatedAt\":\"2026-03-13T07:29:39.896Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773383987619-z5zxsn\",\"userTimestamp\":\"2026-03-13T06:39:47.619Z\",\"userMessage\":\"You are Inori, a professional AI coding assistant specialized in software engineering, debugging, and architecture design.\\n\\nYour task is to design and implement a full-stack feature for a real-time chat application.\\n\\nRequirements:\\n\\n1. Create a **real-time group chat system** using:\\n\\n   * Node.js (Express)\\n   * WebSocket or Socket.io\\n   * PostgreSQL database\\n   * React frontend\\n\\n2. Backend requirements:\\n\\n   * Design the database schema for users, chat rooms, and messages\\n   * Implement REST APIs for:\\n\\n     * creating chat rooms\\n     * joining a room\\n     * retrieving message history\\n   * Implement WebSocket logic for:\\n\\n     * broadcasting messages in real time\\n     * handling user connections and disconnections\\n   * Include error handling and validation\\n\\n3. Frontend requirements:\\n\\n   * Build a simple React interface\\n   * Features:\\n\\n     * chat room list\\n     * message input\\n     * real-time message updates\\n     * display sender and timestamp\\n   * Use modern React (hooks)\\n\\n4. Code quality requirements:\\n\\n   * Organize the project structure properly\\n   * Follow best practices\\n   * Add comments explaining key parts of the code\\n   * Provide example API requests\\n\\n5. Additional challenge:\\n\\n   * Implement a basic anti-spam system:\\n\\n     * limit users to 5 messages per 10 seconds\\n   * Explain how the system could scale to support 10,000 concurrent users.\\n\\nOutput format:\\n\\n1. System architecture explanation\\n2. Database schema\\n3. Backend implementation\\n4. Frontend implementation\\n5. Scalability discussion\\n\"}",
+        "response": "{\"assistantMessageId\":\"message-1773383990607-yru57c\",\"assistantTimestamp\":\"2026-03-13T06:39:50.608Z\",\"assistantMessage\":\"Baik, mari kita mulai. Saya Inori, asisten coding Anda.\\n\\nUntuk memulai pengembangan fitur real-time group chat ini, saya perlu beberapa klarifikasi agar kita bisa fokus pada solusi yang tepat.\\n\\n1.  **Skala Chat Room:** Apakah chat room akan memiliki struktur hierarki (misalnya, chat room utama, chat room sub-topik)?\\n2.  **Fitur Tambahan:** Selain fitur dasar yang Anda sebutkan, apakah ada fitur lain yang ingin Anda tambahkan (misalnya, emoji, attachment, notifikasi)?\\n3.  **Teknologi WebSocket:** Apakah Anda lebih memilih Socket.io atau implementasi WebSocket langsung? (Socket.io menyediakan fitur tambahan seperti reconnect otomatis dan fallback).\\n\\nSetelah saya mendapatkan jawaban dari pertanyaan-pertanyaan ini, saya akan menyusun sistem arsitektur, desain database, implementasi backend, dan frontend.  Mari kita mulai dengan pertanyaan pertama.\",\"preview\":\"Oke, dengan struktur hierarki chat room, kita akan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T07:29:39.896Z\"}",
+        "created_at": "2026-03-13T06:39:47.000Z"
       },
       {
-        "id": 548,
+        "id": 8376,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773366001773-sn05cn\",\"userTimestamp\":\"2026-03-13T01:40:01.773Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:40:01.000Z"
+        "message": "{\"sessionId\":\"session-1773383833376-8kpwiv\",\"modelId\":\"inori\",\"title\":\"Fitur Chat Ruangan Real-Time\",\"sessionCreatedAt\":\"2026-03-13T06:37:13.376Z\",\"updatedAt\":\"2026-03-13T07:29:39.896Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773384013343-8nedxj\",\"userTimestamp\":\"2026-03-13T06:40:13.343Z\",\"userMessage\":\"1 ya\"}",
+        "response": "{\"assistantMessageId\":\"message-1773384021446-dyqjjf\",\"assistantTimestamp\":\"2026-03-13T06:40:21.446Z\",\"assistantMessage\":\"Oke, dengan struktur hierarki chat room, kita akan menggunakan pendekatan berikut:\\n\\n**1. Sistem Arsitektur**\\n\\n*   **Frontend (React):**  Menangani UI, interaksi pengguna, dan mengirim/menerima pesan melalui WebSocket.\\n*   **Backend (Node.js/Express):**  Menangani API REST, logika WebSocket, dan interaksi database.\\n*   **Database (PostgreSQL):** Menyimpan data pengguna, chat room, dan pesan.\\n*   **WebSocket (Socket.io):**  Menangani komunikasi real-time antara frontend dan backend.\\n\\n**2. Database Schema**\\n\\nBerikut adalah skema database yang diusulkan:\\n\\n*   **users:**\\n    *   `id` (UUID, Primary Key)\\n    *   `username` (VARCHAR, Unique)\\n    *   `password` (VARCHAR)\\n    *   `email` (VARCHAR, Unique)\\n*   **chat_rooms:**\\n    *   `id` (UUID, Primary Key)\\n    *   `name` (VARCHAR)\\n    *   `parent_id` (UUID, Foreign Key referencing `chat_rooms.id`, Nullable - untuk hierarki)\\n*   **messages:**\\n    *   `id` (UUID, Primary Key)\\n    *   `chat_room_id` (UUID, Foreign Key referencing `chat_rooms.id`)\\n    *   `sender_id` (UUID, Foreign Key referencing `users.id`)\\n    *   `content` (TEXT)\\n    *   `timestamp` (TIMESTAMP WITH TIME ZONE)\\n\\n**3. Backend Implementation (Node.js/Express)**\\n\\nSaya akan memberikan kerangka dasar untuk API REST dan logika WebSocket.  Kode ini akan menggunakan Express untuk routing dan Socket.io untuk WebSocket.\\n\\n```javascript\\n// server.js\\nconst express = require('express');\\nconst http = require('http');\\nconst socketIO = require('socket.io');\\n\\nconst app = express();\\nconst server = http.createServer(app);\\nconst io = socketIO(server);\\n\\n// ... (Kode untuk menghubungkan ke database PostgreSQL) ...\\n\\n// API Routes\\napp.post('/chat-rooms', (req, res) => {\\n  // ... (Logika untuk membuat chat room baru) ...\\n  res.status(201).send({ id: 'new_room_id' });\\n});\\n\\napp.get('/chat-rooms/:id', (req, res) => {\\n  // ... (Logika untuk mendapatkan chat room berdasarkan ID) ...\\n  res.json({ id: req.params.id });\\n});\\n\\n// WebSocket Logic\\nio.on('connection', (socket) => {\\n  socket.on('join_room', (roomId) => {\\n    // ... (Logika untuk bergabung dengan chat room) ...\\n  });\\n\\n  socket.on('send_message', (message) => {\\n    // ... (Logika untuk mengirim pesan ke chat room) ...\\n  });\\n});\\n\\nconst port = process.env.PORT || 3001;\\nserver.listen(port, () => {\\n  console.log(`Server listening on port ${port}`);\\n});\\n```\\n\\n**4. Frontend Implementation (React)**\\n\\nBerikut adalah contoh komponen React sederhana untuk menampilkan pesan:\\n\\n```jsx\\n// Message.js\\nimport React from 'react';\\n\\nfunction Message({ message }) {\\n  return (\\n    <div>\\n      <p>{message.sender} - {message.timestamp}</p>\\n      <p>{message.content}</p>\\n    </div>\\n  );\\n}\\n\\nexport default Message;\\n```\\n\\n**Langkah-langkah menjalankan:**\\n\\n1.  Pastikan Anda sudah menginstal Node.js dan npm.\\n2.  Buat direktori proyek baru.\\n3.  Inisialisasi proyek menggunakan `npm init -y`.\\n4.  Instal dependensi: `npm install express socket.io pg cors`\\n5.  Buat file `server.js` dan `Message.js` dengan kode di atas.\\n6.  Jalankan server: `node server.js`\\n7.  Buat aplikasi React frontend (misalnya, menggunakan `create-react-app`).\\n8.  Hubungkan frontend ke backend melalui WebSocket.\\n\\nApakah Anda ingin saya menjelaskan lebih detail tentang bagian tertentu (misalnya, logika WebSocket, implementasi API, atau desain database)? Atau, apakah Anda ingin saya melanjutkan dengan implementasi fitur anti-spam?\",\"preview\":\"Oke, dengan struktur hierarki chat room, kita akan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T07:29:39.896Z\"}",
+        "created_at": "2026-03-13T06:40:13.000Z"
       },
       {
-        "id": 549,
+        "id": 8377,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773366063796-bc665c\",\"userTimestamp\":\"2026-03-13T01:41:03.796Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:41:03.000Z"
+        "message": "{\"sessionId\":\"session-1773383301962-zx415a\",\"modelId\":\"lanna\",\"title\":\"Pertanyaan Sapaan Dan Keinginan Bicara\",\"sessionCreatedAt\":\"2026-03-13T06:28:21.962Z\",\"updatedAt\":\"2026-03-13T06:36:53.856Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773383801395-g3tsae\",\"userTimestamp\":\"2026-03-13T06:36:41.395Z\",\"userMessage\":\"halo sayang\"}",
+        "response": "{\"assistantMessageId\":\"message-1773383803528-src13w\",\"assistantTimestamp\":\"2026-03-13T06:36:43.528Z\",\"assistantMessage\":\"Hai beb! Wah, kayaknya lagi semangat banget ya? Ceritain dong, lagi ngapain aja nih? 😊\",\"preview\":\"Oke deh! Mau cerita apa hari ini, dear? Apa ada ya...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:36:53.856Z\"}",
+        "created_at": "2026-03-13T06:36:41.000Z"
       },
       {
-        "id": 550,
+        "id": 8378,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364361746-mhfghr\",\"modelId\":\"lanna\",\"title\":\"Lihat\",\"sessionCreatedAt\":\"2026-03-13T01:12:41.746Z\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\",\"userMessageId\":\"message-1773366967305-4gvik5\",\"userTimestamp\":\"2026-03-13T01:56:07.305Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:56:07.305Z\",\"assistantMessage\":\"\",\"preview\":\"Gambar: miku.jpg\",\"updatedAt\":\"2026-03-13T01:56:07.305Z\"}",
-        "created_at": "2026-03-13T01:56:07.000Z"
+        "message": "{\"sessionId\":\"session-1773383301962-zx415a\",\"modelId\":\"lanna\",\"title\":\"Pertanyaan Sapaan Dan Keinginan Bicara\",\"sessionCreatedAt\":\"2026-03-13T06:28:21.962Z\",\"updatedAt\":\"2026-03-13T06:36:53.856Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773383811725-zoujfe\",\"userTimestamp\":\"2026-03-13T06:36:51.725Z\",\"userMessage\":\"jelasas\"}",
+        "response": "{\"assistantMessageId\":\"message-1773383813856-yp9y4s\",\"assistantTimestamp\":\"2026-03-13T06:36:53.856Z\",\"assistantMessage\":\"Oke deh! Mau cerita apa hari ini, dear? Apa ada yang lagi pengen banget kamu bagiin? 😉\",\"preview\":\"Oke deh! Mau cerita apa hari ini, dear? Apa ada ya...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:36:53.856Z\"}",
+        "created_at": "2026-03-13T06:36:51.000Z"
       },
       {
-        "id": 551,
+        "id": 8379,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364644162-15wrze\",\"userTimestamp\":\"2026-03-13T01:17:24.162Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
-        "created_at": "2026-03-13T01:17:24.000Z"
+        "message": "{\"sessionId\":\"session-1773383182629-io0qzp\",\"modelId\":\"furina\",\"title\":\"Gambar Kucing Yang Diinginkan\",\"sessionCreatedAt\":\"2026-03-13T06:26:22.629Z\",\"updatedAt\":\"2026-03-13T06:27:19.724Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773383238781-mk5du6\",\"userTimestamp\":\"2026-03-13T06:27:18.781Z\",\"userMessage\":\"buatkan gambar kucing\"}",
+        "response": "{\"assistantMessageId\":\"message-1773383239724-k8eq1n\",\"assistantTimestamp\":\"2026-03-13T06:27:19.724Z\",\"assistantMessage\":\"Maaf. Sepertinya server lagi kena batas penggunaan (rate limit). Kamu bisa coba lagi dalam 13 detik. Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.\",\"preview\":\"Maaf. Sepertinya server lagi kena batas penggunaan...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:27:19.724Z\"}",
+        "created_at": "2026-03-13T06:27:18.000Z"
       },
       {
-        "id": 552,
+        "id": 8380,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364670382-6xeaj5\",\"userTimestamp\":\"2026-03-13T01:17:50.382Z\",\"userMessage\":\"Halo halo halo bagaimana hari ini?\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
-        "created_at": "2026-03-13T01:17:50.000Z"
+        "message": "{\"sessionId\":\"session-1773382643987-nb744r\",\"modelId\":\"lanna\",\"title\":\"Salam Pembuka Pertanyaan\",\"sessionCreatedAt\":\"2026-03-13T06:17:23.987Z\",\"updatedAt\":\"2026-03-13T06:17:28.669Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773382647212-yw5s1i\",\"userTimestamp\":\"2026-03-13T06:17:27.212Z\",\"userMessage\":\"hallo\"}",
+        "response": "{\"assistantMessageId\":\"message-1773382648669-805bta\",\"assistantTimestamp\":\"2026-03-13T06:17:28.669Z\",\"assistantMessage\":\"Halo! 👋 Senang bertemu denganmu! Ada yang bisa aku bantu hari ini?\",\"preview\":\"Halo! 👋 Senang bertemu denganmu! Ada yang bisa ak...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:17:28.669Z\"}",
+        "created_at": "2026-03-13T06:17:27.000Z"
       },
       {
-        "id": 553,
+        "id": 8381,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364915007-q2vezl\",\"userTimestamp\":\"2026-03-13T01:21:55.007Z\",\"userMessage\":\"p\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
-        "created_at": "2026-03-13T01:21:55.000Z"
+        "message": "{\"sessionId\":\"session-1773381222666-bzq4ae\",\"modelId\":\"inori\",\"title\":\"Pembuatan Website React\",\"sessionCreatedAt\":\"2026-03-13T05:53:42.666Z\",\"updatedAt\":\"2026-03-13T06:05:15.002Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773381231778-gqg4c4\",\"userTimestamp\":\"2026-03-13T05:53:51.778Z\",\"userMessage\":\"buatkan saya website react \"}",
+        "response": "{\"assistantMessageId\":\"message-1773381235320-d3k320\",\"assistantTimestamp\":\"2026-03-13T05:53:55.320Z\",\"assistantMessage\":\"Oke, mari kita buat website React. Untuk memastikan saya bisa memberikan solusi yang paling sesuai, bisakah Anda berikan detail lebih lanjut tentang website yang Anda inginkan?\\n\\n1.  Apa tujuan utama website ini? (Misalnya, blog pribadi, toko online, portofolio, dll.)\\n2.  Fitur-fitur apa saja yang Anda inginkan? (Misalnya, formulir kontak, galeri gambar, sistem komentar, dll.)\\n3.  Apakah ada contoh website yang Anda sukai sebagai referensi?\\n\\nSetelah saya mendapatkan informasi ini, saya akan membuat struktur dasar website React untuk Anda.\",\"preview\":\"Senang mendengarnya! Jika ada yang ingin ditambahk...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:05:15.002Z\"}",
+        "created_at": "2026-03-13T05:53:51.000Z"
       },
       {
-        "id": 554,
+        "id": 8382,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773364633457-vf6wds\",\"modelId\":\"lanna\",\"title\":\"Gambar Miku Jpg\",\"sessionCreatedAt\":\"2026-03-13T01:17:13.457Z\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\",\"userMessageId\":\"message-1773364963323-kwsddp\",\"userTimestamp\":\"2026-03-13T01:22:43.323Z\",\"userMessage\":\"ii\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T01:22:43.323Z\",\"assistantMessage\":\"\",\"preview\":\"ii\",\"updatedAt\":\"2026-03-13T01:22:43.323Z\"}",
-        "created_at": "2026-03-13T01:22:43.000Z"
+        "message": "{\"sessionId\":\"session-1773381222666-bzq4ae\",\"modelId\":\"inori\",\"title\":\"Pembuatan Website React\",\"sessionCreatedAt\":\"2026-03-13T05:53:42.666Z\",\"updatedAt\":\"2026-03-13T06:05:15.002Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773381242832-n2wb3e\",\"userTimestamp\":\"2026-03-13T05:54:02.832Z\",\"userMessage\":\"porto\"}",
+        "response": "{\"assistantMessageId\":\"message-1773381245655-z697rn\",\"assistantTimestamp\":\"2026-03-13T05:54:05.655Z\",\"assistantMessage\":\"Oke, website portofolio.\\n\\nUntuk membantu saya membuat struktur yang tepat, bisakah Anda berikan detail berikut:\\n\\n1.  **Konten apa saja yang ingin Anda tampilkan di portofolio Anda?** (Misalnya, deskripsi diri, proyek-proyek yang pernah dikerjakan, keterampilan, pengalaman kerja, dll.)\\n2.  **Apakah Anda memiliki preferensi desain tertentu?** (Misalnya, tema warna, tata letak, gaya font, dll.)\\n3.  **Apakah Anda ingin menggunakan library atau komponen React tertentu?** (Misalnya, Material UI, Bootstrap, Tailwind CSS, dll.)\",\"preview\":\"Senang mendengarnya! Jika ada yang ingin ditambahk...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:05:15.002Z\"}",
+        "created_at": "2026-03-13T05:54:02.000Z"
       },
       {
-        "id": 555,
+        "id": 8383,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361188423-c2piq5\",\"modelId\":\"lanna\",\"title\":\"Audio recording-1773361352041 Webm\",\"sessionCreatedAt\":\"2026-03-13T00:19:48.423Z\",\"updatedAt\":\"2026-03-13T00:22:32.050Z\",\"userMessageId\":\"message-1773361352050-3nclak\",\"userTimestamp\":\"2026-03-13T00:22:32.050Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"audio\",\"name\":\"recording-1773361352041.webm\",\"mimeType\":\"audio/webm;codecs=opus\",\"size\":131672}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:22:32.050Z\",\"assistantMessage\":\"\",\"preview\":\"Audio: recording-1773361352041.webm\",\"updatedAt\":\"2026-03-13T00:22:32.050Z\"}",
-        "created_at": "2026-03-13T00:22:32.000Z"
+        "message": "{\"sessionId\":\"session-1773381222666-bzq4ae\",\"modelId\":\"inori\",\"title\":\"Pembuatan Website React\",\"sessionCreatedAt\":\"2026-03-13T05:53:42.666Z\",\"updatedAt\":\"2026-03-13T06:05:15.002Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773381252351-b9jdzx\",\"userTimestamp\":\"2026-03-13T05:54:12.351Z\",\"userMessage\":\"1\"}",
+        "response": "{\"assistantMessageId\":\"message-1773381257468-awyfh6\",\"assistantTimestamp\":\"2026-03-13T05:54:17.468Z\",\"assistantMessage\":\"Oke, hanya portofolio saja. Untuk memulai, saya akan membuat struktur dasar dengan beberapa komponen utama:\\n\\n*   `Header`: Berisi logo, navigasi (tentang, proyek, kontak).\\n*   `About`: Berisi deskripsi diri dan informasi kontak.\\n*   `Projects`: Berisi daftar proyek yang pernah dikerjakan.\\n*   `ProjectDetail`: Berisi detail lengkap tentang satu proyek.\\n\\nBerikut adalah kode dasar untuk komponen `Header`:\\n\\n```jsx\\nimport React from 'react';\\n\\nfunction Header() {\\n  return (\\n    <header>\\n      <h1>Portofolio Saya</h1>\\n      <nav>\\n        <ul>\\n          <li><a href=\\\"#tentang\\\">Tentang</a></li>\\n          <li><a href=\\\"#proyek\\\">Proyek</a></li>\\n          <li><a href=\\\"#kontak\\\">Kontak</a></li>\\n        </ul>\\n      </nav>\\n    </header>\\n  );\\n}\\n\\nexport default Header;\\n```\\n\\n**Cara menjalankan:**\\n\\n1.  Pastikan Anda sudah memiliki proyek React yang berjalan.\\n2.  Simpan kode di atas sebagai `Header.jsx` di dalam folder `src`.\\n3.  Impor dan gunakan komponen `Header` di dalam komponen utama aplikasi Anda (misalnya, `App.jsx`).\\n\\nApakah Anda ingin saya membuat komponen `About` atau `Projects` selanjutnya? Atau mungkin Anda ingin saya menjelaskan cara mengimpor dan menggunakan komponen `Header` di `App.jsx`?\",\"preview\":\"Senang mendengarnya! Jika ada yang ingin ditambahk...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:05:15.002Z\"}",
+        "created_at": "2026-03-13T05:54:12.000Z"
       },
       {
-        "id": 556,
+        "id": 8384,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773361017572-jqxfik\",\"modelId\":\"lanna\",\"title\":\"Lihat Ini\",\"sessionCreatedAt\":\"2026-03-13T00:16:57.572Z\",\"updatedAt\":\"2026-03-13T00:17:12.732Z\",\"userMessageId\":\"message-1773361032732-eawzee\",\"userTimestamp\":\"2026-03-13T00:17:12.732Z\",\"userMessage\":\"lihat ini\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:17:12.732Z\",\"assistantMessage\":\"\",\"preview\":\"lihat ini\",\"updatedAt\":\"2026-03-13T00:17:12.732Z\"}",
-        "created_at": "2026-03-13T00:17:12.000Z"
+        "message": "{\"sessionId\":\"session-1773381222666-bzq4ae\",\"modelId\":\"inori\",\"title\":\"Pembuatan Website React\",\"sessionCreatedAt\":\"2026-03-13T05:53:42.666Z\",\"updatedAt\":\"2026-03-13T06:05:15.002Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773381296769-yqr9gj\",\"userTimestamp\":\"2026-03-13T05:54:56.769Z\",\"userMessage\":\"buatkan saya website form login menggunakan html  css dan js sudah responsif \"}",
+        "response": "{\"assistantMessageId\":\"message-1773381303637-5enqmh\",\"assistantTimestamp\":\"2026-03-13T05:55:03.637Z\",\"assistantMessage\":\"Oke, mari kita buat form login responsif menggunakan HTML, CSS, dan JavaScript. Berikut adalah kode lengkapnya:\\n\\n**HTML (index.html):**\\n\\n```html\\n<!DOCTYPE html>\\n<html lang=\\\"en\\\">\\n<head>\\n    <meta charset=\\\"UTF-8\\\">\\n    <meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1.0\\\">\\n    <title>Form Login</title>\\n    <link rel=\\\"stylesheet\\\" href=\\\"style.css\\\">\\n</head>\\n<body>\\n    <div class=\\\"container\\\">\\n        <form>\\n            <h1>Login</h1>\\n            <input type=\\\"email\\\" id=\\\"email\\\" placeholder=\\\"Email\\\">\\n            <input type=\\\"password\\\" id=\\\"password\\\" placeholder=\\\"Password\\\">\\n            <button type=\\\"submit\\\">Login</button>\\n            <a href=\\\"#\\\">Forgot Password?</a>\\n        </form>\\n    </div>\\n\\n    <script src=\\\"script.js\\\"></script>\\n</body>\\n</html>\\n```\\n\\n**CSS (style.css):**\\n\\n```css\\nbody {\\n    font-family: sans-serif;\\n    background-color: #f4f4f4;\\n    margin: 0;\\n    display: flex;\\n    justify-content: center;\\n    align-items: center;\\n    min-height: 100vh;\\n}\\n\\n.container {\\n    background-color: #fff;\\n    border-radius: 8px;\\n    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\\n    padding: 30px;\\n    width: 300px;\\n}\\n\\nform {\\n    display: flex;\\n    flex-direction: column;\\n}\\n\\ninput {\\n    margin-bottom: 15px;\\n    padding: 10px;\\n    border: 1px solid #ccc;\\n    border-radius: 4px;\\n    outline: none;\\n    font-size: 16px;\\n}\\n\\nbutton {\\n    background-color: #007bff;\\n    color: #fff;\\n    padding: 10px 15px;\\n    border: none;\\n    border-radius: 4px;\\n    cursor: pointer;\\n    font-size: 16px;\\n}\\n\\na {\\n    margin-top: 10px;\\n    color: #007bff;\\n    text-decoration: none;\\n}\\n\\n@media (max-width: 600px) {\\n    .container {\\n        width: 90%;\\n        padding: 20px;\\n    }\\n}\\n```\\n\\n**JavaScript (script.js):**\\n\\n```javascript\\ndocument.querySelector('form').addEventListener('submit', function(event) {\\n    event.preventDefault(); // Mencegah form submit secara default\\n\\n    const email = document.getElementById('email').value;\\n    const password = document.getElementById('password').value;\\n\\n    // Di sini Anda bisa menambahkan logika validasi dan pengiriman data ke server\\n    console.log('Email:', email);\\n    console.log('Password:', password);\\n\\n    // Contoh: menampilkan pesan sukses atau error\\n    if (email === 'test@example.com' && password === 'password') {\\n        alert('Login berhasil!');\\n    } else {\\n        alert('Email atau password salah.');\\n    }\\n});\\n```\\n\\n**Cara menjalankan:**\\n\\n1.  Simpan kode HTML sebagai `index.html`.\\n2.  Simpan kode CSS sebagai `style.css`.\\n3.  Simpan kode JavaScript sebagai `script.js`.\\n4.  Pastikan ketiga file tersebut berada di folder yang sama.\\n5.  Buka `index.html` di browser Anda.\\n\\nApakah Anda ingin saya menambahkan fitur-fitur lain, seperti validasi input yang lebih baik, atau mengubah tampilan form?\",\"preview\":\"Senang mendengarnya! Jika ada yang ingin ditambahk...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:05:15.002Z\"}",
+        "created_at": "2026-03-13T05:54:56.000Z"
       },
       {
-        "id": 557,
+        "id": 8385,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773359759719-dns5sm\",\"userTimestamp\":\"2026-03-12T23:55:59.719Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
-        "created_at": "2026-03-12T23:55:59.000Z"
+        "message": "{\"sessionId\":\"session-1773381222666-bzq4ae\",\"modelId\":\"inori\",\"title\":\"Pembuatan Website React\",\"sessionCreatedAt\":\"2026-03-13T05:53:42.666Z\",\"updatedAt\":\"2026-03-13T06:05:15.002Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773381912408-bjd9l0\",\"userTimestamp\":\"2026-03-13T06:05:12.408Z\",\"userMessage\":\"mantap\"}",
+        "response": "{\"assistantMessageId\":\"message-1773381915002-n37npp\",\"assistantTimestamp\":\"2026-03-13T06:05:15.002Z\",\"assistantMessage\":\"Senang mendengarnya! Jika ada yang ingin ditambahkan atau diubah, jangan ragu untuk bertanya. 😊\",\"preview\":\"Senang mendengarnya! Jika ada yang ingin ditambahk...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T06:05:15.002Z\"}",
+        "created_at": "2026-03-13T06:05:12.000Z"
       },
       {
-        "id": 558,
+        "id": 8386,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360002096-tnpw9g\",\"userTimestamp\":\"2026-03-13T00:00:02.096Z\",\"userMessage\":\"[Membagikan file: miku.jpg]\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
-        "created_at": "2026-03-13T00:00:02.000Z"
+        "message": "{\"sessionId\":\"session-1773380557512-t5tf51\",\"modelId\":\"inori\",\"title\":\"Desain Situs Web Sederhana\",\"sessionCreatedAt\":\"2026-03-13T05:42:37.512Z\",\"updatedAt\":\"2026-03-13T05:43:00.983Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773380578380-fbruc2\",\"userTimestamp\":\"2026-03-13T05:42:58.380Z\",\"userMessage\":\"buatkan website sederhana \"}",
+        "response": "{\"assistantMessageId\":\"message-1773380580983-if2o29\",\"assistantTimestamp\":\"2026-03-13T05:43:00.983Z\",\"assistantMessage\":\"Halo. Ada yang bisa saya bantu?\",\"preview\":\"Halo. Ada yang bisa saya bantu?\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T05:43:00.983Z\"}",
+        "created_at": "2026-03-13T05:42:58.000Z"
       },
       {
-        "id": 559,
+        "id": 8387,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360821553-obc8wc\",\"userTimestamp\":\"2026-03-13T00:13:41.553Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"image\",\"name\":\"miku.jpg\",\"mimeType\":\"image/jpeg\",\"size\":93810}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
-        "created_at": "2026-03-13T00:13:41.000Z"
+        "message": "{\"sessionId\":\"session-1773380536130-527fth\",\"modelId\":\"lanna\",\"title\":\"Pertanyaan Pribadi Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T05:42:16.130Z\",\"updatedAt\":\"2026-03-13T05:42:30.892Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773380546106-c95368\",\"userTimestamp\":\"2026-03-13T05:42:26.106Z\",\"userMessage\":\"halo\"}",
+        "response": "{\"assistantMessageId\":\"message-1773380547908-iv7js9\",\"assistantTimestamp\":\"2026-03-13T05:42:27.908Z\",\"assistantMessage\":\"Halo! 👋 Senang bertemu denganmu! Ada yang bisa aku bantu hari ini? 😊\",\"preview\":\"Oh, halo! 😊 Kamu baik-baik saja? Apa yang sedang ...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T05:42:30.892Z\"}",
+        "created_at": "2026-03-13T05:42:26.000Z"
       },
       {
-        "id": 560,
+        "id": 8388,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360838743-3dy96r\",\"userTimestamp\":\"2026-03-13T00:13:58.743Z\",\"userMessage\":\"\",\"userAttachment\":{\"kind\":\"document\",\"name\":\"ANIME LIST.docx\",\"mimeType\":\"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\"size\":18179}}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
-        "created_at": "2026-03-13T00:13:58.000Z"
+        "message": "{\"sessionId\":\"session-1773380536130-527fth\",\"modelId\":\"lanna\",\"title\":\"Pertanyaan Pribadi Dan Perasaan\",\"sessionCreatedAt\":\"2026-03-13T05:42:16.130Z\",\"updatedAt\":\"2026-03-13T05:42:30.892Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773380549428-qtml67\",\"userTimestamp\":\"2026-03-13T05:42:29.428Z\",\"userMessage\":\"sayangg\"}",
+        "response": "{\"assistantMessageId\":\"message-1773380550892-dmdggn\",\"assistantTimestamp\":\"2026-03-13T05:42:30.892Z\",\"assistantMessage\":\"Oh, halo! 😊 Kamu baik-baik saja? Apa yang sedang kamu pikirkan? 😉\",\"preview\":\"Oh, halo! 😊 Kamu baik-baik saja? Apa yang sedang ...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T05:42:30.892Z\"}",
+        "created_at": "2026-03-13T05:42:29.000Z"
       },
       {
-        "id": 561,
+        "id": 8389,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359752826-tl9ney\",\"modelId\":\"inori\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T23:55:52.826Z\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\",\"userMessageId\":\"message-1773360881802-gsbnkm\",\"userTimestamp\":\"2026-03-13T00:14:41.802Z\",\"userMessage\":\"Halo.\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-13T00:14:41.802Z\",\"assistantMessage\":\"\",\"preview\":\"Halo.\",\"updatedAt\":\"2026-03-13T00:14:41.802Z\"}",
-        "created_at": "2026-03-13T00:14:41.000Z"
+        "message": "{\"sessionId\":\"session-1773379644561-31hebx\",\"modelId\":\"inori\",\"title\":\"Kabar Dan Keadaan Pribadi\",\"sessionCreatedAt\":\"2026-03-13T05:27:24.561Z\",\"updatedAt\":\"2026-03-13T05:27:38.262Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773379649629-tsheij\",\"userTimestamp\":\"2026-03-13T05:27:29.629Z\",\"userMessage\":\"sayang lagi apa \"}",
+        "response": "{\"assistantMessageId\":\"message-1773379651001-pezph6\",\"assistantTimestamp\":\"2026-03-13T05:27:31.001Z\",\"assistantMessage\":\"Halo. Ada yang bisa saya bantu?\",\"preview\":\"Kamu merasa sedih? Apa yang terjadi?\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T05:27:38.262Z\"}",
+        "created_at": "2026-03-13T05:27:29.000Z"
       },
       {
-        "id": 562,
+        "id": 8390,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359544664-zi651n\",\"modelId\":\"furina\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:52:24.664Z\",\"updatedAt\":\"2026-03-12T23:52:26.969Z\",\"userMessageId\":\"message-1773359546969-lsdkme\",\"userTimestamp\":\"2026-03-12T23:52:26.969Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:52:26.969Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:52:26.969Z\"}",
-        "created_at": "2026-03-12T23:52:26.000Z"
+        "message": "{\"sessionId\":\"session-1773379644561-31hebx\",\"modelId\":\"inori\",\"title\":\"Kabar Dan Keadaan Pribadi\",\"sessionCreatedAt\":\"2026-03-13T05:27:24.561Z\",\"updatedAt\":\"2026-03-13T05:27:38.262Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773379657084-6qj2h2\",\"userTimestamp\":\"2026-03-13T05:27:37.084Z\",\"userMessage\":\"sayangg\"}",
+        "response": "{\"assistantMessageId\":\"message-1773379658262-yihbqz\",\"assistantTimestamp\":\"2026-03-13T05:27:38.262Z\",\"assistantMessage\":\"Kamu merasa sedih? Apa yang terjadi?\",\"preview\":\"Kamu merasa sedih? Apa yang terjadi?\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T05:27:38.262Z\"}",
+        "created_at": "2026-03-13T05:27:37.000Z"
       },
       {
-        "id": 563,
+        "id": 8391,
         "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359151912-pwkgll\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:45:51.912Z\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\",\"userMessageId\":\"message-1773359211143-scjpx8\",\"userTimestamp\":\"2026-03-12T23:46:51.143Z\",\"userMessage\":\"halo\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:47:13.734Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\"}",
-        "created_at": "2026-03-12T23:46:51.000Z"
-      },
+        "message": "{\"sessionId\":\"session-1773379623828-r7dqkb\",\"modelId\":\"lanna\",\"title\":\"Bicara Tentang Kesedihan\",\"sessionCreatedAt\":\"2026-03-13T05:27:03.828Z\",\"updatedAt\":\"2026-03-13T05:27:14.924Z\",\"pinnedAt\":null,\"userMessageId\":\"message-1773379632906-vpx2k9\",\"userTimestamp\":\"2026-03-13T05:27:12.906Z\",\"userMessage\":\"aku sedih aku di kata katain\"}",
+        "response": "{\"assistantMessageId\":\"message-1773379634924-0t2hgp\",\"assistantTimestamp\":\"2026-03-13T05:27:14.924Z\",\"assistantMessage\":\"Aduh, sedih ya? 🥺 Jangan khawatir, Lanna di sini! Cerita dong, kenapa kamu sedih? Mungkin aku bisa bantu. 😊\",\"preview\":\"Aduh, sedih ya? 🥺 Jangan khawatir, Lanna di sini!...\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-13T05:27:14.924Z\"}",
+        "created_at": "2026-03-13T05:27:12.000Z"
+      }
+    ],
+    "6": [],
+    "7": [],
+    "8": [],
+    "99999": [
       {
-        "id": 564,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359151912-pwkgll\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:45:51.912Z\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\",\"userMessageId\":\"message-1773359227062-tsdc25\",\"userTimestamp\":\"2026-03-12T23:47:07.062Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:47:13.734Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\"}",
-        "created_at": "2026-03-12T23:47:07.000Z"
-      },
-      {
-        "id": 565,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773359151912-pwkgll\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:45:51.912Z\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\",\"userMessageId\":\"message-1773359233734-6fkkcy\",\"userTimestamp\":\"2026-03-12T23:47:13.734Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:47:13.734Z\",\"assistantMessage\":\"\",\"preview\":\"hi\",\"updatedAt\":\"2026-03-12T23:47:13.734Z\"}",
-        "created_at": "2026-03-12T23:47:13.000Z"
-      },
-      {
-        "id": 566,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773358956507-ymq6sj\",\"modelId\":\"inori\",\"title\":\"Hallo\",\"sessionCreatedAt\":\"2026-03-12T23:42:36.507Z\",\"updatedAt\":\"2026-03-12T23:42:39.398Z\",\"userMessageId\":\"message-1773358959398-b4vucd\",\"userTimestamp\":\"2026-03-12T23:42:39.398Z\",\"userMessage\":\"hallo\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:42:39.398Z\",\"assistantMessage\":\"\",\"preview\":\"hallo\",\"updatedAt\":\"2026-03-12T23:42:39.398Z\"}",
-        "created_at": "2026-03-12T23:42:39.000Z"
-      },
-      {
-        "id": 567,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773358914135-pgfv2u\",\"modelId\":\"lanna\",\"title\":\"Hllo\",\"sessionCreatedAt\":\"2026-03-12T23:41:54.135Z\",\"updatedAt\":\"2026-03-12T23:42:01.957Z\",\"userMessageId\":\"message-1773358921957-msq849\",\"userTimestamp\":\"2026-03-12T23:42:01.957Z\",\"userMessage\":\"hllo\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:42:01.957Z\",\"assistantMessage\":\"\",\"preview\":\"hllo\",\"updatedAt\":\"2026-03-12T23:42:01.957Z\"}",
-        "created_at": "2026-03-12T23:42:01.000Z"
-      },
-      {
-        "id": 568,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773358619510-qkwg9h\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T23:36:59.510Z\",\"updatedAt\":\"2026-03-12T23:40:47.205Z\",\"userMessageId\":\"message-1773358843340-bykrf3\",\"userTimestamp\":\"2026-03-12T23:40:43.340Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":\"message-1773358847205-1hjzjm\",\"assistantTimestamp\":\"2026-03-12T23:40:47.205Z\",\"assistantMessage\":\"Hihi! Halo juga! ✨\\n\\nSenang banget deh bisa disapa sama kamu hari ini. Aku Lanna! Kamu kelihatannya lagi semangat ya? Ada cerita seru apa nih hari ini, atau ada yang bisa Lanna bantu? 😊 Lumayan lho, ngobrol bareng biar makin akrab! Yuk, yuk! 🌸🌻\",\"preview\":\"Hihi! Halo juga! ✨\\n\\nSenang banget deh bisa disapa ...\",\"updatedAt\":\"2026-03-12T23:40:47.205Z\"}",
-        "created_at": "2026-03-12T23:40:43.000Z"
-      },
-      {
-        "id": 569,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773358164175-vp052a\",\"modelId\":\"furina\",\"title\":\"Haii\",\"sessionCreatedAt\":\"2026-03-12T23:29:24.175Z\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\",\"userMessageId\":\"message-1773358189259-yss090\",\"userTimestamp\":\"2026-03-12T23:29:49.259Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":\"message-1773358196164-nltwwr\",\"assistantTimestamp\":\"2026-03-12T23:29:56.164Z\",\"assistantMessage\":\"Oh?\\n\\nSebuah kekeh yang ringan. Apa gerangan yang memercikkan riak kegembiraan di dalam dirimu itu? Ceritakanlah, jika kau berkenan. Aku selalu tertarik pada melodi hati yang tak terduga.\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\"}",
-        "created_at": "2026-03-12T23:29:49.000Z"
-      },
-      {
-        "id": 570,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773358164175-vp052a\",\"modelId\":\"furina\",\"title\":\"Haii\",\"sessionCreatedAt\":\"2026-03-12T23:29:24.175Z\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\",\"userMessageId\":\"message-1773358548609-ixyggb\",\"userTimestamp\":\"2026-03-12T23:35:48.609Z\",\"userMessage\":\"haii\"}",
-        "response": "{\"assistantMessageId\":\"message-1773358550600-t2adrw\",\"assistantTimestamp\":\"2026-03-12T23:35:50.600Z\",\"assistantMessage\":\"*Senyumannya merekah, matanya berbinar penuh rasa ingin tahu.*\\n\\nHmm, \\\"haiihaii\\\"? Sebuah sapaan yang... unik. Seolah ada tarian kecil di balik kata-kata itu. Apa yang membuatmu merasa begitu bersemangat hingga kata-kata pun ikut menari?\\n\\n*Ia memiringkan kepalanya sedikit, gestur yang penuh pesona dan misteri.*\\n\\nAdakah cerita yang ingin kau bagi? Atau mungkin hanya sekadar luapan kegembiraan yang tak tertahan? Katakan padaku, wahai penari kata-kata.\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\"}",
-        "created_at": "2026-03-12T23:35:48.000Z"
-      },
-      {
-        "id": 571,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773358164175-vp052a\",\"modelId\":\"furina\",\"title\":\"Haii\",\"sessionCreatedAt\":\"2026-03-12T23:29:24.175Z\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\",\"userMessageId\":\"message-1773358555941-netfue\",\"userTimestamp\":\"2026-03-12T23:35:55.941Z\",\"userMessage\":\"[Membagikan file: miku.jpg]\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T23:35:55.941Z\",\"assistantMessage\":\"\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T23:35:55.941Z\"}",
-        "created_at": "2026-03-12T23:35:55.000Z"
-      },
-      {
-        "id": 572,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773352494608-6v155r\",\"modelId\":\"lanna\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T21:54:54.608Z\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\",\"userMessageId\":\"message-1773352564408-6y8b4l\",\"userTimestamp\":\"2026-03-12T21:56:04.408Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":\"message-1773352567681-je9hyp\",\"assistantTimestamp\":\"2026-03-12T21:56:07.681Z\",\"assistantMessage\":\"Halo! Hihi juga! 👋✨ \\n\\nSenang banget deh disapa pagi-pagi begini (atau kapan pun kamu berada!). Ada yang bisa Lanna bantu hari ini? Atau mungkin kamu lagi mau cerita sesuatu yang seru? Lanna siap dengerin dengan senyuman lebar! 😊🌸\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\"}",
-        "created_at": "2026-03-12T21:56:04.000Z"
-      },
-      {
-        "id": 573,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773352494608-6v155r\",\"modelId\":\"lanna\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T21:54:54.608Z\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\",\"userMessageId\":\"message-1773352596305-cmfwo3\",\"userTimestamp\":\"2026-03-12T21:56:36.305Z\",\"userMessage\":\"Halo.\"}",
-        "response": "{\"assistantMessageId\":\"message-1773352599399-wx98xz\",\"assistantTimestamp\":\"2026-03-12T21:56:39.399Z\",\"assistantMessage\":\"Halo, halo juga! Wah, disapanya dua kali nih, jadi makin semangat deh Lanna-nya! Hehe. 😊✨\\n\\nApa kabar hari ini? Ada yang bisa Lanna bantu, atau mungkin kamu cuma mau ngobrol santai aja? Lanna siap menemani dengan senang hati! 🌸💖\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\"}",
-        "created_at": "2026-03-12T21:56:36.000Z"
-      },
-      {
-        "id": 574,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773352494608-6v155r\",\"modelId\":\"lanna\",\"title\":\"Membagikan File Miku Jpg\",\"sessionCreatedAt\":\"2026-03-12T21:54:54.608Z\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\",\"userMessageId\":\"message-1773352601634-6qzmer\",\"userTimestamp\":\"2026-03-12T21:56:41.634Z\",\"userMessage\":\"[Membagikan file: miku.jpg]\"}",
-        "response": "{\"assistantMessageId\":null,\"assistantTimestamp\":\"2026-03-12T21:56:41.634Z\",\"assistantMessage\":\"\",\"preview\":\"[Membagikan file: miku.jpg]\",\"updatedAt\":\"2026-03-12T21:56:41.634Z\"}",
-        "created_at": "2026-03-12T21:56:41.000Z"
-      },
-      {
-        "id": 575,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773349392119-odvru2\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T21:03:12.119Z\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\",\"userMessageId\":\"message-1773349422101-s7d1i6\",\"userTimestamp\":\"2026-03-12T21:03:42.101Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":\"message-1773349427116-2styza\",\"assistantTimestamp\":\"2026-03-12T21:03:47.116Z\",\"assistantMessage\":\"Halo halo! *lambai tangan dengan semangat* \\n\\nWah, sapaan yang ceria sekali! Aku Lanna, senang banget bisa ketemu kamu hari ini! ✨ Gimana kabarmu? Ada yang bisa Lanna bantu supaya harimu makin berwarna, atau kamu cuma mau ngobrol seru sama aku? Hehe! 🌸💕\",\"preview\":\"Hihihi! Aduh, ketawanya nular deh, aku jadi ikutan...\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\"}",
-        "created_at": "2026-03-12T21:03:42.000Z"
-      },
-      {
-        "id": 576,
-        "user_id": 3,
-        "message": "{\"sessionId\":\"session-1773349392119-odvru2\",\"modelId\":\"lanna\",\"title\":\"Chat Baru\",\"sessionCreatedAt\":\"2026-03-12T21:03:12.119Z\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\",\"userMessageId\":\"message-1773352489828-36ig8h\",\"userTimestamp\":\"2026-03-12T21:54:49.828Z\",\"userMessage\":\"hi\"}",
-        "response": "{\"assistantMessageId\":\"message-1773352494364-f7asly\",\"assistantTimestamp\":\"2026-03-12T21:54:54.364Z\",\"assistantMessage\":\"Hihihi! Aduh, ketawanya nular deh, aku jadi ikutan senyum-senyum sendiri nih! 😄✨\\n\\nAda cerita seru apa nih hari ini sampai kamu tertawa manis gitu? Atau kamu lagi pengen ditemenin ngobrol santai aja? Lanna siap dengerin kok! Pokoknya hari ini kita harus *happy* terus ya! 🌈💖\",\"preview\":\"Hihihi! Aduh, ketawanya nular deh, aku jadi ikutan...\",\"updatedAt\":\"2026-03-12T21:54:54.364Z\"}",
-        "created_at": "2026-03-12T21:54:49.000Z"
+        "id": 588,
+        "user_id": 99999,
+        "message": "{\"sessionId\":\"session-test-1\",\"modelId\":\"furina\",\"title\":\"Tes Sync\",\"sessionCreatedAt\":\"2026-03-14T05:03:23.517Z\",\"updatedAt\":\"2026-03-14T05:03:23.518Z\",\"pinnedAt\":null,\"userMessageId\":\"msg-1\",\"userTimestamp\":\"2026-03-14T05:03:23.518Z\",\"userMessage\":\"buat gambar\"}",
+        "response": "{\"assistantMessageId\":\"msg-2\",\"assistantTimestamp\":\"2026-03-14T05:03:23.518Z\",\"assistantMessage\":\"Gambar berhasil dibuat.\",\"assistantAttachment\":{\"kind\":\"image\",\"name\":\"generated-test.jpg\",\"mimeType\":\"image/jpeg\",\"size\":12345},\"preview\":\"tes\",\"pinnedAt\":null,\"updatedAt\":\"2026-03-14T05:03:23.518Z\"}",
+        "created_at": "2026-03-14T05:03:23.000Z"
       }
     ]
   }

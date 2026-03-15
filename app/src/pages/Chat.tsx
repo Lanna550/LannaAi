@@ -35,6 +35,8 @@ import {
   Meh,
   Volume2,
   VolumeX,
+  Play,
+  Pause,
 } from 'lucide-react';
 import { useChat, CHAT_MODELS } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
@@ -76,6 +78,9 @@ type AssistantResponseVariantState = {
   selectedIndex: number;
   compareMode: boolean;
 };
+
+const VOICEVOX_BASE_URL = 'http://localhost:50021';
+const VOICEVOX_SPEAKER_ID = 1;
 
 function cloneAttachment(
   attachment?: ChatAttachment | null,
@@ -256,6 +261,8 @@ export function Chat({ onNavigate }: ChatProps) {
   >({});
   const [isSpeakingResponse, setIsSpeakingResponse] = useState(false);
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
+  const [isPlayingVoicePreview, setIsPlayingVoicePreview] = useState(false);
+  const [voiceReplayWaveShift, setVoiceReplayWaveShift] = useState(0);
   const attachmentMenuRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -278,7 +285,12 @@ export function Chat({ onNavigate }: ChatProps) {
   const [, forceResizeTick] = useState(0);
   const lastAutoScrollMessageIdRef = useRef<string | null>(null);
   const prevKeyboardOffsetRef = useRef(0);
-  const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const voicevoxAudioRef = useRef<HTMLAudioElement | null>(null);
+  const voicevoxAudioUrlRef = useRef<string | null>(null);
+  const voicevoxAbortControllerRef = useRef<AbortController | null>(null);
+  const voicevoxSessionIdRef = useRef(0);
+  const voicePreviewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const voicePreviewAudioUrlRef = useRef<string | null>(null);
   const previousSpeechModelIdRef = useRef(currentModel.id);
   const hasUserMessages = messages.some((message) => message.role === 'user');
   const latestAssistantResponse = useMemo(
@@ -365,98 +377,192 @@ export function Chat({ onNavigate }: ChatProps) {
       .replace(/`([^`]+)`/g, '$1')
       .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '$1')
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
-      .replace(/[*_~>#-]+/g, ' ')
+      .replace(/(?:https?:\/\/|www\.)\S+/gi, ' ')
+      .replace(/^\s*[-*\u2022]\s+/gm, ', ')
+      .replace(/\r?\n+/g, '. ')
+      .replace(/\s+-\s+/g, ' ')
+      .replace(/[*_~`>#|]+/g, ' ')
+      .replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, ' ')
+      .replace(/([,.!?;:]){2,}/g, '$1')
+      .replace(/\s+([,.!?;:])/g, '$1')
       .replace(/\s+/g, ' ')
       .trim();
   }, []);
 
-  const isLikelyFemaleVoice = useCallback((voice: SpeechSynthesisVoice) => {
-    const normalizedName = String(voice?.name || '').toLowerCase();
-    return /female|woman|girl|samantha|victoria|zira|aria|nova|alloy|jenny|amy|katya|naomi|siri/.test(
-      normalizedName,
-    );
+  const cleanupVoicevoxAudio = useCallback(() => {
+    const activeAudio = voicevoxAudioRef.current;
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio.onended = null;
+      activeAudio.onerror = null;
+      activeAudio.src = '';
+      voicevoxAudioRef.current = null;
+    }
+
+    const activeAudioUrl = voicevoxAudioUrlRef.current;
+    if (activeAudioUrl) {
+      URL.revokeObjectURL(activeAudioUrl);
+      voicevoxAudioUrlRef.current = null;
+    }
   }, []);
-
-  const getSpeechProfileByModel = useCallback((modelId: string) => {
-    if (modelId === 'furina') {
-      return {
-        lang: 'ja-JP',
-        rate: 1.08,
-        pitch: 1.35,
-      };
-    }
-
-    if (modelId === 'inori') {
-      return {
-        lang: 'ja-JP',
-        rate: 1.12,
-        pitch: 1.45,
-      };
-    }
-
-    return {
-      lang: 'id-ID',
-      rate: 1,
-      pitch: 1.03,
-    };
-  }, []);
-
-  const pickSpeechVoiceForModel = useCallback((modelId: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      return undefined;
-    }
-
-    const voices = window.speechSynthesis.getVoices();
-    if (!Array.isArray(voices) || voices.length === 0) {
-      return undefined;
-    }
-
-    const byLangPrefix = (prefix: string) =>
-      voices.filter((voice) => String(voice.lang || '').toLowerCase().startsWith(prefix));
-    const pickFemale = (list: SpeechSynthesisVoice[]) => list.find(isLikelyFemaleVoice);
-
-    if (modelId === 'furina' || modelId === 'inori') {
-      const japaneseVoices = byLangPrefix('ja');
-      const indonesianVoices = byLangPrefix('id');
-      const englishVoices = byLangPrefix('en');
-
-      return (
-        pickFemale(japaneseVoices) ||
-        japaneseVoices[0] ||
-        pickFemale(indonesianVoices) ||
-        pickFemale(englishVoices) ||
-        indonesianVoices[0] ||
-        englishVoices[0] ||
-        voices[0]
-      );
-    }
-
-    const indonesianVoices = byLangPrefix('id');
-    const englishVoices = byLangPrefix('en');
-    return (
-      pickFemale(indonesianVoices) ||
-      indonesianVoices[0] ||
-      pickFemale(englishVoices) ||
-      englishVoices[0] ||
-      voices[0]
-    );
-  }, [isLikelyFemaleVoice]);
 
   const stopSpeakingResponse = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    voicevoxSessionIdRef.current += 1;
+    if (voicevoxAbortControllerRef.current) {
+      voicevoxAbortControllerRef.current.abort();
+      voicevoxAbortControllerRef.current = null;
     }
-    speechUtteranceRef.current = null;
+    cleanupVoicevoxAudio();
     setIsSpeakingResponse(false);
     setSpeakingMessageId(null);
-  }, []);
+  }, [cleanupVoicevoxAudio]);
 
-  const handleSpeakLatestResponse = useCallback(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      toast.error('Browser ini belum mendukung text-to-speech.');
-      return;
-    }
+  const speakWithVoicevox = useCallback(
+    async (text: string) => {
+      const speechText = toSpeechText(text);
+      if (!speechText) {
+        toast.info('Teks respons kosong, tidak ada yang dibacakan.');
+        setIsSpeakingResponse(false);
+        setSpeakingMessageId(null);
+        return;
+      }
 
+      const sessionId = voicevoxSessionIdRef.current + 1;
+      voicevoxSessionIdRef.current = sessionId;
+      if (voicevoxAbortControllerRef.current) {
+        voicevoxAbortControllerRef.current.abort();
+      }
+      cleanupVoicevoxAudio();
+      setIsSpeakingResponse(false);
+
+      const abortController = new AbortController();
+      voicevoxAbortControllerRef.current = abortController;
+
+      try {
+        // Step 1: Buat audio query dari teks AI.
+        const queryParams = new URLSearchParams({
+          text: speechText,
+          speaker: String(VOICEVOX_SPEAKER_ID),
+        });
+        const audioQueryResponse = await fetch(
+          `${VOICEVOX_BASE_URL}/audio_query?${queryParams.toString()}`,
+          {
+            method: 'POST',
+            signal: abortController.signal,
+          },
+        );
+
+        if (!audioQueryResponse.ok) {
+          throw new Error(`VOICEVOX audio_query gagal (${audioQueryResponse.status})`);
+        }
+
+        const audioQuery = await audioQueryResponse.json();
+
+        // Step 2: Sintesis audio dari hasil query.
+        const synthesisResponse = await fetch(
+          `${VOICEVOX_BASE_URL}/synthesis?speaker=${VOICEVOX_SPEAKER_ID}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(audioQuery),
+            signal: abortController.signal,
+          },
+        );
+
+        if (!synthesisResponse.ok) {
+          throw new Error(`VOICEVOX synthesis gagal (${synthesisResponse.status})`);
+        }
+
+        if (voicevoxSessionIdRef.current !== sessionId) {
+          return;
+        }
+
+        const audioBlob = await synthesisResponse.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        voicevoxAudioUrlRef.current = audioUrl;
+
+        // Step 3: Putar blob audio di browser dengan HTML5 Audio.
+        const audio = new Audio(audioUrl);
+        voicevoxAudioRef.current = audio;
+
+        const finalize = () => {
+          if (voicevoxSessionIdRef.current !== sessionId) {
+            return;
+          }
+
+          setIsSpeakingResponse(false);
+          setSpeakingMessageId(null);
+          if (voicevoxAudioRef.current === audio) {
+            voicevoxAudioRef.current = null;
+          }
+          if (voicevoxAudioUrlRef.current === audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+            voicevoxAudioUrlRef.current = null;
+          }
+          if (voicevoxAbortControllerRef.current === abortController) {
+            voicevoxAbortControllerRef.current = null;
+          }
+        };
+
+        audio.onended = finalize;
+        audio.onerror = () => {
+          finalize();
+          toast.error('Audio VOICEVOX gagal diputar.');
+        };
+
+        await audio.play();
+        if (voicevoxSessionIdRef.current !== sessionId) {
+          audio.pause();
+          return;
+        }
+
+        setIsSpeakingResponse(true);
+        if (voicevoxAbortControllerRef.current === abortController) {
+          voicevoxAbortControllerRef.current = null;
+        }
+      } catch (error) {
+        if (voicevoxAbortControllerRef.current === abortController) {
+          voicevoxAbortControllerRef.current = null;
+        }
+
+        const errorName =
+          error && typeof error === 'object' && 'name' in error
+            ? String((error as { name?: string }).name || '')
+            : '';
+        if (errorName === 'AbortError') {
+          return;
+        }
+
+        setIsSpeakingResponse(false);
+        setSpeakingMessageId(null);
+
+        if (error instanceof TypeError) {
+          toast.error('VOICEVOX tidak bisa dihubungi. Pastikan server berjalan di http://localhost:50021.');
+          return;
+        }
+
+        toast.error('Gagal menghasilkan suara dari VOICEVOX.');
+      }
+    },
+    [cleanupVoicevoxAudio, toSpeechText],
+  );
+
+  const handleSpeakMessage = useCallback(
+    async (messageId: string, content: string) => {
+      if (isSpeakingResponse && speakingMessageId === messageId) {
+        stopSpeakingResponse();
+        return;
+      }
+
+      setSpeakingMessageId(messageId);
+      await speakWithVoicevox(content);
+    },
+    [isSpeakingResponse, speakWithVoicevox, speakingMessageId, stopSpeakingResponse],
+  );
+
+  const handleSpeakLatestResponse = useCallback(async () => {
     if (isSpeakingResponse) {
       stopSpeakingResponse();
       return;
@@ -468,63 +574,12 @@ export function Chat({ onNavigate }: ChatProps) {
       return;
     }
 
-    const speechText = toSpeechText(targetMessage.content);
-    if (!speechText) {
-      toast.info('Teks respons kosong, tidak ada yang dibacakan.');
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(speechText);
-    const speechProfile = getSpeechProfileByModel(currentModel.id);
-    utterance.lang = speechProfile.lang;
-    utterance.rate = speechProfile.rate;
-    utterance.pitch = speechProfile.pitch;
-    utterance.volume = 1;
-
-    const preferredVoice = pickSpeechVoiceForModel(currentModel.id);
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-      utterance.lang = preferredVoice.lang || speechProfile.lang;
-    }
-
-    utterance.onstart = () => {
-      setIsSpeakingResponse(true);
-      setSpeakingMessageId(targetMessage.id);
-    };
-    utterance.onend = () => {
-      speechUtteranceRef.current = null;
-      setIsSpeakingResponse(false);
-      setSpeakingMessageId(null);
-    };
-    utterance.onerror = (event) => {
-      speechUtteranceRef.current = null;
-      setIsSpeakingResponse(false);
-      setSpeakingMessageId(null);
-
-      const errorCode = String(event.error || '').toLowerCase();
-      if (
-        errorCode === 'interrupted' ||
-        errorCode === 'canceled' ||
-        errorCode === 'cancelled' ||
-        errorCode === 'aborted'
-      ) {
-        return;
-      }
-
-      toast.error('Gagal membacakan respons model.');
-    };
-
-    speechUtteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    await handleSpeakMessage(targetMessage.id, targetMessage.content);
   }, [
-    currentModel.id,
-    getSpeechProfileByModel,
+    handleSpeakMessage,
     isSpeakingResponse,
     latestAssistantResponse,
-    pickSpeechVoiceForModel,
     stopSpeakingResponse,
-    toSpeechText,
   ]);
 
   const formatAssistantErrorReply = useCallback(
@@ -546,8 +601,19 @@ export function Chat({ onNavigate }: ChatProps) {
             ? 'Aduh, maaf ya.'
             : 'Maaf ya.';
 
-      if (status === 429 || code?.toLowerCase().includes('rate')) {
-        return `${prefix} Sepertinya server lagi kena batas penggunaan (rate limit).${retryHint} Kalau masih terjadi, coba tunggu sebentar, ringkas pertanyaan, atau kirim ulang.`;
+      if (code === 'FURINA_NON_IMAGE_ATTACHMENT') {
+        return `${prefix} Sparkle hanya menerima lampiran gambar. Hapus lampiran audio/dokumen lalu kirim ulang prompt gambarnya.`;
+      }
+
+      if (
+        status === 429 ||
+        code === 'GEMINI_IMAGE_QUOTA_ZERO_LIMIT' ||
+        code === 'GEMINI_QUOTA_EXCEEDED' ||
+        code?.toLowerCase().includes('rate') ||
+        code?.toLowerCase().includes('quota') ||
+        code?.toLowerCase().includes('limit')
+      ) {
+        return `${prefix} Lagi kena limit. Coba lagi sebentar ya.${retryHint}`;
       }
 
       if (status === 413) {
@@ -600,23 +666,17 @@ export function Chat({ onNavigate }: ChatProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      return;
-    }
-
-    // Trigger preload daftar voice agar pemilihan voice lebih stabil.
-    window.speechSynthesis.getVoices();
-
-    return () => {
-      if (speechUtteranceRef.current) {
-        window.speechSynthesis.cancel();
-        speechUtteranceRef.current = null;
+  useEffect(
+    () => () => {
+      voicevoxSessionIdRef.current += 1;
+      if (voicevoxAbortControllerRef.current) {
+        voicevoxAbortControllerRef.current.abort();
+        voicevoxAbortControllerRef.current = null;
       }
-      setIsSpeakingResponse(false);
-      setSpeakingMessageId(null);
-    };
-  }, []);
+      cleanupVoicevoxAudio();
+    },
+    [cleanupVoicevoxAudio],
+  );
 
   useEffect(() => {
     const previousModelId = previousSpeechModelIdRef.current;
@@ -671,7 +731,92 @@ export function Chat({ onNavigate }: ChatProps) {
     setVoiceWaveform(Array.from({ length: 42 }, () => 0));
   }, []);
 
+  const stopVoicePreview = useCallback(() => {
+    const audio = voicePreviewAudioRef.current;
+    if (audio) {
+      audio.onended = null;
+      audio.onerror = null;
+      audio.onpause = null;
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    voicePreviewAudioRef.current = null;
+    voicePreviewAudioUrlRef.current = null;
+    setIsPlayingVoicePreview(false);
+  }, []);
+
+  const handleToggleVoicePreview = useCallback(async () => {
+    if (isRecording) {
+      toast.info('Tunggu sampai rekaman selesai.');
+      return;
+    }
+
+    if (!pendingAttachment || pendingAttachment.kind !== 'audio' || !pendingAttachment.previewUrl) {
+      toast.error('Audio rekaman belum tersedia.');
+      return;
+    }
+
+    const activeAudio = voicePreviewAudioRef.current;
+    const activeAudioUrl = voicePreviewAudioUrlRef.current;
+    const previewUrl = pendingAttachment.previewUrl;
+    const isSameAudio = Boolean(activeAudio && activeAudioUrl && activeAudioUrl === previewUrl);
+
+    if (isSameAudio && activeAudio) {
+      if (activeAudio.paused || activeAudio.ended) {
+        try {
+          await activeAudio.play();
+          setIsPlayingVoicePreview(true);
+        } catch (error) {
+          console.error(error);
+          stopVoicePreview();
+          toast.error('Gagal memutar audio rekaman.');
+        }
+        return;
+      }
+
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      setIsPlayingVoicePreview(false);
+      return;
+    }
+
+    stopVoicePreview();
+    const audio = new Audio(previewUrl);
+    voicePreviewAudioRef.current = audio;
+    voicePreviewAudioUrlRef.current = previewUrl;
+    audio.preload = 'auto';
+
+    audio.onended = () => {
+      if (voicePreviewAudioRef.current === audio) {
+        setIsPlayingVoicePreview(false);
+      }
+    };
+    audio.onpause = () => {
+      if (voicePreviewAudioRef.current === audio && !audio.ended) {
+        setIsPlayingVoicePreview(false);
+      }
+    };
+    audio.onerror = () => {
+      if (voicePreviewAudioRef.current === audio) {
+        setIsPlayingVoicePreview(false);
+      }
+      toast.error('Gagal memutar audio rekaman.');
+    };
+
+    try {
+      await audio.play();
+      if (voicePreviewAudioRef.current === audio) {
+        setIsPlayingVoicePreview(true);
+      }
+    } catch (error) {
+      console.error(error);
+      stopVoicePreview();
+      toast.error('Gagal memutar audio rekaman.');
+    }
+  }, [isRecording, pendingAttachment, stopVoicePreview]);
+
   const clearVoiceDraft = useCallback(() => {
+    stopVoicePreview();
     resetVoiceDraft();
     setPendingAttachment((prev) => {
       if (prev?.previewUrl?.startsWith('blob:')) {
@@ -679,21 +824,25 @@ export function Chat({ onNavigate }: ChatProps) {
       }
       return null;
     });
-  }, [resetVoiceDraft]);
+  }, [resetVoiceDraft, stopVoicePreview]);
 
   const renderVoiceWaveform = (values: number[], options: { active?: boolean } = {}) => {
     const active = Boolean(options.active);
     const barColor = active ? 'bg-blue-500/70 dark:bg-cyan-300/70' : 'bg-gray-500/60 dark:bg-gray-300/60';
+    const shiftedValues =
+      voiceReplayWaveShift > 0 && values.length > 0
+        ? values.map((_, index) => values[(index + voiceReplayWaveShift) % values.length] ?? 0)
+        : values;
 
     return (
-      <div className={`flex items-center justify-center gap-[3px] h-10 ${active ? 'opacity-100' : 'opacity-95'}`}>
-        {values.map((value, index) => {
+      <div className={`flex items-center justify-start gap-[2px] h-11 ${active ? 'opacity-100' : 'opacity-95'}`}>
+        {shiftedValues.map((value, index) => {
           const normalized = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
-          const height = Math.round(6 + normalized * 26);
+          const height = Math.round(8 + normalized * 28);
           return (
             <div
               key={index}
-              className={`w-[3px] rounded-full ${barColor} transition-[height] duration-150 ease-out`}
+              className={`w-[3.5px] rounded-full ${barColor} transition-[height] duration-150 ease-out`}
               style={{ height }}
             />
           );
@@ -824,8 +973,9 @@ export function Chat({ onNavigate }: ChatProps) {
       mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
       mediaStreamRef.current = null;
       mediaRecorderRef.current = null;
+      stopVoicePreview();
     };
-  }, []);
+  }, [stopVoicePreview]);
 
   useEffect(() => {
     const vv = window.visualViewport;
@@ -1053,6 +1203,7 @@ export function Chat({ onNavigate }: ChatProps) {
 
   const clearPendingAttachment = useCallback(
     (eventOrOptions?: React.SyntheticEvent | { revoke?: boolean }) => {
+      stopVoicePreview();
       const revoke =
         eventOrOptions &&
         typeof eventOrOptions === 'object' &&
@@ -1066,8 +1217,51 @@ export function Chat({ onNavigate }: ChatProps) {
         return null;
       });
     },
-    [],
+    [stopVoicePreview],
   );
+
+  useEffect(() => {
+    if (!pendingAttachment || pendingAttachment.kind !== 'audio') {
+      stopVoicePreview();
+      return;
+    }
+
+    if (
+      voicePreviewAudioUrlRef.current &&
+      pendingAttachment.previewUrl !== voicePreviewAudioUrlRef.current
+    ) {
+      stopVoicePreview();
+    }
+  }, [pendingAttachment, stopVoicePreview]);
+
+  useEffect(() => {
+    if (!isPlayingVoicePreview) {
+      setVoiceReplayWaveShift(0);
+      return;
+    }
+
+    const timerId = window.setInterval(() => {
+      setVoiceReplayWaveShift((prev) => (prev + 1) % 42);
+    }, 85);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [isPlayingVoicePreview]);
+
+  useEffect(() => {
+    if (currentModel.id !== 'furina' || !pendingAttachment || pendingAttachment.kind === 'image') {
+      return;
+    }
+
+    if (pendingAttachment.kind === 'audio') {
+      clearVoiceDraft();
+    } else {
+      clearPendingAttachment();
+    }
+
+    toast.info('Sparkle hanya menerima lampiran gambar. Lampiran non-gambar dilepas otomatis.');
+  }, [clearPendingAttachment, clearVoiceDraft, currentModel.id, pendingAttachment]);
 
   const serializeHistoryForApi = useCallback(
     (history: ApiHistoryItem[]) =>
@@ -1216,7 +1410,7 @@ export function Chat({ onNavigate }: ChatProps) {
               '',
               'Jika user minta gambar:',
               '- Kamu bisa generate gambar dengan kualitas standar.',
-              '- Jika user butuh kualitas gambar paling bagus, sarankan gunakan model Furina.',
+              '- Jika user butuh kualitas gambar paling bagus, sarankan gunakan model Sparkle.',
             ]
           : []),
       ].join('\n');
@@ -1252,6 +1446,13 @@ export function Chat({ onNavigate }: ChatProps) {
       isImageCompanion: boolean;
       wantsImageGeneration: boolean;
     }) => {
+      if (isImageCompanion && attachmentToSend && attachmentToSend.kind !== 'image') {
+        throw new ChatApiError('Sparkle hanya menerima lampiran gambar.', {
+          status: 400,
+          code: 'FURINA_NON_IMAGE_ATTACHMENT',
+        });
+      }
+
       const canUseImageRoute =
         (isImageCompanion || (isEmotionalCompanion && wantsImageGeneration)) &&
         (!attachmentToSend || attachmentToSend.kind === 'image');
@@ -1262,7 +1463,7 @@ export function Chat({ onNavigate }: ChatProps) {
             historyForApi,
             systemInstruction,
             attachmentToSend ?? undefined,
-            isImageCompanion ? 'gemini-3.1-flash-image-preview' : 'gemini-2.5-flash-image',
+            isImageCompanion ? 'lan-image-worker' : 'gemini-2.5-flash-image',
           )
         : askGemini(
             promptForModel,
@@ -1355,11 +1556,6 @@ export function Chat({ onNavigate }: ChatProps) {
         return;
       }
 
-      const feedbackLabelMap: Record<AssistantFeedbackType, string> = {
-        positive: 'bagus',
-        neutral: 'biasa',
-        negative: 'jelek',
-      };
       const feedbackRatingMap: Record<AssistantFeedbackType, number> = {
         positive: 5,
         neutral: 3,
@@ -1379,7 +1575,7 @@ export function Chat({ onNavigate }: ChatProps) {
           ...prev,
           [messageId]: feedbackType,
         }));
-        toast.success(`Feedback ${feedbackLabelMap[feedbackType]} tersimpan.`);
+        toast.success('Feedback terkirim.');
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Gagal menyimpan feedback.';
         toast.error(message);
@@ -1971,7 +2167,7 @@ export function Chat({ onNavigate }: ChatProps) {
     setShowAttachmentMenu(false);
 
     if (currentModel.id === 'furina' && type === 'file') {
-      toast.info('Furina fokus untuk generate gambar. Gunakan lampiran gambar.');
+      toast.info('Sparkle fokus untuk generate gambar. Gunakan lampiran gambar.');
       return;
     }
 
@@ -2560,13 +2756,14 @@ export function Chat({ onNavigate }: ChatProps) {
           className="max-w-4xl mx-auto"
         >
           {(isRecording || pendingAttachment?.kind === 'audio') && (
-            <div className="mb-2 rounded-2xl bg-white/70 dark:bg-slate-800/60 px-3 py-2 ring-1 ring-black/5 dark:ring-white/10">
-              <div className="relative flex items-center justify-end">
+            <div className="mb-2 rounded-2xl bg-white/70 dark:bg-slate-800/60 px-3.5 py-2.5 ring-1 ring-black/5 dark:ring-white/10">
+              <div className="grid grid-cols-[44px_1fr_44px] items-center">
+                <div aria-hidden="true" className="w-11 h-11" />
                 <button
                   type="button"
                   onClick={handleViewVoiceText}
                   disabled={isRecording}
-                  className={`mx-auto text-sm font-semibold ${
+                  className={`justify-self-center text-base font-semibold leading-none ${
                     isRecording
                       ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                       : 'text-gray-800 dark:text-gray-100 hover:opacity-80'
@@ -2577,31 +2774,50 @@ export function Chat({ onNavigate }: ChatProps) {
                 </button>
 
                 {pendingAttachment?.kind === 'audio' && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        clearVoiceDraft();
-                        window.setTimeout(() => handleMicClick(), 0);
-                      }}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 text-gray-700 dark:text-gray-100"
-                      title="Rekam ulang"
-                    >
-                      Ulang
-                    </button>
+                  <div className="justify-self-end flex items-center">
                     <button
                       type="button"
                       onClick={clearVoiceDraft}
-                      className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                      className="p-2.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                       title="Hapus rekaman"
                     >
-                      <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                      <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </button>
                   </div>
                 )}
+                {pendingAttachment?.kind !== 'audio' && <div aria-hidden="true" className="w-11 h-11 justify-self-end" />}
               </div>
 
-              {renderVoiceWaveform(voiceWaveform, { active: isRecording })}
+              <div className="mt-0.5 grid grid-cols-[48px_1fr] items-center gap-1.5">
+                {pendingAttachment?.kind === 'audio' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void handleToggleVoicePreview();
+                    }}
+                    disabled={isRecording || !pendingAttachment.previewUrl}
+                    className={`h-11 w-11 rounded-full transition-colors shrink-0 flex items-center justify-center ${
+                      isRecording || !pendingAttachment.previewUrl
+                        ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                        : 'hover:bg-black/5 dark:hover:bg-white/10 text-gray-600 dark:text-gray-200'
+                    }`}
+                    title={isPlayingVoicePreview ? 'Stop dengarkan suara' : 'Dengarkan suara'}
+                    aria-label={isPlayingVoicePreview ? 'Stop dengarkan suara' : 'Dengarkan suara'}
+                    >
+                      {isPlayingVoicePreview ? (
+                        <Pause className="w-6 h-6" />
+                      ) : (
+                        <Play className="w-6 h-6" />
+                      )}
+                  </button>
+                )}
+                {pendingAttachment?.kind !== 'audio' && <div aria-hidden="true" className="h-11 w-11" />}
+                <div className="flex-1">
+                  {renderVoiceWaveform(voiceWaveform, {
+                    active: isRecording || isPlayingVoicePreview,
+                  })}
+                </div>
+              </div>
             </div>
           )}
 
@@ -2964,4 +3180,3 @@ export function Chat({ onNavigate }: ChatProps) {
     </div>
   );
 }
-

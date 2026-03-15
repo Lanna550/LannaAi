@@ -20,6 +20,7 @@ export function Register({ onNavigate }: RegisterProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,21 +42,28 @@ export function Register({ onNavigate }: RegisterProps) {
 
     setIsLoading(true);
 
-    const result = await register(username, email, password);
-    
-    if (result.success) {
-      setIsSuccess(true);
-      toast.success('Pendaftaran berhasil. Akun kamu sudah dibuat!');
-      setTimeout(() => {
-        onNavigate('profile');
-      }, 2000);
-    } else {
-      const errorMessage = result.error || 'Email already registered. Please use a different email.';
+    try {
+      const result = await register(username.trim(), email.trim(), password);
+
+      if (result.success) {
+        setWelcomeName(username.trim());
+        setIsSuccess(true);
+        toast.success('Pendaftaran berhasil. Akun kamu sudah dibuat!');
+        window.setTimeout(() => {
+          onNavigate('profile');
+        }, 2000);
+      } else {
+        const errorMessage = result.error || 'Email already registered. Please use a different email.';
+        setError(errorMessage);
+        toast.error(`Pendaftaran gagal. ${errorMessage}`);
+      }
+    } catch {
+      const errorMessage = 'Terjadi kendala saat mendaftar. Silakan coba lagi.';
       setError(errorMessage);
       toast.error(`Pendaftaran gagal. ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   if (isSuccess) {
@@ -74,7 +82,9 @@ export function Register({ onNavigate }: RegisterProps) {
           >
             <CheckCircle className="w-10 h-10 text-white" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome to Lanna!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Welcome, {welcomeName || 'Teman Baru'}!
+          </h1>
           <p className="text-gray-600 dark:text-gray-400">Your account has been created successfully. Redirecting...</p>
         </motion.div>
       </div>
