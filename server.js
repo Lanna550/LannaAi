@@ -2502,87 +2502,140 @@ async function requestTikTokDownloadInfo(sourceUrl, { hd = TIKTOK_DEFAULT_HD } =
   }
 
   const resolvedTikTokUrl = await resolveTikTokSourceUrl(String(sourceUrl).trim());
-  const encodedParams = new URLSearchParams();
-  encodedParams.set("url", resolvedTikTokUrl);
-  encodedParams.set("hd", hd ? "1" : "0");
+  const normalizedHd = hd ? "1" : "0";
+  const requestVariants = [
+    {
+      kind: "json",
+      contentType: "application/json",
+      body: JSON.stringify({
+        url: resolvedTikTokUrl,
+        hd: normalizedHd,
+      }),
+    },
+    {
+      kind: "form",
+      contentType: "application/x-www-form-urlencoded",
+      body: new URLSearchParams({
+        url: resolvedTikTokUrl,
+        hd: normalizedHd,
+      }).toString(),
+    },
+  ];
 
-  const abortController = new AbortController();
-  const timeoutId = setTimeout(() => abortController.abort(), TIKTOK_RAPIDAPI_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(TIKTOK_RAPIDAPI_URL, {
-      method: "POST",
-      headers: {
-        "x-rapidapi-key": TIKTOK_RAPIDAPI_KEY,
-        "x-rapidapi-host": TIKTOK_RAPIDAPI_HOST,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: encodedParams.toString(),
-      signal: abortController.signal,
-    });
-
-    const rawText = await response.text().catch(() => "");
-    let payload = null;
-    if (rawText) {
-      try {
-        payload = JSON.parse(rawText);
-      } catch (_error) {
-        payload = null;
-      }
+  const shouldRetryWithFallbackBody = (statusCode, message = "") => {
+    if (![400, 415, 422].includes(Number(statusCode))) {
+      return false;
     }
 
-    const rapidApiMessage = pickFirstNonEmptyString(
-      payload?.message,
-      payload?.error,
-      payload?.msg,
-      payload?.detail,
-      payload?.error?.message,
-      rawText.length <= 300 ? rawText : "",
+    return /invalid|payload|body|json|form|content[-\s]?type|parse|unsupported media/i.test(
+      String(message || ""),
     );
+  };
 
-    if (!response.ok) {
-      const likelyAuthIssue = /not subscribed|forbidden|unauthorized|invalid api key/i.test(
-        String(rapidApiMessage || ""),
+  for (let index = 0; index < requestVariants.length; index += 1) {
+    const variant = requestVariants[index];
+    const isLastAttempt = index === requestVariants.length - 1;
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), TIKTOK_RAPIDAPI_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(TIKTOK_RAPIDAPI_URL, {
+        method: "POST",
+        headers: {
+          "x-rapidapi-key": TIKTOK_RAPIDAPI_KEY,
+          "x-rapidapi-host": TIKTOK_RAPIDAPI_HOST,
+          "Content-Type": variant.contentType,
+        },
+        body: variant.body,
+        signal: abortController.signal,
+      });
+
+      const rawText = await response.text().catch(() => "");
+      let payload = null;
+      if (rawText) {
+        try {
+          payload = JSON.parse(rawText);
+        } catch (_error) {
+          payload = null;
+        }
+      }
+
+      const rapidApiMessage = pickFirstNonEmptyString(
+        payload?.message,
+        payload?.error,
+        payload?.msg,
+        payload?.detail,
+        payload?.error?.message,
+        rawText.length <= 300 ? rawText : "",
       );
-      throw createTikTokHttpError(
-        likelyAuthIssue ? 402 : response.status,
-        rapidApiMessage || `TikTok API gagal merespons (${response.status}).`,
-      );
-    }
 
-    if (/not subscribed/i.test(String(rapidApiMessage || ""))) {
-      throw createTikTokHttpError(
-        402,
-        "RapidAPI key belum subscribe ke API TikTok downloader.",
-      );
-    }
+      if (!response.ok) {
+        if (
+          !isLastAttempt &&
+          shouldRetryWithFallbackBody(response.status, rapidApiMessage)
+        ) {
+          continue;
+        }
 
-    const normalizedResult = normalizeTikTokResponse(payload);
-    if (!normalizedResult.noWatermarkUrl) {
-      throw createTikTokHttpError(
-        404,
-        rapidApiMessage ||
-          "Video no watermark tidak ditemukan dari respons TikTok API.",
-      );
-    }
+        const likelyAuthIssue = /not subscribed|forbidden|unauthorized|invalid api key/i.test(
+          String(rapidApiMessage || ""),
+        );
+        const isQuotaLimited =
+          Number(response.status) === 429 ||
+          /exceeded|quota|too many requests|rate limit/i.test(String(rapidApiMessage || ""));
+        if (isQuotaLimited) {
+          throw createTikTokHttpError(
+            429,
+            "Kuota RapidAPI TikTok habis. Ganti API key aktif atau upgrade plan RapidAPI.",
+          );
+        }
 
-    return {
-      sourceUrl: resolvedTikTokUrl,
-      result: normalizedResult,
-    };
-  } catch (error) {
-    if (error?.name === "AbortError") {
-      throw createTikTokHttpError(504, "Request ke TikTok API timeout. Coba lagi.");
-    }
+        throw createTikTokHttpError(
+          likelyAuthIssue ? 402 : response.status,
+          rapidApiMessage || `TikTok API gagal merespons (${response.status}).`,
+        );
+      }
 
-    if (error?.clientMessage) {
-      throw error;
-    }
+      if (/not subscribed/i.test(String(rapidApiMessage || ""))) {
+        throw createTikTokHttpError(
+          402,
+          "RapidAPI key belum subscribe ke API TikTok downloader.",
+        );
+      }
 
-    throw createTikTokHttpError(502, "Gagal menghubungi layanan TikTok downloader.");
-  } finally {
-    clearTimeout(timeoutId);
+      const normalizedResult = normalizeTikTokResponse(payload);
+      if (!normalizedResult.noWatermarkUrl) {
+        throw createTikTokHttpError(
+          404,
+          rapidApiMessage ||
+            "Video no watermark tidak ditemukan dari respons TikTok API.",
+        );
+      }
+
+      return {
+        sourceUrl: resolvedTikTokUrl,
+        result: normalizedResult,
+      };
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        throw createTikTokHttpError(504, "Request ke TikTok API timeout. Coba lagi.");
+      }
+
+      if (error?.clientMessage) {
+        throw error;
+      }
+
+      if (!isLastAttempt) {
+        continue;
+      }
+
+      throw createTikTokHttpError(502, "Gagal menghubungi layanan TikTok downloader.");
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
+
+  throw createTikTokHttpError(502, "Gagal menghubungi layanan TikTok downloader.");
 }
 
 function isAllowedTikTokMediaHost(hostname = "") {
