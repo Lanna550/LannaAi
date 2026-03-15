@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, Sparkles, ArrowRight } from 'lucide-react';
 
@@ -49,6 +50,22 @@ function ScrollMouse() {
 }
 
 export function Hero({ onNavigate }: HeroProps) {
+  const [heroImageIndex, setHeroImageIndex] = useState(0);
+  const heroImageSources = useMemo(() => {
+    const baseUrl = String(import.meta.env.BASE_URL || '/');
+    const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+    const withBase = (path: string) => `${normalizedBase}${path}`.replace(/\/{2,}/g, '/');
+
+    return [
+      withBase('images/hero_girl.png'),
+      withBase('images/hero_mascot.png'),
+      withBase('images/lanna_character.png'),
+      withBase('images/furina_character.png'),
+    ];
+  }, []);
+
+  const currentHeroImage = heroImageSources[Math.min(heroImageIndex, heroImageSources.length - 1)];
+
   return (
     <section className="relative min-h-screen flex flex-col pt-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Very subtle grid background - like reference */}
@@ -189,9 +206,17 @@ export function Hero({ onNavigate }: HeroProps) {
               >
                 {/* Character - Larger size */}
                 <img
-                  src="images/hero_girl.png"
+                  src={currentHeroImage}
                   alt="Lanna"
                   className="relative w-96 h-96 sm:w-[500px] sm:h-[500px] lg:w-[550px] lg:h-[550px] object-contain"
+                  onError={() => {
+                    setHeroImageIndex((prevIndex) => {
+                      if (prevIndex >= heroImageSources.length - 1) {
+                        return prevIndex;
+                      }
+                      return prevIndex + 1;
+                    });
+                  }}
                 />
               </motion.div>
             </motion.div>

@@ -109,7 +109,7 @@ export function GuideChatWidget({ onNavigate }: GuideChatWidgetProps) {
 
   return (
     <div
-      className="fixed right-2 bottom-2 z-[60] sm:right-4 sm:bottom-4"
+      className="fixed right-2 bottom-16 z-[60] sm:right-4 sm:bottom-5"
       style={containerStyle}
     >
       <AnimatePresence initial={false} mode="wait">
@@ -120,7 +120,7 @@ export function GuideChatWidget({ onNavigate }: GuideChatWidgetProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
             transition={{ duration: 0.22 }}
-            className="w-[calc(100vw-1rem)] max-w-[360px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl dark:border-white/10 dark:bg-slate-900"
+            className="w-[calc(100vw-0.75rem)] max-w-[340px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl sm:max-w-[360px] dark:border-white/10 dark:bg-slate-900"
           >
             <div className="flex items-center justify-between border-b border-slate-200/70 px-3 py-3 dark:border-white/10">
               <div className="flex items-center gap-2">
@@ -223,13 +223,13 @@ export function GuideChatWidget({ onNavigate }: GuideChatWidgetProps) {
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.2 }}
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1.5 sm:gap-2"
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 shadow-xl shadow-sky-500/30">
-              <Bot className="h-6 w-6 text-white" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 shadow-xl shadow-sky-500/30 sm:h-14 sm:w-14">
+              <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
             </div>
-            <div className="max-w-[58vw] rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-              Butuh panduan cepat?
+            <div className="max-w-[52vw] rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm sm:max-w-[58vw] sm:px-4 sm:py-2 sm:text-sm max-[359px]:hidden dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+              Butuh bantuan?
             </div>
           </motion.button>
         )}
