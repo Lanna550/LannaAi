@@ -49,9 +49,69 @@ type Page =
   | 'tiktok-downloader'
   | 'youtube-downloader';
 
+const VALID_PAGES: Page[] = [
+  'home',
+  'login',
+  'register',
+  'profile',
+  'settings',
+  'chat',
+  'ml',
+  'ml-house-price',
+  'ml-spam',
+  'ml-grade',
+  'ml-disease',
+  'ml-fraud',
+  'ml-art',
+  'tools',
+  'tiktok-downloader',
+  'youtube-downloader',
+];
+
+const APP_BASE_PATH = (() => {
+  const basePath = String(import.meta.env.BASE_URL || '').trim();
+  if (!basePath || basePath === '.' || basePath === './') {
+    return '';
+  }
+
+  const withLeadingSlash = basePath.startsWith('/') ? basePath : `/${basePath}`;
+  return withLeadingSlash.replace(/\/+$/, '');
+})();
+
+function resolveCurrentPageFromPathname(): Page {
+  if (typeof window === 'undefined') {
+    return 'home';
+  }
+
+  const rawPathname = String(window.location.pathname || '/');
+  let normalizedPathname = rawPathname;
+
+  if (APP_BASE_PATH && rawPathname === APP_BASE_PATH) {
+    normalizedPathname = '/';
+  } else if (APP_BASE_PATH && rawPathname.startsWith(`${APP_BASE_PATH}/`)) {
+    normalizedPathname = rawPathname.slice(APP_BASE_PATH.length);
+  }
+
+  const pageCandidate = normalizedPathname.replace(/^\/+|\/+$/g, '') as Page;
+  if (!pageCandidate || pageCandidate === 'home') {
+    return 'home';
+  }
+
+  return VALID_PAGES.includes(pageCandidate) ? pageCandidate : 'home';
+}
+
+function buildPathForPage(page: Page) {
+  const pagePath = page === 'home' ? '/' : `/${page}`;
+  if (!APP_BASE_PATH) {
+    return pagePath;
+  }
+
+  return `${APP_BASE_PATH}${pagePath}`.replace(/\/{2,}/g, '/');
+}
+
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState<Page>(() => resolveCurrentPageFromPathname());
   const { theme } = useTheme();
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
@@ -59,28 +119,7 @@ function AppContent() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.slice(1) as Page;
-      const validPages: Page[] = [
-        'home',
-        'login',
-        'register',
-        'profile',
-        'settings',
-        'chat',
-        'ml',
-        'ml-house-price',
-        'ml-spam',
-        'ml-grade',
-        'ml-disease',
-        'ml-fraud',
-        'ml-art',
-        'tools',
-        'tiktok-downloader',
-        'youtube-downloader',
-      ];
-      if (validPages.includes(path)) {
-        setCurrentPage(path);
-      }
+      setCurrentPage(resolveCurrentPageFromPathname());
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -88,9 +127,9 @@ function AppContent() {
   }, []);
 
   const navigate = (page: string) => {
-    const typedPage = page as Page;
+    const typedPage = VALID_PAGES.includes(page as Page) ? (page as Page) : 'home';
     setCurrentPage(typedPage);
-    window.history.pushState({}, '', page === 'home' ? '/' : `/${page}`);
+    window.history.pushState({}, '', buildPathForPage(typedPage));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

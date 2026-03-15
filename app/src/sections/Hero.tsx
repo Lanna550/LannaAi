@@ -189,7 +189,7 @@ export function Hero({ onNavigate }: HeroProps) {
               >
                 {/* Character - Larger size */}
                 <img
-                  src="/images/hero_girl.png"
+                  src="images/hero_girl.png"
                   alt="Lanna"
                   className="relative w-96 h-96 sm:w-[500px] sm:h-[500px] lg:w-[550px] lg:h-[550px] object-contain"
                 />

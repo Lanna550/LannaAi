@@ -132,7 +132,7 @@ export const CHAT_MODELS: ChatModelConfig[] = [
     id: 'lanna',
     name: 'Miku',
     description: 'Teman cerita yang peka mood dan suportif',
-    avatar: '/images/hatsune_miku.png',
+    avatar: 'images/hatsune_miku.png',
     theme: {
       primary: '#3b82f6',
       secondary: '#60a5fa',
@@ -145,7 +145,7 @@ export const CHAT_MODELS: ChatModelConfig[] = [
     id: 'furina',
     name: 'Sparkle',
     description: 'Spesialis generate gambar dan ilustrasi visual',
-    avatar: '/images/sparkle_portrait.png',
+    avatar: 'images/sparkle_portrait.png',
     theme: {
       primary: '#6366f1',
       secondary: '#8b5cf6',
@@ -158,7 +158,7 @@ export const CHAT_MODELS: ChatModelConfig[] = [
     id: 'inori',
     name: 'Furina',
     description: 'Asisten coding yang fokus dan rapi',
-    avatar: '/images/furina_potrait.png',
+    avatar: 'images/furina_potrait.png',
     theme: {
       primary: '#ec4899',
       secondary: '#f472b6',

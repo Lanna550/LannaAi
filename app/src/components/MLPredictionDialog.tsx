@@ -48,7 +48,7 @@ const mlFeatures: MLFeature[] = [
     iconBg: 'bg-blue-500',
     title: 'House Price Prediction',
     description: 'Estimate property values using advanced regression models with visual price breakdown.',
-    image: '/images/ml_house_visual.png',
+    image: 'images/ml_house_visual.png',
     inputs: [
       { name: 'size', label: 'House Size (sq ft)', type: 'number', placeholder: 'e.g., 2000', min: 500, max: 10000 },
       { name: 'bedrooms', label: 'Number of Bedrooms', type: 'number', placeholder: 'e.g., 3', min: 1, max: 10 },
@@ -103,7 +103,7 @@ const mlFeatures: MLFeature[] = [
     iconBg: 'bg-red-500',
     title: 'Spam Email Classifier',
     description: 'Detect spam emails with visual threat analysis and confidence scoring.',
-    image: '/images/ml_spam_visual.png',
+    image: 'images/ml_spam_visual.png',
     inputs: [
       { name: 'subject', label: 'Email Subject', type: 'text', placeholder: 'Enter the email subject line...' },
       { name: 'content', label: 'Email Content', type: 'text', placeholder: 'Paste the email content here...' },
@@ -174,7 +174,7 @@ const mlFeatures: MLFeature[] = [
     iconBg: 'bg-green-500',
     title: 'Student Grade Prediction',
     description: 'Predict academic performance with detailed factor analysis.',
-    image: '/images/ml_grade_visual.png',
+    image: 'images/ml_grade_visual.png',
     inputs: [
       { name: 'attendance', label: 'Attendance Rate (%)', type: 'number', placeholder: 'e.g., 85', min: 0, max: 100 },
       { name: 'studyHours', label: 'Study Hours per Week', type: 'number', placeholder: 'e.g., 15', min: 0, max: 100 },
@@ -236,7 +236,7 @@ const mlFeatures: MLFeature[] = [
     iconBg: 'bg-purple-500',
     title: 'Disease Detection',
     description: 'Get preliminary health insights with symptom visualization.',
-    image: '/images/ml_medical_visual.png',
+    image: 'images/ml_medical_visual.png',
     inputs: [
       { name: 'age', label: 'Age', type: 'number', placeholder: 'e.g., 30', min: 1, max: 120 },
       { name: 'symptoms', label: 'Main Symptoms', type: 'text', placeholder: 'e.g., fever, headache, cough' },
@@ -313,7 +313,7 @@ const mlFeatures: MLFeature[] = [
     iconBg: 'bg-yellow-500',
     title: 'Fraud Detection',
     description: 'Identify suspicious transactions with risk visualization.',
-    image: '/images/ml_fraud_visual.png',
+    image: 'images/ml_fraud_visual.png',
     inputs: [
       { name: 'amount', label: 'Transaction Amount ($)', type: 'number', placeholder: 'e.g., 500', min: 1 },
       { name: 'location', label: 'Location Match', type: 'text', placeholder: 'Same as usual? (yes/no)' },
@@ -391,7 +391,7 @@ const mlFeatures: MLFeature[] = [
     iconBg: 'bg-pink-500',
     title: 'AI Art Detection',
     description: 'Distinguish AI-generated from human-created artwork.',
-    image: '/images/ml_aiart_visual.png',
+    image: 'images/ml_aiart_visual.png',
     inputs: [
       { name: 'style', label: 'Art Style Description', type: 'text', placeholder: 'e.g., detailed shading, smooth lines' },
       { name: 'texture', label: 'Texture Quality', type: 'text', placeholder: 'e.g., smooth, rough, detailed' },

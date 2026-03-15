@@ -9,9 +9,11 @@ export default defineConfig(({ mode }) => {
   const proxyTarget =
     String(env.VITE_DEV_API_PROXY_TARGET || "http://localhost:3001").replace(/\/+$/, "") ||
     "http://localhost:3001"
+  const productionBasePath = "/LannaAi/"
+  const base = mode === "production" ? productionBasePath : "/"
 
   return {
-    base: './',
+    base,
     plugins: [inspectAttr(), react()],
     server: {
       allowedHosts: true,

@@ -3,28 +3,28 @@ import { MessageSquare, Image, Brain, Download } from 'lucide-react';
 
 const features = [
   {
-    image: '/images/feature_chat.png',
+    image: 'images/feature_chat.png',
     icon: MessageSquare,
     iconBg: 'bg-blue-500',
     title: 'Smart Conversations',
     description: 'Engage in natural, context-aware conversations that feel human and meaningful.',
   },
   {
-    image: '/images/feature_image.png',
+    image: 'images/feature_image.png',
     icon: Image,
     iconBg: 'bg-purple-500',
     title: 'Image Generation',
     description: 'Create stunning anime-style images with just a text description.',
   },
   {
-    image: '/images/feature_ml.png',
+    image: 'images/feature_ml.png',
     icon: Brain,
     iconBg: 'bg-orange-500',
     title: 'ML Predictions',
     description: 'Access powerful machine learning models for various prediction tasks.',
   },
   {
-    image: '/images/feature_image.png',
+    image: 'images/feature_image.png',
     icon: Download,
     iconBg: 'bg-emerald-500',
     title: 'Tiktok Downloader',

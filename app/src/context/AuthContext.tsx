@@ -39,7 +39,7 @@ interface AuthApiResponse {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const DEFAULT_AVATAR = '/images/avatar1.jpg';
+const DEFAULT_AVATAR = 'images/avatar1.jpg';
 const DEFAULT_BIO = '';
 const LEGACY_DEFAULT_BIO = 'Halo! Aku suka anime!';
 const STORAGE_KEY = 'lanna-user';
