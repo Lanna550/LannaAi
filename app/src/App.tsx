@@ -6,6 +6,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Navbar } from '@/components/Navbar';
+import { GuideChatWidget } from '@/components/GuideChatWidget';
 import { Hero } from '@/sections/Hero';
 import { Features } from '@/sections/Features';
 import { Companions } from '@/sections/Companions';
@@ -20,6 +21,7 @@ import { Settings } from '@/pages/Settings';
 import { Chat } from '@/pages/Chat';
 import { MLPage } from '@/pages/MLPage';
 import { Tools } from '@/pages/Tools';
+import { DeployWebsite } from '@/pages/DeployWebsite';
 import { TiktokDownloader } from '@/pages/TiktokDownloader';
 import { YoutubeDownloader } from '@/pages/YoutubeDownloader';
 import {
@@ -46,6 +48,7 @@ type Page =
   | 'ml-fraud'
   | 'ml-art'
   | 'tools'
+  | 'deploy-website'
   | 'tiktok-downloader'
   | 'youtube-downloader';
 
@@ -64,6 +67,7 @@ const VALID_PAGES: Page[] = [
   'ml-fraud',
   'ml-art',
   'tools',
+  'deploy-website',
   'tiktok-downloader',
   'youtube-downloader',
 ];
@@ -154,6 +158,7 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>(() => resolveCurrentPageFromLocation());
   const { theme } = useTheme();
+  const showGuideWidget = currentPage !== 'login' && currentPage !== 'register';
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
   }, []);
@@ -346,6 +351,18 @@ function AppContent() {
             <Tools onNavigate={navigate} />
           </motion.div>
         );
+      case 'deploy-website':
+        return (
+          <motion.div
+            key="deploy-website"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DeployWebsite onNavigate={navigate} />
+          </motion.div>
+        );
       case 'tiktok-downloader':
         return (
           <motion.div
@@ -406,6 +423,7 @@ function AppContent() {
           <AnimatePresence mode="wait">
             {renderPage()}
           </AnimatePresence>
+          {showGuideWidget && <GuideChatWidget onNavigate={navigate} />}
         </>
       )}
 

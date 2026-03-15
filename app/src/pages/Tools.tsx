@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Download, Music2, Youtube } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, Music2, Rocket, Youtube } from 'lucide-react';
 
 interface ToolsProps {
   onNavigate: (page: string) => void;
@@ -21,6 +21,14 @@ const tools = [
     icon: Youtube,
     iconBg: 'from-red-500 to-orange-500',
     badge: 'Media Tool',
+  },
+  {
+    id: 'deploy-website',
+    title: 'Auto Deploy',
+    description: 'Deploy website otomatis dari repository hanya dalam satu alur.',
+    icon: Rocket,
+    iconBg: 'from-blue-500 to-indigo-500',
+    badge: 'Dev Tool',
   },
 ];
 
@@ -50,7 +58,7 @@ export function Tools({ onNavigate }: ToolsProps) {
               Tools <span className="bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">Center</span>
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300 sm:text-base">
-              Pilih tool yang ingin kamu pakai untuk download video atau audio.
+              Pilih tool yang ingin kamu pakai untuk download media atau deploy website.
             </p>
           </div>
         </motion.div>

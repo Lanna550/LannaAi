@@ -23,15 +23,42 @@ function restoreGitHubPagesRedirect() {
   window.history.replaceState(null, '', normalizedPath)
 }
 
-restoreGitHubPagesRedirect()
+function setupServiceWorker() {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return
+  }
 
-if ('serviceWorker' in navigator) {
+  if (!('serviceWorker' in navigator)) {
+    return
+  }
+
+  if (!import.meta.env.PROD) {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((registrations) =>
+        Promise.all(registrations.map((registration) => registration.unregister())),
+      )
+      .catch(() => undefined)
+
+    if ('caches' in window) {
+      caches
+        .keys()
+        .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+        .catch(() => undefined)
+    }
+
+    return
+  }
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch((error) => {
       console.error('Service worker registration failed:', error)
     })
   })
 }
+
+restoreGitHubPagesRedirect()
+setupServiceWorker()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Brain,
   Home,
+  Rocket,
   Wrench,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
@@ -57,6 +58,7 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'ml', label: 'ML Features', icon: Brain },
     { id: 'tools', label: 'Tools', icon: Wrench },
+    { id: 'deploy-website', label: 'Auto Deploy', icon: Rocket },
   ];
 
   const handleLogout = () => {
@@ -93,16 +95,22 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isToolsItem = item.id === 'tools';
+              const isDeployItem = item.id === 'deploy-website';
               const isToolsPage =
                 currentPage === 'tools' ||
                 currentPage === 'tiktok-downloader' ||
                 currentPage === 'youtube-downloader';
-              const isActive = isToolsItem ? isToolsPage : currentPage === item.id;
+              const isActive =
+                isToolsItem
+                  ? isToolsPage
+                  : isDeployItem
+                    ? currentPage === 'deploy-website'
+                    : currentPage === item.id;
               return (
                 <motion.button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
-                  className={`relative px-5 py-2.5 rounded-lg flex items-center gap-2 text-base font-medium transition-colors ${
+                  className={`relative px-3.5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors lg:px-4 lg:text-base ${
                     isActive 
                       ? 'text-blue-600 dark:text-blue-400' 
                       : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
@@ -118,7 +126,7 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
                     />
                   )}
                   <Icon className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">{item.label}</span>
+                  <span className="relative z-10 whitespace-nowrap">{item.label}</span>
                 </motion.button>
               );
             })}
@@ -248,11 +256,17 @@ export function Navbar({ onNavigate, currentPage }: NavbarProps) {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isToolsItem = item.id === 'tools';
+                const isDeployItem = item.id === 'deploy-website';
                 const isToolsPage =
                   currentPage === 'tools' ||
                   currentPage === 'tiktok-downloader' ||
                   currentPage === 'youtube-downloader';
-                const isActive = isToolsItem ? isToolsPage : currentPage === item.id;
+                const isActive =
+                  isToolsItem
+                    ? isToolsPage
+                    : isDeployItem
+                      ? currentPage === 'deploy-website'
+                      : currentPage === item.id;
                 return (
                   <motion.button
                     key={item.id}
