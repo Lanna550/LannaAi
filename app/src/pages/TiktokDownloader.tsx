@@ -359,15 +359,15 @@ export function TiktokDownloader({ onNavigate }: TiktokDownloaderProps) {
   };
 
   const handleDirectDownload = async (sourceUrl: string | null | undefined, kind: DownloadKind) => {
-    const trimmedSourceUrl = String(sourceUrl || '').trim();
+    const normalizedTikTokInput = tiktokUrl.trim();
+    const fallbackTikTokSource = TIKTOK_URL_REGEX.test(normalizedTikTokInput) ? normalizedTikTokInput : '';
+    const trimmedSourceUrl = String(sourceUrl || fallbackTikTokSource).trim();
     if (!trimmedSourceUrl) {
       toast.error('Link download tidak tersedia.');
       return;
     }
 
-    const normalizedTikTokInput = tiktokUrl.trim();
-    const sourceForBackend =
-      TIKTOK_URL_REGEX.test(normalizedTikTokInput) ? normalizedTikTokInput : trimmedSourceUrl;
+    const sourceForBackend = fallbackTikTokSource || trimmedSourceUrl;
 
     const baseName = sanitizeFileNameSegment(result?.title || result?.id || 'tiktok-video', 'tiktok-video');
     const suffix = kind === 'audio' ? 'audio' : kind === 'hd' ? 'hd' : 'video';
@@ -831,49 +831,55 @@ export function TiktokDownloader({ onNavigate }: TiktokDownloaderProps) {
                         )}
                       </Button>
 
-                      {result.hdNoWatermarkUrl && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="h-10"
-                          onClick={() => handleDirectDownload(result.hdNoWatermarkUrl, 'hd')}
-                          disabled={activeDownloadKind !== null}
-                        >
-                          {activeDownloadKind === 'hd' ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                              Menyiapkan...
-                            </>
-                          ) : (
-                            <>
-                              <Download className="w-4 h-4" />
-                              Download HD
-                            </>
-                          )}
-                        </Button>
-                      )}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-10"
+                        onClick={() =>
+                          handleDirectDownload(
+                            result.hdNoWatermarkUrl || result.noWatermarkUrl || tiktokUrl,
+                            'hd',
+                          )
+                        }
+                        disabled={activeDownloadKind !== null}
+                      >
+                        {activeDownloadKind === 'hd' ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Menyiapkan...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-4 h-4" />
+                            Download HD
+                          </>
+                        )}
+                      </Button>
 
-                      {result.audioUrl && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="h-10"
-                          onClick={() => handleDirectDownload(result.audioUrl, 'audio')}
-                          disabled={activeDownloadKind !== null}
-                        >
-                          {activeDownloadKind === 'audio' ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                              Menyiapkan...
-                            </>
-                          ) : (
-                            <>
-                              <Music2 className="w-4 h-4" />
-                              Download Audio
-                            </>
-                          )}
-                        </Button>
-                      )}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-10"
+                        onClick={() =>
+                          handleDirectDownload(
+                            result.audioUrl || result.noWatermarkUrl || tiktokUrl,
+                            'audio',
+                          )
+                        }
+                        disabled={activeDownloadKind !== null}
+                      >
+                        {activeDownloadKind === 'audio' ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Menyiapkan...
+                          </>
+                        ) : (
+                          <>
+                            <Music2 className="w-4 h-4" />
+                            Download Audio
+                          </>
+                        )}
+                      </Button>
 
                       <Button
                         type="button"

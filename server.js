@@ -1287,6 +1287,7 @@ function buildChatRowsForStorage(userId, sessions = []) {
 
 app.get("/api/health", (_req, res) => {
   const { apiKey } = getGeminiClients();
+  const tiktokConfig = getTikTokRapidApiConfig();
   const apiKeyFingerprint = apiKey
     ? crypto.createHash("sha256").update(apiKey).digest("hex").slice(0, 8)
     : null;
@@ -1296,8 +1297,8 @@ app.get("/api/health", (_req, res) => {
     persistence: persistenceMode,
     hasGeminiApiKey: Boolean(apiKey),
     geminiApiKeyFingerprint: apiKeyFingerprint,
-    hasTiktokRapidApiKey: Boolean(TIKTOK_RAPIDAPI_KEY),
-    tiktokRapidApiHost: TIKTOK_RAPIDAPI_HOST,
+    hasTiktokRapidApiKey: Boolean(tiktokConfig.rapidApiKey),
+    tiktokRapidApiHost: tiktokConfig.rapidApiHost,
     hasGithubDeployToken: Boolean(GITHUB_DEPLOY_TOKEN),
     githubDeployWorkflow: GITHUB_DEPLOY_WORKFLOW,
     textModel: DEFAULT_TEXT_MODEL,
@@ -1766,6 +1767,33 @@ function clampInt(value, { min, max, fallback }) {
   }
 
   return Math.min(max, Math.max(min, parsed));
+}
+
+function getTikTokRapidApiConfig() {
+  maybeReloadDotenv();
+  const rapidApiUrl =
+    String(process.env.TIKTOK_RAPIDAPI_URL || TIKTOK_RAPIDAPI_URL).trim() ||
+    TIKTOK_RAPIDAPI_URL;
+  const rapidApiHost =
+    String(process.env.TIKTOK_RAPIDAPI_HOST || TIKTOK_RAPIDAPI_HOST).trim() ||
+    TIKTOK_RAPIDAPI_HOST;
+  const rapidApiKey = String(process.env.TIKTOK_RAPIDAPI_KEY || "").trim();
+  const timeoutMs =
+    Number.parseInt(
+      String(process.env.TIKTOK_RAPIDAPI_TIMEOUT_MS || TIKTOK_RAPIDAPI_TIMEOUT_MS),
+      10,
+    ) || TIKTOK_RAPIDAPI_TIMEOUT_MS;
+  const defaultHd = String(
+    process.env.TIKTOK_DEFAULT_HD || (TIKTOK_DEFAULT_HD ? "1" : "0"),
+  ).trim() !== "0";
+
+  return {
+    rapidApiUrl,
+    rapidApiHost,
+    rapidApiKey,
+    timeoutMs,
+    defaultHd,
+  };
 }
 
 function createGithubHttpError(statusCode, message) {
@@ -2433,7 +2461,10 @@ function createTikTokHttpError(statusCode, message, extra = {}) {
   return error;
 }
 
-async function resolveTikTokSourceUrl(sourceUrl) {
+async function resolveTikTokSourceUrl(
+  sourceUrl,
+  { timeoutMs = TIKTOK_RAPIDAPI_TIMEOUT_MS } = {},
+) {
   let parsedUrl;
   try {
     parsedUrl = new URL(sourceUrl);
@@ -2446,7 +2477,7 @@ async function resolveTikTokSourceUrl(sourceUrl) {
   }
 
   const abortController = new AbortController();
-  const timeoutId = setTimeout(() => abortController.abort(), TIKTOK_RAPIDAPI_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
   try {
     const response = await fetch(parsedUrl.toString(), {
@@ -2492,29 +2523,34 @@ async function resolveTikTokSourceUrl(sourceUrl) {
   }
 }
 
-async function requestTikTokDownloadInfo(sourceUrl, { hd = TIKTOK_DEFAULT_HD } = {}) {
+async function requestTikTokDownloadInfo(sourceUrl, { hd } = {}) {
   if (!sourceUrl || !String(sourceUrl).trim()) {
     throw createTikTokHttpError(400, "URL TikTok wajib diisi.");
   }
 
-  if (!TIKTOK_RAPIDAPI_KEY) {
+  const tiktokConfig = getTikTokRapidApiConfig();
+  const useHd = hd == null ? tiktokConfig.defaultHd : String(hd).trim() !== "0";
+
+  if (!tiktokConfig.rapidApiKey) {
     throw createTikTokHttpError(500, "TIKTOK_RAPIDAPI_KEY belum diset di server.");
   }
 
-  const resolvedTikTokUrl = await resolveTikTokSourceUrl(String(sourceUrl).trim());
+  const resolvedTikTokUrl = await resolveTikTokSourceUrl(String(sourceUrl).trim(), {
+    timeoutMs: tiktokConfig.timeoutMs,
+  });
   const encodedParams = new URLSearchParams();
   encodedParams.set("url", resolvedTikTokUrl);
-  encodedParams.set("hd", hd ? "1" : "0");
+  encodedParams.set("hd", useHd ? "1" : "0");
 
   const abortController = new AbortController();
-  const timeoutId = setTimeout(() => abortController.abort(), TIKTOK_RAPIDAPI_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => abortController.abort(), tiktokConfig.timeoutMs);
 
   try {
-    const response = await fetch(TIKTOK_RAPIDAPI_URL, {
+    const response = await fetch(tiktokConfig.rapidApiUrl, {
       method: "POST",
       headers: {
-        "x-rapidapi-key": TIKTOK_RAPIDAPI_KEY,
-        "x-rapidapi-host": TIKTOK_RAPIDAPI_HOST,
+        "x-rapidapi-key": tiktokConfig.rapidApiKey,
+        "x-rapidapi-host": tiktokConfig.rapidApiHost,
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: encodedParams.toString(),
