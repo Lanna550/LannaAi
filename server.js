@@ -143,7 +143,22 @@ const persistenceReady = (async () => {
   }
 })();
 
-app.use(cors());
+const corsMiddleware = cors({
+  origin: true,
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
+});
+
+app.use((req, res, next) => {
+  if (req.headers["access-control-request-private-network"] === "true") {
+    res.setHeader("Access-Control-Allow-Private-Network", "true");
+  }
+
+  next();
+});
+
+app.use(corsMiddleware);
+app.options(/.*/, corsMiddleware);
 app.use(express.json({ limit: "2mb" }));
 app.use(
   "/uploads",

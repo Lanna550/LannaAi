@@ -44,6 +44,14 @@ const DEFAULT_BIO = '';
 const LEGACY_DEFAULT_BIO = 'Halo! Aku suka anime!';
 const STORAGE_KEY = 'lanna-user';
 
+function isGitHubPagesApiOrigin(value: string) {
+  try {
+    return String(new URL(value).hostname || '').toLowerCase().endsWith('.github.io');
+  } catch {
+    return false;
+  }
+}
+
 function resolveAssetUrl(value?: string) {
   if (!value) {
     return undefined;
@@ -87,14 +95,22 @@ function normalizeUser(rawUser: Partial<User> | null | undefined): User {
 async function readUserResponse(response: Response): Promise<{ user?: User; error?: string }> {
   const data = await readJsonSafely<AuthApiResponse>(response);
   if (!response.ok) {
+    const resolvedError =
+      data?.error ||
+      (response.status === 404
+        ? 'User tidak ditemukan. Silakan login ulang jika akun lama berubah.'
+        : response.status >= 500
+          ? 'Backend user gagal. Periksa server dan MySQL XAMPP.'
+          : 'Permintaan user gagal.');
+
+    if (isGitHubPagesApiOrigin(API_BASE_URL) || response.status === 405) {
+      return {
+        error: `Endpoint auth tidak tersedia di ${API_BASE_URL}. Pastikan frontend menunjuk ke URL backend (VITE_API_BASE_URL).`,
+      };
+    }
+
     return {
-      error:
-        data?.error ||
-        (response.status === 404
-          ? 'User tidak ditemukan. Silakan login ulang jika akun lama berubah.'
-          : response.status >= 500
-            ? 'Backend user gagal. Periksa server dan MySQL XAMPP.'
-            : 'Permintaan user gagal.'),
+      error: resolvedError,
     };
   }
 
@@ -130,7 +146,9 @@ async function sendAuthRequest(
       };
     }
 
-    throw error;
+    return {
+      error: `Tidak bisa terhubung ke backend auth (${API_BASE_URL}). Pastikan server aktif dan origin frontend diizinkan di CORS.`,
+    };
   }
 }
 

@@ -2,6 +2,7 @@ const LOCALHOST_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
 const NGROK_HOST_SUFFIXES = ['.ngrok-free.app', '.ngrok.io', '.ngrok.app'];
 const DEFAULT_LOCAL_API_PORT = 3001;
 const DEFAULT_FETCH_TIMEOUT_MS = 15000;
+const STATIC_HOST_SUFFIXES = ['.github.io'];
 
 function isPrivateIpv4Host(hostname: string) {
   const matched = hostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
@@ -45,14 +46,30 @@ function normalizeApiBaseUrl(value: string | null | undefined) {
     .replace(/\/+$/, '');
 }
 
+function isNgrokHost(hostname: string) {
+  const normalizedHost = String(hostname || '').trim().toLowerCase();
+  return NGROK_HOST_SUFFIXES.some((suffix) => normalizedHost.endsWith(suffix));
+}
+
+function isLikelyStaticHost(hostname: string) {
+  const normalizedHost = String(hostname || '').trim().toLowerCase();
+  return STATIC_HOST_SUFFIXES.some((suffix) => normalizedHost.endsWith(suffix));
+}
+
 function resolveRuntimeDefaultApiBaseUrl() {
   if (typeof window === 'undefined') {
     return `http://localhost:${DEFAULT_LOCAL_API_PORT}`;
   }
 
-  const pageHost = String(window.location.hostname || '').trim();
+  const pageHost = String(window.location.hostname || '').trim().toLowerCase();
   if (isLoopbackOrPrivateHost(pageHost)) {
     return `${window.location.protocol}//${pageHost}:${DEFAULT_LOCAL_API_PORT}`;
+  }
+
+  // Static hosts (GitHub Pages, etc.) tidak menyediakan backend API.
+  // Gunakan localhost sebagai fallback agar tetap bisa terhubung saat backend lokal aktif.
+  if (isLikelyStaticHost(pageHost)) {
+    return `http://localhost:${DEFAULT_LOCAL_API_PORT}`;
   }
 
   return window.location.origin;
@@ -68,12 +85,10 @@ function resolveApiBaseUrl() {
     try {
       const pageHost = String(window.location.hostname || '').trim().toLowerCase();
       const envHost = String(new URL(envApiBaseUrl).hostname || '').trim().toLowerCase();
-      const isPagePublicHost = !isLoopbackOrPrivateHost(pageHost);
       const isEnvLocalHost = isLoopbackOrPrivateHost(envHost);
 
-      // Saat frontend diakses dari host publik (mis. ngrok), pakai origin saat ini
-      // jika env masih menunjuk ke host lokal/private agar request tidak mentok.
-      if (isPagePublicHost && isEnvLocalHost) {
+      // Untuk sesi ngrok, kalau env masih localhost/private, fallback ke origin ngrok aktif.
+      if (isNgrokHost(pageHost) && isEnvLocalHost) {
         return window.location.origin;
       }
     } catch {
