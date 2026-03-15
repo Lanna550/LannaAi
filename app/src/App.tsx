@@ -68,6 +68,8 @@ const VALID_PAGES: Page[] = [
   'youtube-downloader',
 ];
 
+const HASH_ROUTING_HOST_SUFFIXES = ['.github.io'];
+
 const APP_BASE_PATH = (() => {
   const basePath = String(import.meta.env.BASE_URL || '').trim();
   if (!basePath || basePath === '.' || basePath === './') {
@@ -78,12 +80,17 @@ const APP_BASE_PATH = (() => {
   return withLeadingSlash.replace(/\/+$/, '');
 })();
 
-function resolveCurrentPageFromPathname(): Page {
+const USE_HASH_ROUTING = (() => {
   if (typeof window === 'undefined') {
-    return 'home';
+    return false;
   }
 
-  const rawPathname = String(window.location.pathname || '/');
+  const pageHost = String(window.location.hostname || '').trim().toLowerCase();
+  return HASH_ROUTING_HOST_SUFFIXES.some((suffix) => pageHost.endsWith(suffix));
+})();
+
+function extractPageFromPathname(pathname: string): Page {
+  const rawPathname = String(pathname || '/');
   let normalizedPathname = rawPathname;
 
   if (APP_BASE_PATH && rawPathname === APP_BASE_PATH) {
@@ -100,7 +107,41 @@ function resolveCurrentPageFromPathname(): Page {
   return VALID_PAGES.includes(pageCandidate) ? pageCandidate : 'home';
 }
 
+function extractPageFromHash(hash: string): Page {
+  const normalizedHashPath = String(hash || '')
+    .replace(/^#\/?/, '')
+    .replace(/\/+$/, '') as Page;
+
+  if (!normalizedHashPath || normalizedHashPath === 'home') {
+    return 'home';
+  }
+
+  return VALID_PAGES.includes(normalizedHashPath) ? normalizedHashPath : 'home';
+}
+
+function resolveCurrentPageFromLocation(): Page {
+  if (typeof window === 'undefined') {
+    return 'home';
+  }
+
+  if (USE_HASH_ROUTING) {
+    const hashPage = extractPageFromHash(window.location.hash);
+    if (window.location.hash) {
+      return hashPage;
+    }
+  }
+
+  return extractPageFromPathname(window.location.pathname);
+}
+
 function buildPathForPage(page: Page) {
+  if (USE_HASH_ROUTING) {
+    const hashPath = page === 'home' ? '#/' : `#/${page}`;
+    const hashBasePath = APP_BASE_PATH ? `${APP_BASE_PATH}/` : '/';
+    const normalizedHashPath = `${hashBasePath}${hashPath}`.replace(/\/{2,}/g, '/');
+    return normalizedHashPath.replace('/#', '/#');
+  }
+
   const pagePath = page === 'home' ? '/' : `/${page}`;
   if (!APP_BASE_PATH) {
     return pagePath;
@@ -111,19 +152,33 @@ function buildPathForPage(page: Page) {
 
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<Page>(() => resolveCurrentPageFromPathname());
+  const [currentPage, setCurrentPage] = useState<Page>(() => resolveCurrentPageFromLocation());
   const { theme } = useTheme();
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPage(resolveCurrentPageFromPathname());
+    const syncCurrentPage = () => {
+      setCurrentPage(resolveCurrentPageFromLocation());
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    if (USE_HASH_ROUTING && !window.location.hash) {
+      const pageFromPathname = extractPageFromPathname(window.location.pathname);
+      window.history.replaceState({}, '', buildPathForPage(pageFromPathname));
+    }
+
+    window.addEventListener('popstate', syncCurrentPage);
+    if (USE_HASH_ROUTING) {
+      window.addEventListener('hashchange', syncCurrentPage);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', syncCurrentPage);
+      if (USE_HASH_ROUTING) {
+        window.removeEventListener('hashchange', syncCurrentPage);
+      }
+    };
   }, []);
 
   const navigate = (page: string) => {
