@@ -1,19 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   CheckCircle2,
   Clock3,
   Copy,
+  ExternalLink,
   GitBranch,
   Globe,
   Loader2,
   Rocket,
   Settings2,
-  TerminalSquare,
+  Workflow,
+  XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { API_BASE_URL, fetchWithTimeout, readJsonSafely } from '@/lib/api';
 import { toast } from 'sonner';
 
 interface DeployWebsiteProps {
@@ -21,7 +24,28 @@ interface DeployWebsiteProps {
 }
 
 type DeployProvider = 'vercel' | 'netlify' | 'github-pages';
-type DeployStatus = 'idle' | 'running' | 'success';
+type DeployStatus = 'idle' | 'running' | 'success' | 'error';
+
+type GithubRun = {
+  id: number | null;
+  status: string;
+  conclusion: string | null;
+  htmlUrl: string | null;
+  event: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+};
+
+type GithubDeployResponse = {
+  ok?: boolean;
+  error?: string;
+  owner?: string;
+  repo?: string;
+  branch?: string;
+  workflow?: string;
+  pagesUrl?: string;
+  run?: GithubRun | null;
+};
 
 const PROVIDER_LABELS: Record<DeployProvider, string> = {
   vercel: 'Vercel',
@@ -30,58 +54,124 @@ const PROVIDER_LABELS: Record<DeployProvider, string> = {
 };
 
 const DEPLOY_STEPS = [
-  'Memvalidasi repository',
-  'Menjalankan build command',
-  'Upload artifact website',
-  'Menyambungkan domain deploy',
+  'Validasi konfigurasi deploy',
+  'Trigger GitHub Actions workflow',
+  'Build dan publish ke GitHub Pages',
+  'Situs online dan siap diakses',
 ];
 
-function normalizeProjectSlug(value: string) {
-  const sanitized = value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
+function parseGitHubRepository(value: string) {
+  const raw = String(value || '').trim();
+  if (!raw) {
+    return null;
+  }
 
-  return sanitized || 'my-website';
-}
+  const ownerRepoMatch = raw.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?$/);
+  if (ownerRepoMatch) {
+    return {
+      owner: ownerRepoMatch[1],
+      repo: ownerRepoMatch[2],
+    };
+  }
 
-function createDeployHostname(provider: DeployProvider, slug: string) {
-  switch (provider) {
-    case 'netlify':
-      return `${slug}.netlify.app`;
-    case 'github-pages':
-      return `${slug}.github.io`;
-    case 'vercel':
-    default:
-      return `${slug}.vercel.app`;
+  try {
+    const parsedUrl = new URL(raw);
+    const host = String(parsedUrl.hostname || '').toLowerCase();
+    if (host !== 'github.com' && host !== 'www.github.com') {
+      return null;
+    }
+
+    const segments = parsedUrl.pathname
+      .split('/')
+      .map((segment) => segment.trim())
+      .filter(Boolean);
+
+    if (segments.length < 2) {
+      return null;
+    }
+
+    return {
+      owner: segments[0],
+      repo: segments[1].replace(/\.git$/i, ''),
+    };
+  } catch {
+    return null;
   }
 }
 
-function sleep(ms: number) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
+function resolveActiveStepIndex(status: DeployStatus, run: GithubRun | null) {
+  if (status === 'idle') {
+    return -1;
+  }
+
+  if (!run) {
+    return 1;
+  }
+
+  const runStatus = String(run.status || '').toLowerCase();
+  if (runStatus === 'queued' || runStatus === 'waiting' || runStatus === 'requested') {
+    return 1;
+  }
+
+  if (runStatus === 'in_progress') {
+    return 2;
+  }
+
+  if (runStatus === 'completed' && status === 'success') {
+    return 3;
+  }
+
+  return 2;
 }
 
 export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
-  const [projectName, setProjectName] = useState('lanna-ai');
-  const [repositoryUrl, setRepositoryUrl] = useState('');
+  const [repositoryUrl, setRepositoryUrl] = useState('https://github.com/Lanna550/LannaAi');
   const [branchName, setBranchName] = useState('main');
-  const [buildCommand, setBuildCommand] = useState('npm run build');
-  const [outputDirectory, setOutputDirectory] = useState('dist');
-  const [provider, setProvider] = useState<DeployProvider>('vercel');
+  const [workflowName, setWorkflowName] = useState('deploy-pages.yml');
+  const [provider, setProvider] = useState<DeployProvider>('github-pages');
   const [autoRedeploy, setAutoRedeploy] = useState(true);
   const [deployStatus, setDeployStatus] = useState<DeployStatus>('idle');
-  const [activeStepIndex, setActiveStepIndex] = useState(-1);
+  const [deployError, setDeployError] = useState('');
   const [deployedUrl, setDeployedUrl] = useState('');
+  const [currentRun, setCurrentRun] = useState<GithubRun | null>(null);
 
-  const projectSlug = useMemo(() => normalizeProjectSlug(projectName), [projectName]);
-  const previewUrl = useMemo(
-    () => `https://${createDeployHostname(provider, projectSlug)}`,
-    [provider, projectSlug],
+  const pollingIntervalRef = useRef<number | null>(null);
+  const pollingBusyRef = useRef(false);
+  const deployContextRef = useRef<{
+    owner: string;
+    repo: string;
+    branch: string;
+    workflow: string;
+    runId: number | null;
+  } | null>(null);
+
+  const parsedRepository = useMemo(
+    () => parseGitHubRepository(repositoryUrl),
+    [repositoryUrl],
   );
+  const previewUrl = useMemo(() => {
+    if (!parsedRepository) {
+      return '';
+    }
+    return `https://${parsedRepository.owner}.github.io/${parsedRepository.repo}/`;
+  }, [parsedRepository]);
+  const activeStepIndex = useMemo(
+    () => resolveActiveStepIndex(deployStatus, currentRun),
+    [deployStatus, currentRun],
+  );
+
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      window.clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopPolling();
+    };
+  }, []);
 
   const handleCopyUrl = async () => {
     const urlToCopy = (deployedUrl || previewUrl).trim();
@@ -104,43 +194,159 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
     }
   };
 
+  const pollGithubDeployStatus = async () => {
+    const context = deployContextRef.current;
+    if (!context || pollingBusyRef.current) {
+      return;
+    }
+
+    pollingBusyRef.current = true;
+    try {
+      const query = new URLSearchParams({
+        owner: context.owner,
+        repo: context.repo,
+        branch: context.branch,
+        workflow: context.workflow,
+      });
+      if (context.runId) {
+        query.set('runId', String(context.runId));
+      }
+
+      const response = await fetchWithTimeout(
+        `${API_BASE_URL}/api/deploy/github/status?${query.toString()}`,
+        {
+          method: 'GET',
+        },
+      );
+      const payload = await readJsonSafely<GithubDeployResponse>(response);
+
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload?.error || `Gagal mengecek status deploy (${response.status}).`);
+      }
+
+      if (payload.pagesUrl) {
+        setDeployedUrl(payload.pagesUrl);
+      }
+      if (payload.run) {
+        setCurrentRun(payload.run);
+      }
+
+      const status = String(payload.run?.status || '').toLowerCase();
+      const conclusion = String(payload.run?.conclusion || '').toLowerCase();
+
+      if (status === 'completed') {
+        stopPolling();
+        if (conclusion === 'success') {
+          setDeployStatus('success');
+          setDeployError('');
+          toast.success('Deploy GitHub Pages selesai dan berhasil.');
+          return;
+        }
+
+        setDeployStatus('error');
+        setDeployError(
+          `Workflow selesai dengan status "${conclusion || 'failed'}". Cek detail di GitHub Actions.`,
+        );
+        toast.error('Deploy gagal. Cek log GitHub Actions.');
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Gagal mengecek status deploy GitHub.';
+      setDeployStatus('error');
+      setDeployError(message);
+      stopPolling();
+      toast.error(message);
+    } finally {
+      pollingBusyRef.current = false;
+    }
+  };
+
+  const startPolling = () => {
+    stopPolling();
+    pollingIntervalRef.current = window.setInterval(() => {
+      void pollGithubDeployStatus();
+    }, 5000);
+  };
+
   const handleAutoDeploy = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const trimmedProjectName = projectName.trim();
     const trimmedRepositoryUrl = repositoryUrl.trim();
     const trimmedBranchName = branchName.trim();
-    const trimmedBuildCommand = buildCommand.trim();
-    const trimmedOutputDirectory = outputDirectory.trim();
+    const trimmedWorkflowName = workflowName.trim();
 
-    if (!trimmedProjectName || !trimmedRepositoryUrl || !trimmedBranchName) {
-      toast.error('Project name, repository URL, dan branch wajib diisi.');
+    if (!trimmedRepositoryUrl || !trimmedBranchName || !trimmedWorkflowName) {
+      toast.error('Repository URL, branch, dan workflow wajib diisi.');
       return;
     }
 
-    if (!/^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(trimmedRepositoryUrl)) {
-      toast.error('Repository URL tidak valid.');
+    if (provider !== 'github-pages') {
+      toast.error('Saat ini auto deploy real hanya tersedia untuk GitHub Pages.');
       return;
     }
 
-    if (!trimmedBuildCommand || !trimmedOutputDirectory) {
-      toast.error('Build command dan output directory wajib diisi.');
+    if (!parseGitHubRepository(trimmedRepositoryUrl)) {
+      toast.error('Repository harus format owner/repo atau URL GitHub valid.');
       return;
     }
 
+    stopPolling();
     setDeployStatus('running');
-    setActiveStepIndex(0);
-    setDeployedUrl('');
+    setDeployError('');
+    setCurrentRun(null);
 
-    for (let stepIndex = 0; stepIndex < DEPLOY_STEPS.length; stepIndex += 1) {
-      setActiveStepIndex(stepIndex);
-      await sleep(900);
+    try {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/deploy/github/start`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          repositoryUrl: trimmedRepositoryUrl,
+          branch: trimmedBranchName,
+          workflow: trimmedWorkflowName,
+          autoRedeploy,
+        }),
+      });
+      const payload = await readJsonSafely<GithubDeployResponse>(response);
+
+      if (!response.ok || !payload?.ok || !payload.owner || !payload.repo) {
+        throw new Error(payload?.error || `Gagal memulai deploy (${response.status}).`);
+      }
+
+      deployContextRef.current = {
+        owner: payload.owner,
+        repo: payload.repo,
+        branch: payload.branch || trimmedBranchName,
+        workflow: payload.workflow || trimmedWorkflowName,
+        runId: payload.run?.id || null,
+      };
+
+      if (payload.pagesUrl) {
+        setDeployedUrl(payload.pagesUrl);
+      }
+      if (payload.run) {
+        setCurrentRun(payload.run);
+      }
+
+      const runStatus = String(payload.run?.status || '').toLowerCase();
+      const runConclusion = String(payload.run?.conclusion || '').toLowerCase();
+      if (runStatus === 'completed' && runConclusion === 'success') {
+        setDeployStatus('success');
+        toast.success('Deploy GitHub Pages selesai dan berhasil.');
+        return;
+      }
+
+      toast.success('Workflow deploy berhasil dipicu. Menunggu proses build...');
+      void pollGithubDeployStatus();
+      startPolling();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Terjadi kesalahan saat memulai auto deploy.';
+      setDeployStatus('error');
+      setDeployError(message);
+      toast.error(message);
     }
-
-    const nextUrl = `https://${createDeployHostname(provider, normalizeProjectSlug(trimmedProjectName))}`;
-    setDeployedUrl(nextUrl);
-    setDeployStatus('success');
-    toast.success('Deploy website berhasil selesai.');
   };
 
   return (
@@ -174,7 +380,7 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
               Deploy <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">Website</span>
             </h1>
             <p className="mt-2 text-[15px] leading-relaxed text-gray-600 dark:text-gray-300 sm:text-base">
-              Atur project, lalu jalankan auto deploy untuk publish website kamu secara otomatis.
+              Trigger deploy GitHub Pages langsung dari dashboard ini, lalu pantau status workflow secara real-time.
             </p>
           </div>
         </motion.div>
@@ -190,24 +396,12 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
               onSubmit={handleAutoDeploy}
               className="rounded-2xl border border-gray-100 bg-white p-6 shadow-card dark:border-gray-700 dark:bg-gray-800 sm:p-8"
             >
-              <h2 className="mb-5 text-xl font-bold text-gray-900 dark:text-white">Konfigurasi Auto Deploy</h2>
+              <h2 className="mb-5 text-xl font-bold text-gray-900 dark:text-white">Konfigurasi Auto Deploy (GitHub)</h2>
 
               <div className="space-y-4">
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    Project Name
-                  </label>
-                  <Input
-                    value={projectName}
-                    onChange={(event) => setProjectName(event.target.value)}
-                    placeholder="contoh: lanna-ai"
-                    className="h-11"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    Repository URL
+                    Repository URL / owner/repo
                   </label>
                   <Input
                     value={repositoryUrl}
@@ -238,36 +432,23 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                       onChange={(event) => setProvider(event.target.value as DeployProvider)}
                       className="h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white"
                     >
-                      <option value="vercel">Vercel</option>
-                      <option value="netlify">Netlify</option>
                       <option value="github-pages">GitHub Pages</option>
+                      <option value="vercel" disabled>Vercel (Coming Soon)</option>
+                      <option value="netlify" disabled>Netlify (Coming Soon)</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                      Build Command
-                    </label>
-                    <Input
-                      value={buildCommand}
-                      onChange={(event) => setBuildCommand(event.target.value)}
-                      placeholder="npm run build"
-                      className="h-11"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                      Output Directory
-                    </label>
-                    <Input
-                      value={outputDirectory}
-                      onChange={(event) => setOutputDirectory(event.target.value)}
-                      placeholder="dist"
-                      className="h-11"
-                    />
-                  </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    Workflow File
+                  </label>
+                  <Input
+                    value={workflowName}
+                    onChange={(event) => setWorkflowName(event.target.value)}
+                    placeholder="deploy-pages.yml"
+                    className="h-11"
+                  />
                 </div>
 
                 <label className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/60 px-3.5 py-3 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-200">
@@ -277,7 +458,7 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                     onChange={(event) => setAutoRedeploy(event.target.checked)}
                     className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span>Aktifkan auto redeploy setiap ada push baru ke branch ini.</span>
+                  <span>Aktifkan auto redeploy mode (workflow bisa dipicu ulang dari halaman ini).</span>
                 </label>
 
                 <div className="flex flex-col gap-3 sm:flex-row">
@@ -289,7 +470,7 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                     {deployStatus === 'running' ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Menjalankan Auto Deploy...
+                        Menjalankan Deploy...
                       </>
                     ) : (
                       <>
@@ -324,8 +505,9 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                 <h3 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">Deploy Pipeline</h3>
                 <div className="space-y-3">
                   {DEPLOY_STEPS.map((step, stepIndex) => {
-                    const isDone = deployStatus === 'success' && stepIndex <= activeStepIndex;
-                    const isRunning = deployStatus === 'running' && stepIndex === activeStepIndex;
+                    const isDone = activeStepIndex > stepIndex || (deployStatus === 'success' && activeStepIndex >= stepIndex);
+                    const isRunning = deployStatus === 'running' && activeStepIndex === stepIndex;
+                    const isError = deployStatus === 'error' && activeStepIndex === stepIndex;
 
                     return (
                       <div
@@ -335,13 +517,17 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                             ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-900/20 dark:text-emerald-300'
                             : isRunning
                               ? 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-300'
-                              : 'border-gray-100 bg-gray-50 text-gray-600 dark:border-gray-700 dark:bg-gray-700/40 dark:text-gray-300'
+                              : isError
+                                ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-300'
+                                : 'border-gray-100 bg-gray-50 text-gray-600 dark:border-gray-700 dark:bg-gray-700/40 dark:text-gray-300'
                         }`}
                       >
                         {isDone ? (
                           <CheckCircle2 className="h-4 w-4" />
                         ) : isRunning ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : isError ? (
+                          <XCircle className="h-4 w-4" />
                         ) : (
                           <Clock3 className="h-4 w-4" />
                         )}
@@ -353,7 +539,7 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
               </div>
 
               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-card dark:border-gray-700 dark:bg-gray-800">
-                <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Ringkasan</h3>
+                <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Ringkasan Deploy</h3>
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div className="flex items-center gap-2">
                     <Settings2 className="h-4 w-4 text-blue-500" />
@@ -364,34 +550,53 @@ export function DeployWebsite({ onNavigate }: DeployWebsiteProps) {
                     <span>Branch: {branchName || '-'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <TerminalSquare className="h-4 w-4 text-blue-500" />
-                    <span>Build: {buildCommand || '-'}</span>
+                    <Workflow className="h-4 w-4 text-blue-500" />
+                    <span>Workflow: {workflowName || '-'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Globe className="h-4 w-4 text-blue-500" />
-                    <span>Preview URL: {previewUrl}</span>
+                    <span className="break-all">Preview URL: {deployedUrl || previewUrl || '-'}</span>
                   </div>
                 </div>
 
-                {deployStatus === 'success' && deployedUrl && (
+                {currentRun?.htmlUrl && (
+                  <a
+                    href={currentRun.htmlUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                  >
+                    Buka GitHub Actions Run
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+
+                {deployStatus === 'success' && (deployedUrl || previewUrl) && (
                   <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-900/20 dark:text-emerald-300">
                     Deploy selesai. Website online di:
                     <a
-                      href={deployedUrl}
+                      href={deployedUrl || previewUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="mt-1 block break-all font-semibold underline underline-offset-2"
                     >
-                      {deployedUrl}
+                      {deployedUrl || previewUrl}
                     </a>
                   </div>
                 )}
 
-                {autoRedeploy && (
-                  <p className="mt-4 text-xs text-blue-700 dark:text-blue-300">
-                    Auto redeploy aktif: setiap commit baru ke branch ini akan memicu deploy otomatis.
-                  </p>
+                {deployStatus === 'error' && deployError && (
+                  <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-300">
+                    {deployError}
+                  </div>
                 )}
+
+                <p className="mt-4 text-xs text-blue-700 dark:text-blue-300">
+                  Backend butuh env `GITHUB_DEPLOY_TOKEN` dengan akses workflow + repo untuk trigger deploy.
+                </p>
+                <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+                  API target sekarang: <span className="font-semibold">{API_BASE_URL}</span>
+                </p>
               </div>
             </div>
           </motion.div>

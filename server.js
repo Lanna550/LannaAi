@@ -1298,6 +1298,8 @@ app.get("/api/health", (_req, res) => {
     geminiApiKeyFingerprint: apiKeyFingerprint,
     hasTiktokRapidApiKey: Boolean(TIKTOK_RAPIDAPI_KEY),
     tiktokRapidApiHost: TIKTOK_RAPIDAPI_HOST,
+    hasGithubDeployToken: Boolean(GITHUB_DEPLOY_TOKEN),
+    githubDeployWorkflow: GITHUB_DEPLOY_WORKFLOW,
     textModel: DEFAULT_TEXT_MODEL,
     multimodalModel: DEFAULT_MULTIMODAL_MODEL,
     imageModel: DEFAULT_IMAGE_MODEL,
@@ -1740,6 +1742,13 @@ const DEFAULT_TEMPERATURE = Number.parseFloat(
 const DEFAULT_TEMPERATURE_CODE = Number.parseFloat(
   String(process.env.GEMINI_TEMPERATURE_CODE || "0.2"),
 );
+const GITHUB_API_BASE_URL = "https://api.github.com";
+const GITHUB_DEPLOY_TOKEN = String(
+  process.env.GITHUB_DEPLOY_TOKEN || process.env.GITHUB_TOKEN || "",
+).trim();
+const GITHUB_DEPLOY_WORKFLOW =
+  String(process.env.GITHUB_DEPLOY_WORKFLOW || "deploy-pages.yml").trim() ||
+  "deploy-pages.yml";
 
 function clampNumber(value, { min, max, fallback }) {
   const parsed = typeof value === "number" ? value : Number.parseFloat(String(value));
@@ -1757,6 +1766,182 @@ function clampInt(value, { min, max, fallback }) {
   }
 
   return Math.min(max, Math.max(min, parsed));
+}
+
+function createGithubHttpError(statusCode, message) {
+  const error = new Error(message);
+  error.statusCode = Number(statusCode) || 500;
+  return error;
+}
+
+function sanitizeGithubName(value = "") {
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    return "";
+  }
+
+  return /^[A-Za-z0-9_.-]+$/.test(normalized) ? normalized : "";
+}
+
+function normalizeGithubWorkflowId(value = "") {
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    return GITHUB_DEPLOY_WORKFLOW;
+  }
+
+  return normalized.replace(/^\/+/, "");
+}
+
+function parseGithubRepositoryInput(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) {
+    return null;
+  }
+
+  let owner = "";
+  let repo = "";
+
+  const ownerRepoMatch = raw.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?$/);
+  if (ownerRepoMatch) {
+    owner = ownerRepoMatch[1];
+    repo = ownerRepoMatch[2];
+  } else {
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(raw);
+    } catch (_error) {
+      return null;
+    }
+
+    const host = String(parsedUrl.hostname || "").trim().toLowerCase();
+    if (host !== "github.com" && host !== "www.github.com") {
+      return null;
+    }
+
+    const segments = parsedUrl.pathname
+      .split("/")
+      .map((segment) => segment.trim())
+      .filter(Boolean);
+
+    if (segments.length < 2) {
+      return null;
+    }
+
+    owner = segments[0];
+    repo = segments[1].replace(/\.git$/i, "");
+  }
+
+  const safeOwner = sanitizeGithubName(owner);
+  const safeRepo = sanitizeGithubName(repo);
+  if (!safeOwner || !safeRepo) {
+    return null;
+  }
+
+  return {
+    owner: safeOwner,
+    repo: safeRepo,
+  };
+}
+
+function buildGithubPagesUrl(owner, repo) {
+  return `https://${owner}.github.io/${repo}/`;
+}
+
+function createGithubApiHeaders() {
+  if (!GITHUB_DEPLOY_TOKEN) {
+    throw createGithubHttpError(500, "GITHUB_DEPLOY_TOKEN belum diset di server.");
+  }
+
+  return {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${GITHUB_DEPLOY_TOKEN}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+    "Content-Type": "application/json",
+  };
+}
+
+async function readGithubJsonSafely(response) {
+  const rawText = await response.text().catch(() => "");
+  if (!rawText) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawText);
+  } catch (_error) {
+    return null;
+  }
+}
+
+async function githubApiRequest(endpointPath, { method = "GET", body } = {}) {
+  const normalizedPath = String(endpointPath || "").startsWith("/")
+    ? String(endpointPath || "")
+    : `/${String(endpointPath || "")}`;
+  const requestUrl = `${GITHUB_API_BASE_URL}${normalizedPath}`;
+  const response = await fetch(requestUrl, {
+    method,
+    headers: createGithubApiHeaders(),
+    body: body == null ? undefined : JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const payload = await readGithubJsonSafely(response);
+    const message =
+      payload?.message ||
+      payload?.error ||
+      `GitHub API request gagal (${response.status}).`;
+    throw createGithubHttpError(response.status, message);
+  }
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  return readGithubJsonSafely(response);
+}
+
+function mapGithubWorkflowRun(runPayload = null) {
+  if (!runPayload || typeof runPayload !== "object") {
+    return null;
+  }
+
+  return {
+    id: Number(runPayload.id) || null,
+    status: String(runPayload.status || "").trim() || "unknown",
+    conclusion:
+      runPayload.conclusion == null ? null : String(runPayload.conclusion || "").trim() || null,
+    htmlUrl: String(runPayload.html_url || "").trim() || null,
+    event: String(runPayload.event || "").trim() || null,
+    createdAt: String(runPayload.created_at || "").trim() || null,
+    updatedAt: String(runPayload.updated_at || "").trim() || null,
+  };
+}
+
+async function fetchLatestGithubWorkflowRun({ owner, repo, workflow, branch }) {
+  const query = new URLSearchParams({
+    branch,
+    event: "workflow_dispatch",
+    per_page: "5",
+  });
+  const payload = await githubApiRequest(
+    `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/actions/workflows/${encodeURIComponent(workflow)}/runs?${query.toString()}`,
+  );
+  const runs = Array.isArray(payload?.workflow_runs) ? payload.workflow_runs : [];
+  if (!runs.length) {
+    return null;
+  }
+
+  const matchedRun = runs.find(
+    (run) => String(run?.head_branch || "").trim() === branch,
+  );
+  return mapGithubWorkflowRun(matchedRun || runs[0]);
+}
+
+async function fetchGithubWorkflowRunById({ owner, repo, runId }) {
+  const payload = await githubApiRequest(
+    `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/actions/runs/${encodeURIComponent(String(runId))}`,
+  );
+  return mapGithubWorkflowRun(payload);
 }
 
 function extractLastUserText(contents = []) {
@@ -3309,6 +3494,116 @@ app.post("/api/chat/image", upload.single("attachment"), async (req, res) => {
     }
 
     return res.status(clientError.status).json(clientError.payload);
+  }
+});
+
+app.post("/api/deploy/github/start", async (req, res) => {
+  const repositoryInput = String(
+    req.body?.repositoryUrl || req.body?.repository || req.body?.repo || "",
+  ).trim();
+  const branch = String(req.body?.branch || "main").trim() || "main";
+  const workflow = normalizeGithubWorkflowId(req.body?.workflow);
+
+  if (!repositoryInput) {
+    return res.status(400).json({
+      ok: false,
+      error: "Repository URL wajib diisi.",
+    });
+  }
+
+  const repository = parseGithubRepositoryInput(repositoryInput);
+  if (!repository) {
+    return res.status(400).json({
+      ok: false,
+      error: "Repository harus format owner/repo atau URL GitHub yang valid.",
+    });
+  }
+
+  try {
+    await githubApiRequest(
+      `/repos/${encodeURIComponent(repository.owner)}/${encodeURIComponent(repository.repo)}/actions/workflows/${encodeURIComponent(workflow)}/dispatches`,
+      {
+        method: "POST",
+        body: {
+          ref: branch,
+        },
+      },
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    const latestRun = await fetchLatestGithubWorkflowRun({
+      owner: repository.owner,
+      repo: repository.repo,
+      workflow,
+      branch,
+    });
+
+    return res.json({
+      ok: true,
+      owner: repository.owner,
+      repo: repository.repo,
+      branch,
+      workflow,
+      pagesUrl: buildGithubPagesUrl(repository.owner, repository.repo),
+      run: latestRun,
+    });
+  } catch (error) {
+    console.error("GITHUB DEPLOY START ERROR:", error);
+    const statusCode = Number(error?.statusCode) || 502;
+    return res.status(statusCode).json({
+      ok: false,
+      error:
+        error?.message ||
+        "Gagal menjalankan workflow deploy GitHub. Cek token/repo/workflow.",
+    });
+  }
+});
+
+app.get("/api/deploy/github/status", async (req, res) => {
+  const owner = sanitizeGithubName(req.query?.owner || "");
+  const repo = sanitizeGithubName(req.query?.repo || "");
+  const branch = String(req.query?.branch || "main").trim() || "main";
+  const workflow = normalizeGithubWorkflowId(req.query?.workflow);
+  const runId = Number.parseInt(String(req.query?.runId || ""), 10);
+
+  if (!owner || !repo) {
+    return res.status(400).json({
+      ok: false,
+      error: "Parameter owner dan repo wajib diisi.",
+    });
+  }
+
+  try {
+    const run = Number.isInteger(runId) && runId > 0
+      ? await fetchGithubWorkflowRunById({
+          owner,
+          repo,
+          runId,
+        })
+      : await fetchLatestGithubWorkflowRun({
+          owner,
+          repo,
+          workflow,
+          branch,
+        });
+
+    return res.json({
+      ok: true,
+      owner,
+      repo,
+      branch,
+      workflow,
+      pagesUrl: buildGithubPagesUrl(owner, repo),
+      run,
+    });
+  } catch (error) {
+    console.error("GITHUB DEPLOY STATUS ERROR:", error);
+    const statusCode = Number(error?.statusCode) || 502;
+    return res.status(statusCode).json({
+      ok: false,
+      error:
+        error?.message || "Gagal mengambil status deploy GitHub.",
+    });
   }
 });
 
