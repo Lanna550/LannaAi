@@ -143,10 +143,110 @@ const persistenceReady = (async () => {
   }
 })();
 
+const LOCALHOST_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+
+function isPrivateIpv4Host(hostname) {
+  const matched = String(hostname || "")
+    .trim()
+    .toLowerCase()
+    .match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!matched) {
+    return false;
+  }
+
+  const [a, b, c, d] = matched.slice(1).map((segment) => Number.parseInt(segment, 10));
+  if (![a, b, c, d].every((segment) => Number.isFinite(segment) && segment >= 0 && segment <= 255)) {
+    return false;
+  }
+
+  return (
+    a === 10 ||
+    a === 127 ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168)
+  );
+}
+
+function isLoopbackOrPrivateHost(hostname) {
+  const normalizedHost = String(hostname || "").trim().toLowerCase();
+  if (!normalizedHost) {
+    return false;
+  }
+
+  if (LOCALHOST_HOSTS.has(normalizedHost)) {
+    return true;
+  }
+
+  if (normalizedHost.endsWith(".local")) {
+    return true;
+  }
+
+  return isPrivateIpv4Host(normalizedHost);
+}
+
+function normalizeCorsOrigin(value) {
+  try {
+    const parsed = new URL(String(value || "").trim());
+    return `${parsed.protocol}//${parsed.host}`.toLowerCase();
+  } catch (_error) {
+    return "";
+  }
+}
+
+function parseCorsAllowedOrigins(value) {
+  return new Set(
+    String(value || "")
+      .split(",")
+      .map((origin) => normalizeCorsOrigin(origin))
+      .filter((origin) => Boolean(origin)),
+  );
+}
+
+const configuredCorsAllowedOrigins = parseCorsAllowedOrigins(
+  process.env.CORS_ALLOWED_ORIGINS,
+);
+
+function isCorsOriginAllowed(origin) {
+  if (!origin) {
+    return true;
+  }
+
+  const normalizedOrigin = normalizeCorsOrigin(origin);
+  if (!normalizedOrigin) {
+    return false;
+  }
+
+  if (!configuredCorsAllowedOrigins.size) {
+    return true;
+  }
+
+  if (configuredCorsAllowedOrigins.has(normalizedOrigin)) {
+    return true;
+  }
+
+  try {
+    const hostname = String(new URL(normalizedOrigin).hostname || "").trim().toLowerCase();
+    return isLoopbackOrPrivateHost(hostname);
+  } catch (_error) {
+    return false;
+  }
+}
+
+if (configuredCorsAllowedOrigins.size) {
+  console.log(
+    `CORS allowlist aktif: ${Array.from(configuredCorsAllowedOrigins).join(", ")} (+ localhost/LAN lokal).`,
+  );
+} else {
+  console.log("CORS mode dev: semua origin diizinkan (set CORS_ALLOWED_ORIGINS untuk membatasi).");
+}
+
 const corsMiddleware = cors({
-  origin: true,
+  origin: (origin, callback) => {
+    callback(null, isCorsOriginAllowed(origin));
+  },
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
+  optionsSuccessStatus: 204,
 });
 
 app.use((req, res, next) => {

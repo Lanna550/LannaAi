@@ -56,6 +56,29 @@ function isLikelyStaticHost(hostname: string) {
   return STATIC_HOST_SUFFIXES.some((suffix) => normalizedHost.endsWith(suffix));
 }
 
+function parseUrlHostname(value: string) {
+  try {
+    return String(new URL(value).hostname || '').trim().toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+function resolveCurrentHostApiBaseUrl(envApiBaseUrl: string) {
+  if (typeof window === 'undefined') {
+    return `http://localhost:${DEFAULT_LOCAL_API_PORT}`;
+  }
+
+  try {
+    const envUrl = new URL(envApiBaseUrl);
+    const pageHost = String(window.location.hostname || '').trim().toLowerCase();
+    const port = String(envUrl.port || DEFAULT_LOCAL_API_PORT);
+    return `${envUrl.protocol}//${pageHost}:${port}`;
+  } catch {
+    return resolveRuntimeDefaultApiBaseUrl();
+  }
+}
+
 function resolveRuntimeDefaultApiBaseUrl() {
   if (typeof window === 'undefined') {
     return `http://localhost:${DEFAULT_LOCAL_API_PORT}`;
@@ -84,12 +107,18 @@ function resolveApiBaseUrl() {
   if (typeof window !== 'undefined') {
     try {
       const pageHost = String(window.location.hostname || '').trim().toLowerCase();
-      const envHost = String(new URL(envApiBaseUrl).hostname || '').trim().toLowerCase();
+      const envHost = parseUrlHostname(envApiBaseUrl);
       const isEnvLocalHost = isLoopbackOrPrivateHost(envHost);
 
       // Untuk sesi ngrok, kalau env masih localhost/private, fallback ke origin ngrok aktif.
       if (isNgrokHost(pageHost) && isEnvLocalHost) {
         return window.location.origin;
+      }
+
+      // Kalau frontend lokal tapi env menunjuk host lokal lain (IP lama/berubah),
+      // pakai host frontend saat ini agar login/auth tidak putus.
+      if (isLoopbackOrPrivateHost(pageHost) && isEnvLocalHost && pageHost !== envHost) {
+        return resolveCurrentHostApiBaseUrl(envApiBaseUrl);
       }
     } catch {
       // Ignore malformed env URL and keep the original env value.
